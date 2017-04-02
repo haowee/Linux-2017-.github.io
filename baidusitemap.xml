@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+
+
+    
+    
+  <url>
+    <loc>http://yoursite.com/2017/04/02/index.html</loc>
+    <lastmod>2017-04-02T14:32:59.116Z</lastmod>
+    <data>
+        <display>
+        <title>notes</title>
+        <pubTime>2017-04-02T04:00:09.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+        <tag>Notes</tag>
+         
+         
+           
+             
+              <breadCrumb title="Linux" url="http://yoursite.com/categories/Linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+    
+    
+  <url>
+    <loc>http://yoursite.com/2017/03/30/blog.html</loc>
+    <lastmod>2017-03-30T08:20:24.634Z</lastmod>
+    <data>
+        <display>
+        <title></title>
+        <pubTime>2017-03-30T08:20:24.634Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+</urlset>
