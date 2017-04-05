@@ -2,6 +2,34 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2017/04/05/selinux.html</loc>
+    
+    <lastmod>2017-04-05T14:06:28.186Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2017/04/05/awk.html</loc>
+    
+    <lastmod>2017-04-05T12:23:45.812Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2017/04/03/vim.html</loc>
+    
+    <lastmod>2017-04-03T07:58:51.153Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>http://yoursite.com/2017/04/03/page.html</loc>
+    
+    <lastmod>2017-04-03T06:13:17.138Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/about/index.html</loc>
     
     <lastmod>2017-04-02T14:47:37.987Z</lastmod>

@@ -290,6 +290,790 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/05/selinux.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hee shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Linux-2017">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/05/selinux.html" itemprop="url">
+                  selinux
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-05T20:27:29+08:00">
+                2017-04-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="SELINUX"><a href="#SELINUX" class="headerlink" title="SELINUX"></a>SELINUX</h2><h4 id="Selinux简介"><a href="#Selinux简介" class="headerlink" title="Selinux简介"></a>Selinux简介</h4><p>SELinux: Secure Enhanced Linux, 是美国国家安全局(NSA=The National Security Agency)和SCC(SecureComputing Corporation)开发的 Linux的一个强制访问控制的<br>安全模块。2000年以GNU GPL发布,Linux内核2.6版本后集成在内核中．</p>
+<h4 id="Selinux工作类型"><a href="#Selinux工作类型" class="headerlink" title="Selinux工作类型"></a>Selinux工作类型</h4><ul>
+<li>Strict: centos5,每个进程都受到selinux的控制</li>
+<li>Targeted: 用来保护常见的网络服务,仅有限进程受到selinux控制,只监控容易被入侵的进程,centos4只保护13个服务,centos5保护88个进程.</li>
+<li>minimum: centos7,修改过的targeted,只对选择的网络服务.</li>
+<li>mls: 提供MLS(多级安全)机制的安全性.</li>
+<li>minimum和mls稳定性不足,未加以应用.</li>
+</ul>
+<h4 id="Selinux安全上下文"><a href="#Selinux安全上下文" class="headerlink" title="Selinux安全上下文"></a>Selinux安全上下文</h4><ul>
+<li>在Selinux中,一切皆对象(object),由存放在inode的扩展属性域的安全元素所控制其访问</li>
+<li>所有文件和端口资源和进程都具备安全标签:安全上下文(security context)</li>
+<li><strong>安全上下文由5个元素组成</strong><ul>
+<li>user:指示登陆系统的用户类型,如root,user_u,system_u多数本地进程都属于自由(unconfined)进程</li>
+<li>role:定义文件,进程和用户的用途:文件:object_r,进程和用户:system_r</li>
+<li>type:指定数据类型,规则中定义何种进程类型访问何种文件,target策略基于type实现,多服务共用:public_content_t．</li>
+<li>sensitivity:限制访问的需要,由组织定义的分层安全级别,如unclassified,secret,top,secret,一个对象有且只有一个sensitivity,分15级,s0最低,Target策略默认使用s0</li>
+<li>category:对于特定组织划分不分层的分类,如FBI Secret,NSA secret,一个对象可以有多个categroy,c0-c1023共1024个分类,target策略不使用category.</li>
+<li>实际上下文:存放在文件系统中,ls -Z;ps -Z</li>
+</ul>
+</li>
+<li>期望(默认)上下文:存放在二进制的SELINUX策略库(映射目录和期望安全上下文)中　　semanage fcontext -l</li>
+</ul>
+<h4 id="Selinux状态"><a href="#Selinux状态" class="headerlink" title="Selinux状态"></a>Selinux状态</h4><ul>
+<li>enforcing:强制，每个受限的进程都必然受限</li>
+<li>permissive:允许,每个受限的进程违规操作不会被禁止,但会被记录与审计日志</li>
+<li>disabled:禁用</li>
+</ul>
+<h4 id="Selinux相关命令"><a href="#Selinux相关命令" class="headerlink" title="Selinux相关命令"></a>Selinux相关命令</h4><ul>
+<li>getenforce:获取selinux当前状态</li>
+<li>sestatus:查看selinux状态</li>
+<li>setenforce 0|1<ul>
+<li>0:设置为permissive</li>
+<li>1:设置为enforcing</li>
+</ul>
+</li>
+<li>给文件重新打安全标签<ul>
+<li>chcon [option] … [-u USER][-r ROLE] [-t TYPE] FILE…</li>
+<li>chcon [option]… –reference=RFILE FILE…</li>
+<li>-R:递归打标</li>
+</ul>
+</li>
+<li>恢复目录或文件默认的安全上下文:<ul>
+<li>restorecon [-R] /path/to/somewhere</li>
+</ul>
+</li>
+<li>semanage:来自policycoreutils-python包</li>
+<li>查看安全上下文<ul>
+<li>semanage fcontext -l</li>
+</ul>
+</li>
+<li>添加<ul>
+<li>semanage fcontext -a -t http_sys_content_t ‘/testdir(/.*)?’</li>
+<li>restorecon -Rv /testdir</li>
+</ul>
+</li>
+<li>删除<ul>
+<li>semanage fcotext -d -t httpd_sys_content_t ‘/testdir(/.*)?’</li>
+</ul>
+</li>
+</ul>
+<h4 id="Selinux布尔值"><a href="#Selinux布尔值" class="headerlink" title="Selinux布尔值"></a>Selinux布尔值</h4><ul>
+<li>布尔型规则<ul>
+<li>getsebool</li>
+<li>setsebool</li>
+</ul>
+</li>
+<li>查看bool命令<ul>
+<li>getsebool [-a] boolean</li>
+<li>semanage boolean -l</li>
+<li>semanage boolean -l -C 查看修改过的布尔值</li>
+</ul>
+</li>
+<li>设置bool值命令<ul>
+<li>setsebool [-p] boolean value (on,off)</li>
+<li>setsebool [-p] boolean=value (0,1)</li>
+</ul>
+</li>
+</ul>
+<h4 id="Selinux日志管理"><a href="#Selinux日志管理" class="headerlink" title="Selinux日志管理"></a>Selinux日志管理</h4><ul>
+<li>yum install setroublesshoot(重启生效) 将错误的信息写入/var/log/message</li>
+<li>grep setroubleshoot  /var/log/message</li>
+<li>sealert -l UUID 查看安全事件日志说明</li>
+<li>sealert -a /var/log/audit/audit.log 扫描并分析日志</li>
+</ul>
+<h4 id="Selinux-help"><a href="#Selinux-help" class="headerlink" title="Selinux help"></a>Selinux help</h4><ul>
+<li>yum install selinux-policy-doc (centos6,7)</li>
+<li>mandb | makewhatis</li>
+<li>man -k _selinux</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/05/awk.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hee shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Linux-2017">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/05/awk.html" itemprop="url">
+                  awk
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-05T20:06:09+08:00">
+                2017-04-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>$$<br>awk<br>$$</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/03/vim.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hee shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Linux-2017">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/03/vim.html" itemprop="url">
+                  vim
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-03T14:14:08+08:00">
+                2017-04-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="vim编辑器"><a href="#vim编辑器" class="headerlink" title="vim编辑器"></a>vim编辑器</h1><p>vim  [option] file</p>
+<p>​    +#:打开文件后，直接让光标处于第＃行</p>
+<p>​    +/pattern:打开文件后，直接让光标处于第一个被pattern匹配到的行的行首</p>
+<p>​    +N file 直接打开file光标在第Ｎ行，默认在最后一行</p>
+<p>​    -b file 二进制方式打开</p>
+<p>​    -d file1 file2 比较多个文件</p>
+<p>​    -m file 只读打开文件</p>
+<p>ex file 或　vim -e 直接进入ex模式    </p>
+<h2 id="Vim-命令模式光标跳转"><a href="#Vim-命令模式光标跳转" class="headerlink" title="Vim 命令模式光标跳转"></a>Vim 命令模式光标跳转</h2><p><strong>行首行尾跳转</strong></p>
+<ul>
+<li>^:调整至行首的第一个非空白字符</li>
+<li>0:跳转至行首</li>
+<li>$:跳转至行尾</li>
+</ul>
+<p><strong>行间移动</strong></p>
+<ul>
+<li>#:G扩展模式</li>
+<li>#:跳转至由#指定行</li>
+<li>Ｇ:最后一行</li>
+<li>1G,gg:第一行</li>
+</ul>
+<p><strong>句间移动</strong></p>
+<ul>
+<li>):下一句</li>
+<li>(:上一句</li>
+</ul>
+<p><strong>段落间移动</strong></p>
+<ul>
+<li>}:下一段</li>
+<li>{:上一段</li>
+</ul>
+<p><strong>命令模式翻屏操作</strong></p>
+<ul>
+<li>Ctrl + f :向文件尾部翻一屏</li>
+<li>Ctrl + b :向文件首部翻一屏</li>
+<li>Ctrl + d :向文件尾部翻半屏</li>
+<li>Ctrl + u: 向文件首部翻半屏</li>
+</ul>
+<p><strong>字符编辑</strong></p>
+<ul>
+<li>x:删除光标处的字符</li>
+<li>#:删除光标处起始的#个字符</li>
+<li>xp:交换光标所在处的字符及其后面字符的位置</li>
+<li>~:转换大小写</li>
+</ul>
+<p><strong>删除命令</strong></p>
+<ul>
+<li>d:删除命令，可结合光标跳转字符，实现范围删除</li>
+<li>d$:删除到行尾</li>
+<li>d^:删除到非空行首</li>
+<li>d0:删除到行首</li>
+<li>dw:</li>
+<li>de:</li>
+<li>db:</li>
+</ul>
+<p><strong>复制命令</strong></p>
+<ul>
+<li>y:复制</li>
+<li>y$</li>
+<li>y0</li>
+<li>y^</li>
+<li>ye</li>
+<li>yw</li>
+<li>yb</li>
+<li>yy:复制行</li>
+<li>#yy复制多行</li>
+</ul>
+<p><strong>粘贴命令</strong></p>
+<ul>
+<li>p:缓冲区存的如果为整行，则粘贴当前光标所在行的下方；否则，则粘贴至当前光标所在行的后面</li>
+<li>P:缓冲区存的如果为整行，则粘贴当前光标所在行的上方；否则，则粘贴至当前光标所在处的前面</li>
+</ul>
+<p><strong>撤销更改</strong></p>
+<ul>
+<li><p>u撤销最近的更改</p>
+</li>
+<li><p>#u撤销之前的多次更改</p>
+</li>
+<li><p>Ｕ撤销光标落在这行后所有此行的更改</p>
+</li>
+<li><p>按Ctrl -r 重做最后的撤销更改</p>
+</li>
+<li><p>.重复之前的操作</p>
+</li>
+<li><p>n.重复前一个操作n次</p>
+<p>​</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/03/page.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hee shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Linux-2017">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/03/page.html" itemprop="url">
+                  笔记
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-03T14:06:11+08:00">
+                2017-04-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="ls"><a href="#ls" class="headerlink" title="ls"></a>ls</h2><p>ls  -a 　all<br>    -l  额外的信息<br>    -R 递归<br>    -ld 目录和符合链接信息<br>    -1 文件分行显示<br>    -S 按文件大小排序<br>    -t mtime排序<br>    -u 配合-t选项，显示并按atime从新到旧排序<br>    -U 按目录存放顺序显示<br>    -X 按文件后缀排序</p>
+<h2 id="stat"><a href="#stat" class="headerlink" title="stat"></a>stat</h2><p>access time 读取文件内容<br>modify time 改变文件内容(数据)<br>change time 元数据发生改变</p>
+<p>##　文件通配符<br>[:digit]<br>[:lower:]<br>[:upper:]<br>[:alpha:]<br>[:alnum:]<br>[:blank:] 水平空白字符<br>[:space:] 水平或垂直空白字符<br>[:punct:] 标点符号<br>[:print:] 可打印字符<br>[:cntrl:] 控制字符<br>[:graph:] 图形字符<br>[:xigit:] 十六进制字符</p>
+<h2 id="cp"><a href="#cp" class="headerlink" title="cp"></a>cp</h2><p>-i 交互式<br>-r,-R 递归<br>-a 归档，相当与-dR –preserv=all<br>-d: –no-dereference –preserv=link 不复制原文件，只复制链接名<br>–preserv=[=ATTR_LIST]</p>
+<pre><code>mode:权限
+ownership:属主属组
+timestamp:
+links
+xattr
+context
+all
+</code></pre><p>-p:等于–preserv=mode,ownership,timestamp<br>-v:–verbose</p>
+<h2 id="硬链接"><a href="#硬链接" class="headerlink" title="硬链接"></a>硬链接</h2><p>创建硬链接会增加额外的记录项以引用文件<br>对应与同一文件系统上一个物理文件<br>每个目录引用相同的inode号<br>创建时链接数递增<br>删除文件时:</p>
+<pre><code>rm命令递减计数的链接
+文件要存在，至少有一个链接数
+当链接数为０，文件则被删除
+</code></pre><p>不能跨越分区或驱动器</p>
+<h2 id="软链接"><a href="#软链接" class="headerlink" title="软链接"></a>软链接</h2><p>１．一个符合链接指向另一个文件<br>２．ls -l 显示链接名和引用的文件<br>３．一个符合链接的内容是它引用文件的名称<br>４．可以对目录进行<br>５．可以跨分区<br>５指向的是另一个文件的路径；其大小为指向的路径字符串的长度；不增加或减少目标文件inode的引用计数；</p>
+<h2 id="file-确定文件内容"><a href="#file-确定文件内容" class="headerlink" title="file 确定文件内容"></a>file 确定文件内容</h2><p>file [option] filename<br>-b 列出文件辨识结果，不显示文件名<br>-f 列车指定文件中内容的文件类型<br>-F 使用指定分割符合替换输出文件名后默认的”:”分割符<br>-L 查看对应软链接对应文件的文件类型</p>
+<p>##　管道与重定向</p>
+<pre><code>&gt; 把STDOUT重定向到文件
+２&gt;　把STDERR重定向到文件
+&amp;&gt; 把所有输出重定向到文件
+&gt;文件内容会被覆盖 
+set -C:全局禁止覆盖
+set +C:允许覆盖
+&gt;&gt; 追加
+2&gt; 覆盖重定向错误输出数据流
+２&gt;&gt; 追加重定向错误输出数据流
+():合并多个程序的STDOUT
+( cal 2007 ; cal 2008 ) &gt; all.txt
+</code></pre><h2 id="tr"><a href="#tr" class="headerlink" title="tr"></a>tr</h2><p>tr [option] set1 set2<br>-c 取字符集的补集<br>-d –delete<br>-s 去重复<br>-t 将第一个字符集对应的字符转换为第二个字符集</p>
+<h2 id="文件权限"><a href="#文件权限" class="headerlink" title="文件权限"></a>文件权限</h2><p>文件<br>r 可使用文件查看类工具获取其内容<br>w 可修改其内容<br>x 可以把此文件提请内核启动为一个进程<br>目录<br>r 可以使用ls查看次目录中文件列表<br>w 可在此目录中创建文件，也可删除此目录中的文件<br>x 可以使用ls -l查看此目录中文件列表，可以cd进去<br>目录 X:只给目录x权限，不给文件x权限</p>
+<h2 id="特殊权限"><a href="#特殊权限" class="headerlink" title="特殊权限"></a>特殊权限</h2><p>###　可执行文件上的SUID权限<br>１.任何一个可执行程序文件能不能启动为进程:取决发起者对程序文件是否拥有执行权限<br>２.启动为进程之后，其进程的属主为原程序文件的属主<br>３.SUID只对二进制可执行程序有效<br>４.SUID设置在目录上无意义<br>权限设定:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chmod u+s file</div><div class="line">chmod u-s file</div></pre></td></tr></table></figure></p>
+<h3 id="可执行文件上的SGID权限"><a href="#可执行文件上的SGID权限" class="headerlink" title="可执行文件上的SGID权限"></a>可执行文件上的SGID权限</h3><p>１．任何一个可执行程序文件能不能启动为进程；取决发起者对程序文件是否拥有执行权限<br>２．启动为进程之后，其进程的属主为远程序文件的属组<br>３．权限设定<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chmod g+s file</div><div class="line">chmod g-s file</div></pre></td></tr></table></figure></p>
+<h3 id="目录上的SGID权限"><a href="#目录上的SGID权限" class="headerlink" title="目录上的SGID权限"></a>目录上的SGID权限</h3><p>１．默认情况下，用户创建文件时，其属组为此用户所属的主组<br>２．一旦某目录被设定了SGID,则对此目录有写权限的用户在此目录中创建的文件所属的组为此目录的属组．<br>３．通常用于创建一个协作目录<br>４．权限设定<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chmod g+s dir</div><div class="line">chmod g-s dir</div></pre></td></tr></table></figure></p>
+<h3 id="Sticky位"><a href="#Sticky位" class="headerlink" title="Sticky位"></a>Sticky位</h3><p>１．具有写权限的目录通常用户可以删除该目录中的任何文件，无论该文件的权限或拥有权<br>２．在目录设置Sticky位，只有文件的所有者或root可以删除该文件<br>３．Sticky设置在文件上无意义<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chmod o+t dir</div><div class="line">chmod o-t dir</div></pre></td></tr></table></figure></p>
+<h3 id="设定文件特点属性"><a href="#设定文件特点属性" class="headerlink" title="设定文件特点属性"></a>设定文件特点属性</h3><p>chattr +i 不能删除，改名，更改<br>chattr +a 只能追加内容<br>lsattr 显示特定属性</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/02/index.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -729,7 +1513,7 @@ zcat messages.gz &gt; messages
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">6</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -751,7 +1535,7 @@ zcat messages.gz &gt; messages
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">3</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
