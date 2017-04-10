@@ -290,6 +290,663 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/08/systemd.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hee shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Linux-2017">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/08/systemd.html" itemprop="url">
+                  未命名
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-08T22:23:29+08:00">
+                2017-04-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <hr>
+<p>title: systemd<br>date: 2017-04-08 22:22:22<br>categories: “Linux”<br>tags: Linux</p>
+<h1 id="Systemd"><a href="#Systemd" class="headerlink" title="Systemd"></a>Systemd</h1><ul>
+<li>POST–&gt;Boot Sequence–&gt;Bootloader–&gt;Kernel initramfs(initrd)–&gt;rootfs–&gt;/sbin/init<ul>
+<li>init <ul>
+<li>Centos 5 : Sysv init </li>
+<li>Centos 6 : Upstart</li>
+<li>Centos 7 : Systemd</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Systemd: 系统启动和服务器守护进程管理器，负责在系统启动或运行时，激活系统资源，服务器进程和其他进程．系统引导时实现服务并行启动，按需启动守护进程，自动化的服务依赖关系管理，同时采用socket式与Ｄ-Bus总线式激活服务，系统状态快照．</li>
+</ul>
+<h2 id="unit"><a href="#unit" class="headerlink" title="unit"></a>unit</h2><p><strong>unit</strong>表示不同类型的systemd对象，通过配置文件进行标识和配置；文件中主要包含了系统服务，监听socket,保存系统快照以及其他与init相关的信息</p>
+<p><strong>配置文件</strong>：</p>
+<ul>
+<li>/usr/lib/systemd/system: 每个服务最主要的启动脚本设置，类似于之前的/etc/init.d/</li>
+<li>/run/systemd/system: 系统执行过程中所产生的服务脚本，比上面目录优先运行</li>
+<li>/etc/systemd/system: 管理员建立的执行脚本，类似与/etc/rc.d/rcN.d/sxx类的功能，比上面目录优先运行</li>
+</ul>
+<p><strong>unit类型</strong></p>
+<ul>
+<li>Systemctl -t help 查看unit类型</li>
+<li>Service unit: 文件扩展名为.service，用于定义系统服务</li>
+<li>Target uniq: .device,用于定义内核识别的设备</li>
+<li>Ｍount unit: .mount,用于定义文件系统挂载点</li>
+<li>Socket unit: .socket,用于标识进程间通信用的socket文件，也可在系统启动时，延迟启动服务，实现按需启动</li>
+<li>Snapshot unit: .snapshot,管理系统快照</li>
+<li>Swap unit: .swao,用于标识swap设备</li>
+<li>Automount unit: .automount,文件系统的自动挂载点</li>
+<li>Path unit: .path,用于定义文件系统中的一个文件或目录使用，常用于当文件系统变化时，延迟激活服务，如：spool目录</li>
+</ul>
+<p><strong>管理服务</strong></p>
+<ul>
+<li>systemctl start|stop|reload|restart|status name.service</li>
+<li>条件式重启: 已启动才重启，否则不做操作: systemctl try-restart name.service</li>
+<li>禁止自动和手动启动: Systemctl mask name.service</li>
+<li>取消禁止: Systemctl unmask name.service</li>
+</ul>
+<p><strong>服务查看</strong></p>
+<ul>
+<li><p>查看某服务当前激活与否的状态</p>
+<blockquote>
+<p>systemctl is-active name.service</p>
+</blockquote>
+</li>
+<li><p>查看所有已经激活的服务</p>
+<blockquote>
+<p>systemctl list-unis –type|-t service</p>
+</blockquote>
+</li>
+<li><p>查看所有服务</p>
+<blockquote>
+<p>systemctl list-units –type service -all|-a</p>
+</blockquote>
+</li>
+<li><p>设定某服务的开机启动</p>
+<blockquote>
+<p>chkconfig name on ==&gt; systemctl enable name.service</p>
+</blockquote>
+</li>
+<li><p>设定某服务的开机禁止启动</p>
+<blockquote>
+<p>chkconfig name off ==&gt; systemctl disable name.service</p>
+</blockquote>
+</li>
+<li><p>查看所有的开机自启状态</p>
+<blockquote>
+<p>chkconfig –list ==&gt; systemctl list-unit-files –type service</p>
+</blockquote>
+</li>
+<li><p>用来列出该服务在哪些运行级别下启用和禁用</p>
+<blockquote>
+<p>chkconfig sshd -list ==&gt; ls /etc/systemd/system/*.wants/sshd.service</p>
+</blockquote>
+</li>
+<li><p>查看服务是否开机自启</p>
+<blockquote>
+<p>systemctl is-enabled name.service</p>
+</blockquote>
+</li>
+<li><p>其他命令</p>
+<blockquote>
+<p>查看服务的依赖关系:</p>
+<p>systemctl list-dependencies name.service</p>
+</blockquote>
+</li>
+<li><p>杀掉进程</p>
+<blockquote>
+<p>systemctl kill 进程名</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>服务状态</strong></p>
+<ul>
+<li>systemctl list-unit-files –type service –all显示状态</li>
+<li>loaded: Unit配置文件已处理</li>
+<li>active(running) : 一次或多次持续处理的运行</li>
+<li>active(exited): 成功完成一次性的配置</li>
+<li>active(waiting): 运行中，等待一个事件</li>
+<li>inactive: 不运行</li>
+<li>enabled: 开机启动</li>
+<li>disabled: 开机不启动</li>
+<li>static: 开机不启动，但可被另一个启用的服务激活</li>
+</ul>
+<p><strong>命令示例</strong></p>
+<ul>
+<li><p>显示所有单元状态</p>
+<blockquote>
+<p>systemctl 或 systemctl list-units</p>
+</blockquote>
+</li>
+<li><p>只显示服务单元的状态</p>
+<blockquote>
+<p>systemctl –type=service</p>
+</blockquote>
+</li>
+<li><p>显示sshd服务单元</p>
+<blockquote>
+<p>systemctl status sshd.service -l</p>
+</blockquote>
+</li>
+<li><p>验证sshd服务当前是否活动</p>
+<blockquote>
+<p>systemctl is-active sshd</p>
+</blockquote>
+</li>
+<li><p>列出所有服务状态的所有服务单元</p>
+<blockquote>
+<p>systemctl list-units –type=service </p>
+</blockquote>
+</li>
+<li><p>列出所有服务单元</p>
+<blockquote>
+<p>systemctl list-units –type=service –all</p>
+</blockquote>
+</li>
+<li><p>查看服务单元的启用和禁用状态</p>
+<blockquote>
+<p>systemctl list-unit-files –type=service</p>
+</blockquote>
+</li>
+<li><p>列出失败的服务</p>
+<blockquote>
+<p>systemctl –failed –type=service</p>
+</blockquote>
+</li>
+<li><p>列出依赖的单元</p>
+<blockquote>
+<p>systemctl listdependencies sshd</p>
+</blockquote>
+</li>
+<li><p>禁用network,使之不能自动启动，但手动可以</p>
+<blockquote>
+<p>systemctl disable network</p>
+</blockquote>
+</li>
+<li><p>启用network</p>
+<blockquote>
+<p>systemctl enable network </p>
+</blockquote>
+</li>
+<li><p>禁用network,使之不能手动或自动启动</p>
+<blockquote>
+<p>systemctl mask network</p>
+</blockquote>
+</li>
+<li><p>启用network</p>
+<blockquote>
+<p>systemctl unmask network</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>运行级别</strong></p>
+<ul>
+<li><p>target units:</p>
+<blockquote>
+<p>unit配置文件: .target</p>
+<p>ls /usr/lib/systemd/system/*.target</p>
+<p>systemctl list-unit-files –type target –all</p>
+</blockquote>
+</li>
+<li><p>运行级别</p>
+<blockquote>
+<p>0 ==&gt; runlevel0.target,poweroff.target</p>
+<p>1 ==&gt; runlevel1.target,recue.target</p>
+<p>2 ==&gt; runlevel2.target,multi-user.target</p>
+<p>3 ==&gt; runlevel3.target,multi-user.target</p>
+<p>4 ==&gt; runlevel4.target,multi-user.target</p>
+<p>5 ==&gt; runlevel5.target,graphical.target</p>
+<p>6 ==&gt; runlevel6.target,reboot.target</p>
+</blockquote>
+</li>
+<li><p>查看依赖性:</p>
+<blockquote>
+<p>systemctl list-dependencies graphical.target</p>
+</blockquote>
+</li>
+<li><p>级别切换: init N  ==&gt; systemctl isolate name.target</p>
+<p>systemctl isolate multi-user.target</p>
+<p>注: 只有/lib/systemd/system/*.target文件中AllowIoslate=yes才能切换(修改文件需执行systemctl daemon-reload才能生效)</p>
+</li>
+<li><p>查看target;</p>
+<p>runlevel ; who -r</p>
+<p>systemctl list-units –type target</p>
+</li>
+<li><p>获取默认运行级别</p>
+<p>/etc/initab ==&gt; systemctl get-default</p>
+</li>
+<li><p>修改默认级别</p>
+<p>/etc/initab ==&gt; systemctl set-default name.target</p>
+<p>systemctl set-default multi-user.target</p>
+<p>ls -l  /etc/systemd/system/default.target</p>
+</li>
+</ul>
+<p><strong>other command</strong></p>
+<ul>
+<li><p>切换至紧急救援摸索</p>
+<blockquote>
+<p>systemctl rescue</p>
+</blockquote>
+</li>
+<li><p>切换至emergency模式</p>
+<blockquote>
+<p>systemctl energebcy</p>
+</blockquote>
+</li>
+<li><p>其他常用命令</p>
+<p>传统命令init,poweroff,halt,reboot都成为systemctl的软链接</p>
+<blockquote>
+<p>关机重启: systemctl halt|poweroff|reboot</p>
+<p>挂起: systemctl suspend</p>
+<p>休眠: systemctl hibernate</p>
+<p>休眠并挂起: systemctl hybrid-sleep</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>Centos 7引导顺序</strong></p>
+<ul>
+<li>UEFI或BIOS初始化，运行POST开机自检</li>
+<li>选择启动设备</li>
+<li>引导装载程序，centos7是grub2</li>
+<li>加载装载程序的配置文件:/etc/grub.d/ /etc/default/grub/ /boot/grub2/grub.cfg</li>
+<li>加载initramfs驱动模块</li>
+<li>加载内核选项</li>
+<li>内核初始化,centos 7使用systemd代替init</li>
+<li>执行initrd.target所有单元,包括挂载/etc/fstab</li>
+<li>从initramfs根文件系统切换到磁盘跟目录</li>
+<li>systemd执行默认target配置,配置文件　/etc/systemd/system/default.target</li>
+<li>systemd执行sysinit.target初始化系统及basic.target准备操作系统</li>
+<li>systemd启动multi-user.target下的本机与服务器服务</li>
+<li>systemd执行multi-user.target下的/etc/rc.d/rd.local</li>
+<li>systemd执行mult-user.target下的getty.target及登陆服务</li>
+<li>systemd换行graphical需要的服务</li>
+</ul>
+<p><strong>centos 7口令破解</strong></p>
+<ul>
+<li>启动时e进入编辑模式</li>
+<li>在linux16后添加内核参数rd.break，然后ctrl +x</li>
+<li>mount -o remount,rw /sysroot</li>
+<li>chroot /sysroot</li>
+<li>passwd root</li>
+<li>touch /.autorelabel</li>
+<li>exit</li>
+</ul>
+<p><strong>修复grub2</strong></p>
+<ul>
+<li><p>修复主配置文件</p>
+<blockquote>
+<p>grub2-mkconfig &gt; /boot/grub2/grub.cfg</p>
+</blockquote>
+</li>
+<li><p>修复grub</p>
+<blockquote>
+<p>grub2-install /dev/sda bios</p>
+<p>grub2-install UEFI</p>
+</blockquote>
+</li>
+<li><p>调整默认启动内核</p>
+<blockquote>
+<p>vim /etc/default/grub</p>
+<p>GRUB_DEFAULT=0</p>
+</blockquote>
+<p>​</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/08/awk.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hee shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Linux-2017">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/08/awk.html" itemprop="url">
+                  awk
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-08T22:20:19+08:00">
+                2017-04-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="awk"><a href="#awk" class="headerlink" title="awk"></a>awk</h1><p><strong>基本用法</strong></p>
+<ul>
+<li>awk [option] ‘program’ var=value file…</li>
+<li>awk [option] -f programfile var=value file…</li>
+<li>awk [option] ‘BEGIN{action;…}pattern{action;…}END{action;…}’ file</li>
+</ul>
+<p><strong>awk变量</strong></p>
+<ul>
+<li>FS: 输入字段分隔符</li>
+<li>OFS: 输出字段分隔符，默认为空白字符</li>
+<li>RS: 输入记录分隔符,指定输入时的换行符,原换行符仍有效</li>
+<li>ORS: 输出记录分隔符，输出时用指定符合代替换行符</li>
+<li>NF: 字段数量</li>
+<li>NR: 行号</li>
+<li>FNR: 各文件分别计数，行号</li>
+<li>FILENAME: 当前文件名</li>
+<li>ARGC: 命令行参数的个数</li>
+<li>ARGV: 数组，保存的三命令行所给定的各参数</li>
+</ul>
+<p><strong>printf命令</strong></p>
+<ul>
+<li><p>格式化输出: printf ‘FORMAT’ , item1, item2,…</p>
+<ul>
+<li>必须指定format</li>
+<li>不会自动换行，需要显示给出换行控制符，\n</li>
+<li>FORMAT中需要分别为后面的每个item指定格式符</li>
+</ul>
+</li>
+<li><p>格式符：与item一一对应</p>
+<ul>
+<li>%c: 显示字符的ascii码</li>
+<li>%d,%i: 显示十进制整数</li>
+<li>%e,%E: 显示科学计数法数值</li>
+<li>%f: 显示为浮点数</li>
+<li>%g,%G: 以科学计数发或浮点数显示数值</li>
+<li>%s: 显示字符串</li>
+<li>%u: 无符号整数</li>
+<li>%%: 显示%自身</li>
+</ul>
+</li>
+<li><p>修饰符</p>
+<ul>
+<li>#[.#]: 第一个数字控制显示的宽度；第二个#表示小数点后精度，%3.1f</li>
+<li>-: 左对齐(默认右对齐)　%-15s</li>
+<li>+: 显示数值的正负符号　%+d</li>
+</ul>
+</li>
+<li><p>操作符</p>
+<ul>
+<li><p>&amp;&amp; || 非!</p>
+</li>
+<li><p>函数调用: function_name(argu1, argu2,…)</p>
+</li>
+<li><p>条件表达式(三目表达式)</p>
+<blockquote>
+<p>selector?if-true-expressioon:if-false-expression</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">awk -F: &apos;&#123;3&gt;=500?usertype=&quot;comman user&quot;:usertype=&quot;sysadmin or root&quot;;printf &quot;%-15s:%-s\n&quot;,1,usertype&#125;&apos; /etc/passwd</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>awk PATTERN</strong></p>
+<ul>
+<li><p>如果为指定：空模式，匹配每一行</p>
+</li>
+<li><p>/regular expression/: 仅处理能够模式匹配到的行，需要用//括起来</p>
+</li>
+<li><p>relational expression: 关系表达式，结果为真，才会被处理</p>
+<ul>
+<li>真：结果为非０，非空字符串</li>
+<li>假：结果为空字符串或０值</li>
+</ul>
+</li>
+<li><p>line ranges: 行范围</p>
+<p>startline,endline: /pat1/,/pat2/ 不支持直接给出数值格式</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">awk -F: &apos;/^root\&gt;/,/^nobody\&gt;/&#123;print $1&#125;&apos; /etc/passwd</div><div class="line">awk -F: &apos;(NR&gt;=10&amp;&amp;NR&lt;=20)&#123;print NR,$1&#125;&apos;</div></pre></td></tr></table></figure>
+</li>
+<li><p>BEGIN/END模式</p>
+<p>BEGIN{}:仅在开始处理文件中的文本之前执行一次</p>
+<p>END{}: 仅在文本处理完成之后执行一次</p>
+</li>
+</ul>
+<p><strong>控制语句</strong></p>
+<ul>
+<li><p>if-else</p>
+<blockquote>
+<p>语法：if(condition){statement;…}[else statement]</p>
+<p>​        if(condition1){statement1}else if(condition2){statement2}else{statement3}</p>
+<p>使用场景:对awk取得的正行或某个字段做条件判断</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">awk &apos;BEGIN&#123; test=100;if(test&gt;90)&#123;print &quot;very good&quot;&#125;else if(test&gt;60)&#123;print &quot;good&quot;&#125;else&#123;print &quot;no pass&quot;&#125;&#125;&apos;  </div><div class="line">df -Ph| awk -F% &apos;/^\/dev/&#123;print $1&#125;&apos;|awk &apos;$NF&gt;=80&#123;print $1,$5&#125;&apos;</div></pre></td></tr></table></figure>
+</li>
+<li><p>while循环</p>
+<blockquote>
+<p>语法: while(condition){statement;…}</p>
+<p>使用场景: 对一行内的多个字符逐一类似处理时使用，对数组中的各元素逐一处理时使用</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">awk &apos;/^[[:space:]]*linux16/&#123;i=1;while(i&lt;=NF)&#123;if(length($i)&gt;=10)&#123;print $i,length($i)&#125;;i++&#125;&#125;&apos; /etc/grub2.cfg</div></pre></td></tr></table></figure>
+</li>
+<li><p>do-while循环</p>
+<blockquote>
+<p>语法：do {statement;…}while(condition)</p>
+<p>意义:无论真假，至少循环一次</p>
+</blockquote>
+<p>​</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/05/selinux.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -478,149 +1135,6 @@
 <li>mandb | makewhatis</li>
 <li>man -k _selinux</li>
 </ul>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/05/awk.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Hee shen">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Linux-2017">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/04/05/awk.html" itemprop="url">
-                  awk
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-05T20:06:09+08:00">
-                2017-04-05
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>$$<br>awk<br>$$</p>
 
           
         
@@ -1513,7 +2027,7 @@ zcat messages.gz &gt; messages
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">6</span>
+                <span class="site-state-item-count">7</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

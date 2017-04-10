@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Linux," />
+  <meta name="keywords" content="Hexo, NexT" />
 
 
 
@@ -87,22 +87,28 @@
 
 
 
-<meta name="description" content="SELINUXSelinux简介SELinux: Secure Enhanced Linux, 是美国国家安全局(NSA=The National Security Agency)和SCC(SecureComputing Corporation)开发的 Linux的一个强制访问控制的安全模块。2000年以GNU GPL发布,Linux内核2.6版本后集成在内核中．
-Selinux工作类型
-Stri">
+<meta name="description" content="title: systemddate: 2017-04-08 22:22:22categories: “Linux”tags: Linux
+Systemd
+POST–&amp;gt;Boot Sequence–&amp;gt;Bootloader–&amp;gt;Kernel initramfs(initrd)–&amp;gt;rootfs–&amp;gt;/sbin/init
+init 
+Centos 5 : Sysv init">
 <meta property="og:type" content="article">
-<meta property="og:title" content="selinux">
-<meta property="og:url" content="http://yoursite.com/2017/04/05/selinux.html">
+<meta property="og:title" content="Linux-2017">
+<meta property="og:url" content="http://yoursite.com/2017/04/08/systemd.html">
 <meta property="og:site_name" content="Linux-2017">
-<meta property="og:description" content="SELINUXSelinux简介SELinux: Secure Enhanced Linux, 是美国国家安全局(NSA=The National Security Agency)和SCC(SecureComputing Corporation)开发的 Linux的一个强制访问控制的安全模块。2000年以GNU GPL发布,Linux内核2.6版本后集成在内核中．
-Selinux工作类型
-Stri">
-<meta property="og:updated_time" content="2017-04-05T14:06:28.186Z">
+<meta property="og:description" content="title: systemddate: 2017-04-08 22:22:22categories: “Linux”tags: Linux
+Systemd
+POST–&amp;gt;Boot Sequence–&amp;gt;Bootloader–&amp;gt;Kernel initramfs(initrd)–&amp;gt;rootfs–&amp;gt;/sbin/init
+init 
+Centos 5 : Sysv init">
+<meta property="og:updated_time" content="2017-04-08T14:23:29.059Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="selinux">
-<meta name="twitter:description" content="SELINUXSelinux简介SELinux: Secure Enhanced Linux, 是美国国家安全局(NSA=The National Security Agency)和SCC(SecureComputing Corporation)开发的 Linux的一个强制访问控制的安全模块。2000年以GNU GPL发布,Linux内核2.6版本后集成在内核中．
-Selinux工作类型
-Stri">
+<meta name="twitter:title" content="Linux-2017">
+<meta name="twitter:description" content="title: systemddate: 2017-04-08 22:22:22categories: “Linux”tags: Linux
+Systemd
+POST–&amp;gt;Boot Sequence–&amp;gt;Bootloader–&amp;gt;Kernel initramfs(initrd)–&amp;gt;rootfs–&amp;gt;/sbin/init
+init 
+Centos 5 : Sysv init">
 
 
 
@@ -130,13 +136,13 @@ Stri">
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2017/04/05/selinux.html"/>
+  <link rel="canonical" href="http://yoursite.com/2017/04/08/systemd.html"/>
 
 
 
 
 
-  <title> selinux | Linux-2017 </title>
+  <title>  | Linux-2017 </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -295,7 +301,7 @@ Stri">
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/05/selinux.html">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/08/systemd.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Hee shen">
@@ -316,7 +322,7 @@ Stri">
             
             
               
-                selinux
+                
               
             
           </h1>
@@ -331,8 +337,8 @@ Stri">
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-05T20:27:29+08:00">
-                2017-04-05
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-08T22:23:29+08:00">
+                2017-04-08
               </time>
             
 
@@ -341,28 +347,6 @@ Stri">
             
           </span>
 
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
           
 
           
@@ -389,94 +373,292 @@ Stri">
       
 
       
-        <h2 id="SELINUX"><a href="#SELINUX" class="headerlink" title="SELINUX"></a>SELINUX</h2><h4 id="Selinux简介"><a href="#Selinux简介" class="headerlink" title="Selinux简介"></a>Selinux简介</h4><p>SELinux: Secure Enhanced Linux, 是美国国家安全局(NSA=The National Security Agency)和SCC(SecureComputing Corporation)开发的 Linux的一个强制访问控制的<br>安全模块。2000年以GNU GPL发布,Linux内核2.6版本后集成在内核中．</p>
-<h4 id="Selinux工作类型"><a href="#Selinux工作类型" class="headerlink" title="Selinux工作类型"></a>Selinux工作类型</h4><ul>
-<li>Strict: centos5,每个进程都受到selinux的控制</li>
-<li>Targeted: 用来保护常见的网络服务,仅有限进程受到selinux控制,只监控容易被入侵的进程,centos4只保护13个服务,centos5保护88个进程.</li>
-<li>minimum: centos7,修改过的targeted,只对选择的网络服务.</li>
-<li>mls: 提供MLS(多级安全)机制的安全性.</li>
-<li>minimum和mls稳定性不足,未加以应用.</li>
-</ul>
-<h4 id="Selinux安全上下文"><a href="#Selinux安全上下文" class="headerlink" title="Selinux安全上下文"></a>Selinux安全上下文</h4><ul>
-<li>在Selinux中,一切皆对象(object),由存放在inode的扩展属性域的安全元素所控制其访问</li>
-<li>所有文件和端口资源和进程都具备安全标签:安全上下文(security context)</li>
-<li><strong>安全上下文由5个元素组成</strong><ul>
-<li>user:指示登陆系统的用户类型,如root,user_u,system_u多数本地进程都属于自由(unconfined)进程</li>
-<li>role:定义文件,进程和用户的用途:文件:object_r,进程和用户:system_r</li>
-<li>type:指定数据类型,规则中定义何种进程类型访问何种文件,target策略基于type实现,多服务共用:public_content_t．</li>
-<li>sensitivity:限制访问的需要,由组织定义的分层安全级别,如unclassified,secret,top,secret,一个对象有且只有一个sensitivity,分15级,s0最低,Target策略默认使用s0</li>
-<li>category:对于特定组织划分不分层的分类,如FBI Secret,NSA secret,一个对象可以有多个categroy,c0-c1023共1024个分类,target策略不使用category.</li>
-<li>实际上下文:存放在文件系统中,ls -Z;ps -Z</li>
-</ul>
-</li>
-<li>期望(默认)上下文:存放在二进制的SELINUX策略库(映射目录和期望安全上下文)中　　semanage fcontext -l</li>
-</ul>
-<h4 id="Selinux状态"><a href="#Selinux状态" class="headerlink" title="Selinux状态"></a>Selinux状态</h4><ul>
-<li>enforcing:强制，每个受限的进程都必然受限</li>
-<li>permissive:允许,每个受限的进程违规操作不会被禁止,但会被记录与审计日志</li>
-<li>disabled:禁用</li>
-</ul>
-<h4 id="Selinux相关命令"><a href="#Selinux相关命令" class="headerlink" title="Selinux相关命令"></a>Selinux相关命令</h4><ul>
-<li>getenforce:获取selinux当前状态</li>
-<li>sestatus:查看selinux状态</li>
-<li>setenforce 0|1<ul>
-<li>0:设置为permissive</li>
-<li>1:设置为enforcing</li>
-</ul>
-</li>
-<li>给文件重新打安全标签<ul>
-<li>chcon [option] … [-u USER][-r ROLE] [-t TYPE] FILE…</li>
-<li>chcon [option]… –reference=RFILE FILE…</li>
-<li>-R:递归打标</li>
-</ul>
-</li>
-<li>恢复目录或文件默认的安全上下文:<ul>
-<li>restorecon [-R] /path/to/somewhere</li>
-</ul>
-</li>
-<li>semanage:来自policycoreutils-python包</li>
-<li>查看安全上下文<ul>
-<li>semanage fcontext -l</li>
-</ul>
-</li>
-<li>添加<ul>
-<li>semanage fcontext -a -t http_sys_content_t ‘/testdir(/.*)?’</li>
-<li>restorecon -Rv /testdir</li>
-</ul>
-</li>
-<li>删除<ul>
-<li>semanage fcotext -d -t httpd_sys_content_t ‘/testdir(/.*)?’</li>
+        <hr>
+<p>title: systemd<br>date: 2017-04-08 22:22:22<br>categories: “Linux”<br>tags: Linux</p>
+<h1 id="Systemd"><a href="#Systemd" class="headerlink" title="Systemd"></a>Systemd</h1><ul>
+<li>POST–&gt;Boot Sequence–&gt;Bootloader–&gt;Kernel initramfs(initrd)–&gt;rootfs–&gt;/sbin/init<ul>
+<li>init <ul>
+<li>Centos 5 : Sysv init </li>
+<li>Centos 6 : Upstart</li>
+<li>Centos 7 : Systemd</li>
 </ul>
 </li>
 </ul>
-<h4 id="Selinux布尔值"><a href="#Selinux布尔值" class="headerlink" title="Selinux布尔值"></a>Selinux布尔值</h4><ul>
-<li>布尔型规则<ul>
-<li>getsebool</li>
-<li>setsebool</li>
-</ul>
 </li>
-<li>查看bool命令<ul>
-<li>getsebool [-a] boolean</li>
-<li>semanage boolean -l</li>
-<li>semanage boolean -l -C 查看修改过的布尔值</li>
+<li>Systemd: 系统启动和服务器守护进程管理器，负责在系统启动或运行时，激活系统资源，服务器进程和其他进程．系统引导时实现服务并行启动，按需启动守护进程，自动化的服务依赖关系管理，同时采用socket式与Ｄ-Bus总线式激活服务，系统状态快照．</li>
 </ul>
+<h2 id="unit"><a href="#unit" class="headerlink" title="unit"></a>unit</h2><p><strong>unit</strong>表示不同类型的systemd对象，通过配置文件进行标识和配置；文件中主要包含了系统服务，监听socket,保存系统快照以及其他与init相关的信息</p>
+<p><strong>配置文件</strong>：</p>
+<ul>
+<li>/usr/lib/systemd/system: 每个服务最主要的启动脚本设置，类似于之前的/etc/init.d/</li>
+<li>/run/systemd/system: 系统执行过程中所产生的服务脚本，比上面目录优先运行</li>
+<li>/etc/systemd/system: 管理员建立的执行脚本，类似与/etc/rc.d/rcN.d/sxx类的功能，比上面目录优先运行</li>
+</ul>
+<p><strong>unit类型</strong></p>
+<ul>
+<li>Systemctl -t help 查看unit类型</li>
+<li>Service unit: 文件扩展名为.service，用于定义系统服务</li>
+<li>Target uniq: .device,用于定义内核识别的设备</li>
+<li>Ｍount unit: .mount,用于定义文件系统挂载点</li>
+<li>Socket unit: .socket,用于标识进程间通信用的socket文件，也可在系统启动时，延迟启动服务，实现按需启动</li>
+<li>Snapshot unit: .snapshot,管理系统快照</li>
+<li>Swap unit: .swao,用于标识swap设备</li>
+<li>Automount unit: .automount,文件系统的自动挂载点</li>
+<li>Path unit: .path,用于定义文件系统中的一个文件或目录使用，常用于当文件系统变化时，延迟激活服务，如：spool目录</li>
+</ul>
+<p><strong>管理服务</strong></p>
+<ul>
+<li>systemctl start|stop|reload|restart|status name.service</li>
+<li>条件式重启: 已启动才重启，否则不做操作: systemctl try-restart name.service</li>
+<li>禁止自动和手动启动: Systemctl mask name.service</li>
+<li>取消禁止: Systemctl unmask name.service</li>
+</ul>
+<p><strong>服务查看</strong></p>
+<ul>
+<li><p>查看某服务当前激活与否的状态</p>
+<blockquote>
+<p>systemctl is-active name.service</p>
+</blockquote>
 </li>
-<li>设置bool值命令<ul>
-<li>setsebool [-p] boolean value (on,off)</li>
-<li>setsebool [-p] boolean=value (0,1)</li>
-</ul>
+<li><p>查看所有已经激活的服务</p>
+<blockquote>
+<p>systemctl list-unis –type|-t service</p>
+</blockquote>
+</li>
+<li><p>查看所有服务</p>
+<blockquote>
+<p>systemctl list-units –type service -all|-a</p>
+</blockquote>
+</li>
+<li><p>设定某服务的开机启动</p>
+<blockquote>
+<p>chkconfig name on ==&gt; systemctl enable name.service</p>
+</blockquote>
+</li>
+<li><p>设定某服务的开机禁止启动</p>
+<blockquote>
+<p>chkconfig name off ==&gt; systemctl disable name.service</p>
+</blockquote>
+</li>
+<li><p>查看所有的开机自启状态</p>
+<blockquote>
+<p>chkconfig –list ==&gt; systemctl list-unit-files –type service</p>
+</blockquote>
+</li>
+<li><p>用来列出该服务在哪些运行级别下启用和禁用</p>
+<blockquote>
+<p>chkconfig sshd -list ==&gt; ls /etc/systemd/system/*.wants/sshd.service</p>
+</blockquote>
+</li>
+<li><p>查看服务是否开机自启</p>
+<blockquote>
+<p>systemctl is-enabled name.service</p>
+</blockquote>
+</li>
+<li><p>其他命令</p>
+<blockquote>
+<p>查看服务的依赖关系:</p>
+<p>systemctl list-dependencies name.service</p>
+</blockquote>
+</li>
+<li><p>杀掉进程</p>
+<blockquote>
+<p>systemctl kill 进程名</p>
+</blockquote>
 </li>
 </ul>
-<h4 id="Selinux日志管理"><a href="#Selinux日志管理" class="headerlink" title="Selinux日志管理"></a>Selinux日志管理</h4><ul>
-<li>yum install setroublesshoot(重启生效) 将错误的信息写入/var/log/message</li>
-<li>grep setroubleshoot  /var/log/message</li>
-<li>sealert -l UUID 查看安全事件日志说明</li>
-<li>sealert -a /var/log/audit/audit.log 扫描并分析日志</li>
+<p><strong>服务状态</strong></p>
+<ul>
+<li>systemctl list-unit-files –type service –all显示状态</li>
+<li>loaded: Unit配置文件已处理</li>
+<li>active(running) : 一次或多次持续处理的运行</li>
+<li>active(exited): 成功完成一次性的配置</li>
+<li>active(waiting): 运行中，等待一个事件</li>
+<li>inactive: 不运行</li>
+<li>enabled: 开机启动</li>
+<li>disabled: 开机不启动</li>
+<li>static: 开机不启动，但可被另一个启用的服务激活</li>
 </ul>
-<h4 id="Selinux-help"><a href="#Selinux-help" class="headerlink" title="Selinux help"></a>Selinux help</h4><ul>
-<li>yum install selinux-policy-doc (centos6,7)</li>
-<li>mandb | makewhatis</li>
-<li>man -k _selinux</li>
+<p><strong>命令示例</strong></p>
+<ul>
+<li><p>显示所有单元状态</p>
+<blockquote>
+<p>systemctl 或 systemctl list-units</p>
+</blockquote>
+</li>
+<li><p>只显示服务单元的状态</p>
+<blockquote>
+<p>systemctl –type=service</p>
+</blockquote>
+</li>
+<li><p>显示sshd服务单元</p>
+<blockquote>
+<p>systemctl status sshd.service -l</p>
+</blockquote>
+</li>
+<li><p>验证sshd服务当前是否活动</p>
+<blockquote>
+<p>systemctl is-active sshd</p>
+</blockquote>
+</li>
+<li><p>列出所有服务状态的所有服务单元</p>
+<blockquote>
+<p>systemctl list-units –type=service </p>
+</blockquote>
+</li>
+<li><p>列出所有服务单元</p>
+<blockquote>
+<p>systemctl list-units –type=service –all</p>
+</blockquote>
+</li>
+<li><p>查看服务单元的启用和禁用状态</p>
+<blockquote>
+<p>systemctl list-unit-files –type=service</p>
+</blockquote>
+</li>
+<li><p>列出失败的服务</p>
+<blockquote>
+<p>systemctl –failed –type=service</p>
+</blockquote>
+</li>
+<li><p>列出依赖的单元</p>
+<blockquote>
+<p>systemctl listdependencies sshd</p>
+</blockquote>
+</li>
+<li><p>禁用network,使之不能自动启动，但手动可以</p>
+<blockquote>
+<p>systemctl disable network</p>
+</blockquote>
+</li>
+<li><p>启用network</p>
+<blockquote>
+<p>systemctl enable network </p>
+</blockquote>
+</li>
+<li><p>禁用network,使之不能手动或自动启动</p>
+<blockquote>
+<p>systemctl mask network</p>
+</blockquote>
+</li>
+<li><p>启用network</p>
+<blockquote>
+<p>systemctl unmask network</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>运行级别</strong></p>
+<ul>
+<li><p>target units:</p>
+<blockquote>
+<p>unit配置文件: .target</p>
+<p>ls /usr/lib/systemd/system/*.target</p>
+<p>systemctl list-unit-files –type target –all</p>
+</blockquote>
+</li>
+<li><p>运行级别</p>
+<blockquote>
+<p>0 ==&gt; runlevel0.target,poweroff.target</p>
+<p>1 ==&gt; runlevel1.target,recue.target</p>
+<p>2 ==&gt; runlevel2.target,multi-user.target</p>
+<p>3 ==&gt; runlevel3.target,multi-user.target</p>
+<p>4 ==&gt; runlevel4.target,multi-user.target</p>
+<p>5 ==&gt; runlevel5.target,graphical.target</p>
+<p>6 ==&gt; runlevel6.target,reboot.target</p>
+</blockquote>
+</li>
+<li><p>查看依赖性:</p>
+<blockquote>
+<p>systemctl list-dependencies graphical.target</p>
+</blockquote>
+</li>
+<li><p>级别切换: init N  ==&gt; systemctl isolate name.target</p>
+<p>systemctl isolate multi-user.target</p>
+<p>注: 只有/lib/systemd/system/*.target文件中AllowIoslate=yes才能切换(修改文件需执行systemctl daemon-reload才能生效)</p>
+</li>
+<li><p>查看target;</p>
+<p>runlevel ; who -r</p>
+<p>systemctl list-units –type target</p>
+</li>
+<li><p>获取默认运行级别</p>
+<p>/etc/initab ==&gt; systemctl get-default</p>
+</li>
+<li><p>修改默认级别</p>
+<p>/etc/initab ==&gt; systemctl set-default name.target</p>
+<p>systemctl set-default multi-user.target</p>
+<p>ls -l  /etc/systemd/system/default.target</p>
+</li>
+</ul>
+<p><strong>other command</strong></p>
+<ul>
+<li><p>切换至紧急救援摸索</p>
+<blockquote>
+<p>systemctl rescue</p>
+</blockquote>
+</li>
+<li><p>切换至emergency模式</p>
+<blockquote>
+<p>systemctl energebcy</p>
+</blockquote>
+</li>
+<li><p>其他常用命令</p>
+<p>传统命令init,poweroff,halt,reboot都成为systemctl的软链接</p>
+<blockquote>
+<p>关机重启: systemctl halt|poweroff|reboot</p>
+<p>挂起: systemctl suspend</p>
+<p>休眠: systemctl hibernate</p>
+<p>休眠并挂起: systemctl hybrid-sleep</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>Centos 7引导顺序</strong></p>
+<ul>
+<li>UEFI或BIOS初始化，运行POST开机自检</li>
+<li>选择启动设备</li>
+<li>引导装载程序，centos7是grub2</li>
+<li>加载装载程序的配置文件:/etc/grub.d/ /etc/default/grub/ /boot/grub2/grub.cfg</li>
+<li>加载initramfs驱动模块</li>
+<li>加载内核选项</li>
+<li>内核初始化,centos 7使用systemd代替init</li>
+<li>执行initrd.target所有单元,包括挂载/etc/fstab</li>
+<li>从initramfs根文件系统切换到磁盘跟目录</li>
+<li>systemd执行默认target配置,配置文件　/etc/systemd/system/default.target</li>
+<li>systemd执行sysinit.target初始化系统及basic.target准备操作系统</li>
+<li>systemd启动multi-user.target下的本机与服务器服务</li>
+<li>systemd执行multi-user.target下的/etc/rc.d/rd.local</li>
+<li>systemd执行mult-user.target下的getty.target及登陆服务</li>
+<li>systemd换行graphical需要的服务</li>
+</ul>
+<p><strong>centos 7口令破解</strong></p>
+<ul>
+<li>启动时e进入编辑模式</li>
+<li>在linux16后添加内核参数rd.break，然后ctrl +x</li>
+<li>mount -o remount,rw /sysroot</li>
+<li>chroot /sysroot</li>
+<li>passwd root</li>
+<li>touch /.autorelabel</li>
+<li>exit</li>
+</ul>
+<p><strong>修复grub2</strong></p>
+<ul>
+<li><p>修复主配置文件</p>
+<blockquote>
+<p>grub2-mkconfig &gt; /boot/grub2/grub.cfg</p>
+</blockquote>
+</li>
+<li><p>修复grub</p>
+<blockquote>
+<p>grub2-install /dev/sda bios</p>
+<p>grub2-install UEFI</p>
+</blockquote>
+</li>
+<li><p>调整默认启动内核</p>
+<blockquote>
+<p>vim /etc/default/grub</p>
+<p>GRUB_DEFAULT=0</p>
+</blockquote>
+<p>​</p>
+</li>
 </ul>
 
       
@@ -505,12 +687,6 @@ Stri">
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/Linux/" rel="tag"># Linux</a>
-          
-        </div>
-      
 
       
         
@@ -520,8 +696,8 @@ Stri">
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/04/03/vim.html" rel="next" title="vim">
-                <i class="fa fa-chevron-left"></i> vim
+              <a href="/2017/04/08/awk.html" rel="next" title="awk">
+                <i class="fa fa-chevron-left"></i> awk
               </a>
             
           </div>
@@ -529,10 +705,6 @@ Stri">
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/04/08/awk.html" rel="prev" title="awk">
-                awk <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -661,7 +833,7 @@ Stri">
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#SELINUX"><span class="nav-number">1.</span> <span class="nav-text">SELINUX</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Selinux简介"><span class="nav-number">1.0.1.</span> <span class="nav-text">Selinux简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Selinux工作类型"><span class="nav-number">1.0.2.</span> <span class="nav-text">Selinux工作类型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Selinux安全上下文"><span class="nav-number">1.0.3.</span> <span class="nav-text">Selinux安全上下文</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Selinux状态"><span class="nav-number">1.0.4.</span> <span class="nav-text">Selinux状态</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Selinux相关命令"><span class="nav-number">1.0.5.</span> <span class="nav-text">Selinux相关命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Selinux布尔值"><span class="nav-number">1.0.6.</span> <span class="nav-text">Selinux布尔值</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Selinux日志管理"><span class="nav-number">1.0.7.</span> <span class="nav-text">Selinux日志管理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Selinux-help"><span class="nav-number">1.0.8.</span> <span class="nav-text">Selinux help</span></a></li></ol></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Systemd"><span class="nav-number">1.</span> <span class="nav-text">Systemd</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#unit"><span class="nav-number">1.1.</span> <span class="nav-text">unit</span></a></li></ol></li></ol></div>
             
 
           </div>

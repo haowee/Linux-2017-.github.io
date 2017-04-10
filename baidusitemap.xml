@@ -4,12 +4,12 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/04/05/selinux.html</loc>
-    <lastmod>2017-04-05T14:06:28.186Z</lastmod>
+    <loc>http://yoursite.com/2017/04/08/awk.html</loc>
+    <lastmod>2017-04-09T04:23:01.009Z</lastmod>
     <data>
         <display>
-        <title>selinux</title>
-        <pubTime>2017-04-05T12:27:29.000Z</pubTime>
+        <title>awk</title>
+        <pubTime>2017-04-08T14:20:19.000Z</pubTime>
         
         <tag>Linux</tag>
          
@@ -24,14 +24,29 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/04/05/awk.html</loc>
-    <lastmod>2017-04-05T12:23:45.812Z</lastmod>
+    <loc>http://yoursite.com/2017/04/08/systemd.html</loc>
+    <lastmod>2017-04-08T14:23:29.059Z</lastmod>
     <data>
         <display>
-        <title>awk</title>
-        <pubTime>2017-04-05T12:06:09.000Z</pubTime>
+        <title></title>
+        <pubTime>2017-04-08T14:23:29.095Z</pubTime>
         
-        <tag>linux</tag>
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/04/05/selinux.html</loc>
+    <lastmod>2017-04-05T14:06:28.186Z</lastmod>
+    <data>
+        <display>
+        <title>selinux</title>
+        <pubTime>2017-04-05T12:27:29.000Z</pubTime>
+        
+        <tag>Linux</tag>
          
          
            
