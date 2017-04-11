@@ -5,13 +5,33 @@
     
   <url>
     <loc>http://yoursite.com/2017/04/08/awk.html</loc>
-    <lastmod>2017-04-09T04:23:01.009Z</lastmod>
+    <lastmod>2017-04-11T15:15:45.210Z</lastmod>
     <data>
         <display>
         <title>awk</title>
         <pubTime>2017-04-08T14:20:19.000Z</pubTime>
         
         <tag>Linux</tag>
+         
+         
+           
+             
+              <breadCrumb title="Linux" url="http://yoursite.com/categories/Linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/04/11/ca.html</loc>
+    <lastmod>2017-04-11T14:02:01.927Z</lastmod>
+    <data>
+        <display>
+        <title>ca</title>
+        <pubTime>2017-04-11T12:40:55.000Z</pubTime>
+        
+        <tag>Ca</tag>
          
          
            
