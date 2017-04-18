@@ -4,6 +4,46 @@
 
     
   <url>
+    <loc>http://yoursite.com/2017/04/18/bind%E7%BC%96%E8%AF%91%E5%AE%89%E8%A3%85.html</loc>
+    <lastmod>2017-04-18T04:39:27.555Z</lastmod>
+    <data>
+        <display>
+        <title>vim</title>
+        <pubTime>2017-04-18T06:14:08.000Z</pubTime>
+        
+        <tag>bind</tag>
+         
+         
+           
+             
+              <breadCrumb title="Linux" url="http://yoursite.com/categories/Linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/04/08/systemd.html</loc>
+    <lastmod>2017-04-11T15:21:28.237Z</lastmod>
+    <data>
+        <display>
+        <title>systemd</title>
+        <pubTime>2017-04-08T14:22:22.000Z</pubTime>
+        
+        <tag>Linux</tag>
+         
+         
+           
+             
+              <breadCrumb title="Linux" url="http://yoursite.com/categories/Linux/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yoursite.com/2017/04/08/awk.html</loc>
     <lastmod>2017-04-11T15:15:45.210Z</lastmod>
     <data>
@@ -38,21 +78,6 @@
              
               <breadCrumb title="Linux" url="http://yoursite.com/categories/Linux/"/>
           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yoursite.com/2017/04/08/systemd.html</loc>
-    <lastmod>2017-04-08T14:23:29.059Z</lastmod>
-    <data>
-        <display>
-        <title></title>
-        <pubTime>2017-04-08T14:23:29.095Z</pubTime>
-        
-         
-           
         </display>
     </data>
     </url>

@@ -290,6 +290,273 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/18/bind编译安装.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hee shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Linux-2017">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/18/bind编译安装.html" itemprop="url">
+                  vim
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-18T14:14:08+08:00">
+                2017-04-18
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="bind编译安装"><a href="#bind编译安装" class="headerlink" title="bind编译安装"></a>bind编译安装</h2><p>解压源码包</p>
+<blockquote>
+<p>tar xvf bin9.tar.gz</p>
+</blockquote>
+<p>添加named用户</p>
+<blockquote>
+<p>useradd -r -s /sbin/nologin -d /var/named -u 53 named</p>
+</blockquote>
+<p>创建用户家目录并修改所属组及其权限</p>
+<blockquote>
+<p>mkdir /var/named</p>
+<p>chown root.named /var/named</p>
+<p>chmod 770 /var/named</p>
+</blockquote>
+<p>安装依赖</p>
+<blockquote>
+<p>yum install gcc  openssl-devel -y</p>
+</blockquote>
+<p>编译安装</p>
+<blockquote>
+<p>./configure –prefix=/usr/local/dns  –sysconfdir=/etc/named</p>
+<p>make &amp;&amp; make install</p>
+</blockquote>
+<p>将生成打文件加入path变量</p>
+<blockquote>
+<p>vim /etc/profie.d/bind9.sh</p>
+<p>PATH=$PATH:/usr/local/dns/bin:/usr/local/dns/sbin</p>
+<p>source /etc/profile.d/bind8.sh</p>
+</blockquote>
+<p>添加man帮助</p>
+<blockquote>
+<p>vim /etc/man_db.conf</p>
+<p>MANDATORY_MANPATH                       /usr/local/dns/share/man</p>
+<p>mandb</p>
+</blockquote>
+<p>添加配置文件</p>
+<blockquote>
+<p>vim /etc/named/named.conf</p>
+<p>options {</p>
+<p>​    directory “/var/named”;</p>
+<p>};</p>
+<p>zone “test.com” {</p>
+<p>​    type master;</p>
+<p>​    file “test.com.zone”;</p>
+<p>};</p>
+</blockquote>
+<p>添加zone文件</p>
+<blockquote>
+<p>[root@shen named]# cat test.com.zone<br>$TTL 86400<br>@ IN SOA dns1 root.test.com. ( 1 1D 1h 1w 1h )</p>
+<p>​    NS    dns1</p>
+<p>dns1    A    172.18.50.71<br>www    CNAME    web<br>web    A    172.18.50.71</p>
+</blockquote>
+<p>确保named用户对其可读</p>
+<p>named-checkconf 检查配置文件语法是否正确</p>
+<p>named-checkzone “test.com” /var/named/test.com.zone 检查zone文件</p>
+<p>启动服务</p>
+<blockquote>
+<p>named</p>
+</blockquote>
+<p>测试</p>
+<blockquote>
+<p>[root@shen named]# dig www.test.com @127.0.0.1</p>
+<p>; &lt;&lt;&gt;&gt; DiG 9.11.0-P5 &lt;&lt;&gt;&gt; www.test.com @127.0.0.1<br>;; global options: +cmd<br>;; Got answer:<br>;; -&gt;&gt;HEADER&lt;&lt;- opcode: QUERY, status: NOERROR, id: 6599<br>;; flags: qr aa rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 1, ADDITIONAL: 2</p>
+<p>;; OPT PSEUDOSECTION:<br>; EDNS: version: 0, flags:; udp: 4096<br>; COOKIE: 6765dbacd3bfd785ae70758258f5822040069e69289113fa (good)<br>;; QUESTION SECTION:<br>;www.test.com.            IN    A</p>
+<p>;; ANSWER SECTION:<br>www.test.com.        86400    IN    CNAME    web.test.com.<br>web.test.com.        86400    IN    A    172.18.50.71</p>
+<p>;; AUTHORITY SECTION:<br>test.com.        86400    IN    NS    dns1.test.com.</p>
+<p>;; ADDITIONAL SECTION:<br>dns1.test.com.        86400    IN    A    172.18.50.71</p>
+<p>;; Query time: 0 msec<br>;; SERVER: 127.0.0.1#53(127.0.0.1)<br>;; WHEN: Mon Apr 17 23:04:00 EDT 2017<br>;; MSG SIZE  rcvd: 138</p>
+</blockquote>
+<p>切换到前台执行</p>
+<blockquote>
+<p>yum provides killall</p>
+<p>yum install psmisc-22.20-11.el7.x86_64      </p>
+<p>killall named</p>
+<p> named -f -d 3 -g</p>
+</blockquote>
+<p>添加根节点</p>
+<blockquote>
+<p>dig -t NS . &gt; /var/named/namd.ca</p>
+<p>vim /etc/named/named.conf</p>
+<p>zone “.” {</p>
+<p>​    type hint;</p>
+<p>​    file “named.ca”;</p>
+<p>};</p>
+</blockquote>
+<p>rndc错误</p>
+<blockquote>
+<p>[root@shen named]# rndc status<br>rndc: neither /etc/named/rndc.conf nor /etc/named/rndc.key was found</p>
+</blockquote>
+<p>修复</p>
+<blockquote>
+<p>rndc-confgen -r /dev/urandom  &gt; /etc/named/rndc.conf</p>
+<p>tail -n 12 rndc.conf | sed ‘s/# //‘ &gt;&gt; /etc/named/named.conf </p>
+<p>vim /etc/named/named.conf</p>
+<p>删除 Use with 以及End of name 这两行</p>
+<p>重启服务后</p>
+<p>[root@shen named]# rndc status<br>version: BIND 9.11.0-P5 <id:ad4fb79><br>running on shen.org: Linux x86_64 3.10.0-514.el7.x86_64 #1 SMP Tue Nov 22 16:42:41 UTC 2016<br>boot time: Tue, 18 Apr 2017 03:41:03 GMT<br>last configured: Tue, 18 Apr 2017 03:41:03 GMT<br>configuration file: /etc/named/named.conf<br>CPUs found: 1<br>worker threads: 1<br>UDP listeners per interface: 1<br>number of zones: 100 (98 automatic)<br>debug level: 3<br>xfers running: 0<br>xfers deferred: 0<br>soa queries in progress: 0<br>query logging is OFF<br>recursive clients: 0/900/1000<br>tcp clients: 0/150<br>server is up and running</id:ad4fb79></p>
+</blockquote>
+<p>压力测试</p>
+<blockquote>
+<p>cd /root/bind-9.11.0-P5/contrib/queryperf</p>
+<p>./cconfigure</p>
+<p>make</p>
+<p>/root/bind-9.11.0-P5/contrib/queryperf</p>
+<p>vim  ~/test.txt</p>
+<p>www.test.com A</p>
+<p>test.com NS</p>
+<p>:1,$y</p>
+<p>多复制一点</p>
+<p>/root/bind-9.11.0-P5/contrib/queryperf</p>
+</blockquote>
+<p>打开日志功能</p>
+<blockquote>
+<p>rndc querylog</p>
+<p>rndc status</p>
+</blockquote>
+<p>dns排错</p>
+<blockquote>
+<p>NXDOMAIN: the queried name does not exits in the zone.</p>
+<p>可能是CNAME对应打A记录不存在导致</p>
+<p>REFUSED: The nameserver refused the client’s DNS</p>
+<p>可能是DNS策略导致</p>
+<p>避免CNAME指向CNAME记录,可能产生回环<br>test.example.com. IN CNAME lab.example.com.<br>lab.example.com. IN CNAME test.example.com.</p>
+<p>正确配置PTR记录,许多服务依赖PTR,如sshd,MTA</p>
+</blockquote>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/11/ca.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -534,7 +801,7 @@
               
                 
                 <a class="post-title-link" href="/2017/04/08/systemd.html" itemprop="url">
-                  未命名
+                  systemd
                 </a>
               
             
@@ -550,7 +817,7 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-08T22:23:29+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-08T22:22:22+08:00">
                 2017-04-08
               </time>
             
@@ -560,6 +827,28 @@
             
           </span>
 
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Linux/" itemprop="url" rel="index">
+                    <span itemprop="name">Linux</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
           
 
           
@@ -588,9 +877,7 @@
       
         
           
-            <hr>
-<p>title: systemd<br>date: 2017-04-08 22:22:22<br>categories: “Linux”<br>tags: Linux</p>
-<h1 id="Systemd"><a href="#Systemd" class="headerlink" title="Systemd"></a>Systemd</h1><ul>
+            <h1 id="Systemd"><a href="#Systemd" class="headerlink" title="Systemd"></a>Systemd</h1><ul>
 <li>POST–&gt;Boot Sequence–&gt;Bootloader–&gt;Kernel initramfs(initrd)–&gt;rootfs–&gt;/sbin/init<ul>
 <li>init <ul>
 <li>Centos 5 : Sysv init </li>
@@ -2381,7 +2668,7 @@ zcat messages.gz &gt; messages
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2403,7 +2690,7 @@ zcat messages.gz &gt; messages
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-count">5</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
