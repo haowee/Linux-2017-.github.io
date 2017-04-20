@@ -290,6 +290,591 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/20/http-ca.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hee shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Linux-2017">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/20/http-ca.html" itemprop="url">
+                  https部署
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-20T16:08:51+08:00">
+                2017-04-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Https/" itemprop="url" rel="index">
+                    <span itemprop="name">Https</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h2><h4 id="Curl"><a href="#Curl" class="headerlink" title="Curl"></a><strong>Curl</strong></h4><blockquote>
+<p>基于URL语法在命令行方式下工作多文件传输工具</p>
+</blockquote>
+<p><strong>一些选项</strong></p>
+<ul>
+<li>-A/–user-agent <string>    设置用户代理</string></li>
+<li>–basic   使用http基本验证</li>
+<li>–tcp-nodelay  使用TCP_NODELAY</li>
+<li>-e/–referer <url> 来源网址</url></li>
+<li>–cacert <file> ssl</file></li>
+<li>–compressed  要求返回的是压缩多形势</li>
+<li>-H/–header <line></line> 自定义头信息</li>
+<li>-I/–head  只显示响应报文首部信息</li>
+<li>–limit-rate <rate>  设置传输速度</rate></li>
+<li>-u/–user <user[:password]> 设置服务器多用户和密码</user[:password]></li>
+<li>-m  设置最大传输时间</li>
+<li>-k 　不使用证书</li>
+</ul>
+<p>eg: curl -I -m 5 -o /dev/null -s -w %{http_code} www.baidu.com</p>
+<p><strong>mod_deflate模块</strong></p>
+<ul>
+<li><p>LoadModule deflate_module modules/mod_deflate.so</p>
+</li>
+<li><p>节省带宽，传输前对资源进行压缩</p>
+</li>
+<li><p>配置</p>
+<blockquote>
+<p>vim +$ /etc/httpd/conf/httpd.conf</p>
+<p>SetOutputFilter DEFLATE<br>AddOutPutFilterByType DEFLATE text/html text/plain text/css text/xml text/javascript application/xhtml+xml</p>
+</blockquote>
+</li>
+<li><p>可以用浏览器f12测试</p>
+</li>
+</ul>
+<p><strong>Https</strong></p>
+<ul>
+<li><p>CA端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cd /etc/pki/CA</div><div class="line">(umask 077;openssl genrsa -out  private/cakey.pem 2048)</div><div class="line">openssl req -new -x509 -key private/cakey.pem -out cacert.pem</div><div class="line">touch serial index.txt</div><div class="line">echo 01 &gt; serial</div></pre></td></tr></table></figure>
+</li>
+<li><p>Http端</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">cd /etc/httpd</div><div class="line">mkdir ssl</div><div class="line">cd ssl</div><div class="line">(umask 077;openssl genrsa -out httpd.key 1024)</div><div class="line">openssl req -new -key httpd.key -out httpd.csr</div></pre></td></tr></table></figure>
+<blockquote>
+<p>将生成多csr发送至CA</p>
+</blockquote>
+</li>
+<li><p>颁发</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">open ca -in httpd.csr -out /etc/pki/CA/certs/httpd.crt</div></pre></td></tr></table></figure>
+<blockquote>
+<p>将生成多证书发送给http服务器</p>
+</blockquote>
+</li>
+<li><p>安装ssl模块</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">yum install mod_ssl</div><div class="line">httpd -M | grep ssl</div><div class="line">vim /etc/httpd/conf.d/ssl.conf</div><div class="line">SSLCertificateFile /etc/httpd/ssl/httpd.crt</div><div class="line">SSLCertificateKeyFile /etc/httpd/ssl/httpd.key</div></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/20/httpd-notes.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hee shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Linux-2017">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/20/httpd-notes.html" itemprop="url">
+                  httpd常见指令及其配置
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-20T09:54:53+08:00">
+                2017-04-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="HTTPD"><a href="#HTTPD" class="headerlink" title="HTTPD"></a>HTTPD</h2><p><strong>Apache常用的配置指令</strong></p>
+<ul>
+<li><p>ServerTokens Http响应头，默认会包含apache详细版本号及php版本号</p>
+<ul>
+<li><p>语法：</p>
+<blockquote>
+<p>ServerTokens Major|Min|Pord|OS|Full</p>
+</blockquote>
+</li>
+<li><p>默认值为 ServerToken OS</p>
+</li>
+<li><p>模块 core,这个指令控制服务器回应给客户端的＂Server:”应答头是否包含关于服务器操作系统和编译进的模块描述信息．</p>
+</li>
+</ul>
+</li>
+<li><p>ServerRoot “/etc/httpd”　指明配置文件存放多位置</p>
+</li>
+<li><p>DocumentRoot  网页根目录</p>
+</li>
+<li><p>ServerName www.test.com:80</p>
+<blockquote>
+<p>定义网站域名</p>
+<p>需要借助DNS将域名解析到服务器IP</p>
+</blockquote>
+</li>
+<li><p>AddDefaultCharset UTF-8|GBK|GB2312|GB18030 设定默认字符集</p>
+<p>​</p>
+</li>
+</ul>
+<p><strong>Http请求处理多连接访问</strong></p>
+<ul>
+<li><p>非保持连接(短连接)</p>
+<blockquote>
+<p>对于大量并发场景中，短连接多三次握手以及四次挥手会占据大量带宽</p>
+</blockquote>
+</li>
+<li><p>保持连接(长连接) Keep-alive</p>
+<blockquote>
+<p>避免过多多连接保持，可以从时间和数量两个维度对长连接加以限制,Http2.4支持毫秒级别多限制</p>
+</blockquote>
+<p><strong>三个参数</strong></p>
+<ul>
+<li>KeepAlive On|Off</li>
+<li>KeepAlive Timeout  15</li>
+<li>MaxKeepAliveRequests 100</li>
+</ul>
+<p><strong>用Telnet测试</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">[root@test ~]# telnet 127.0.0.1 80</div><div class="line">Trying 127.0.0.1...</div><div class="line">Connected to 127.0.0.1.</div><div class="line">Escape character is &apos;^]&apos;.</div><div class="line">GET / HTTP/1.1</div><div class="line">Host:172.18.50.61</div><div class="line"></div><div class="line">HTTP/1.1 200 OK</div><div class="line">Date: Thu, 20 Apr 2017 02:45:55 GMT</div><div class="line">Server: Apache</div><div class="line">Last-Modified: Thu, 20 Apr 2017 02:16:22 GMT</div><div class="line">ETag: &quot;24bf8-5-54d8fba2fe78d&quot;</div><div class="line">Accept-Ranges: bytes</div><div class="line">Content-Length: 5</div><div class="line">Content-Type: text/html; charset=UTF-8</div><div class="line"></div><div class="line">test</div><div class="line">Connection closed by foreign host.</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>MPM详细配置</strong></p>
+<ul>
+<li>查看Httpd程序多模块列表<ul>
+<li>httpd -l　查看静态编译多模块</li>
+<li>httpd -M 查看静态编译及动态编译多模块</li>
+</ul>
+</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">[root@test ~]# httpd -M | grep prefork</div><div class="line">httpd: Could not reliably determine the server&apos;s fully qualified domain name, using test.com for ServerName</div><div class="line"> mpm_prefork_module (static)</div><div class="line">Syntax OK</div></pre></td></tr></table></figure>
+<blockquote>
+<p>在apache2.2中,MPM模块不支持动态装卸载</p>
+</blockquote>
+<ul>
+<li><p>prefork</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;IfModule prefork.c&gt;</div><div class="line">StartServers       8		服务进程启动时启动多少个空闲进程</div><div class="line">MinSpareServers    5		最少空闲进程数，如果少于５，主控进程会再启动几个，使空闲进程到达5</div><div class="line">MaxSpareServers   20		最大空闲进程数，如果到达20,则会被回收</div><div class="line">ServerLimit      256		所允许启动的最大在线进程数</div><div class="line">MaxClients       256		最大允许启动进程数量响应用户请求</div><div class="line">MaxRequestsPerChild  4000　　每个进程最多可以处理多少个请求，超过则销毁</div><div class="line">&lt;/IfModule&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>woker</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">&lt;IfModule worker.c&gt;</div><div class="line">StartServers         4		服务器启动是启动多少个空闲进程</div><div class="line">MaxClients         300		最大并发响应数量</div><div class="line">MinSpareThreads     25		最小空闲线程</div><div class="line">MaxSpareThreads     75		最大空闲线程</div><div class="line">ThreadsPerChild     25		每个进程启动25个线程</div><div class="line">MaxRequestsPerChild  0		每个进程可以处理无限个请求</div><div class="line">&lt;/IfModule&gt;</div></pre></td></tr></table></figure>
+</li>
+<li><p>event</p>
+</li>
+</ul>
+<blockquote>
+<p>Centos 6上同时提供了三个二进制文件(/usr/sbin/httpd  /usr/sbin/httpd.event  /usr/sbin/httpd.worker)，分别对应不同多MPM支持，默认使用prefork,可以使用http -l查看</p>
+<p>可以通过修改/etc/sysconfig/httpd的HTTPD=/usr/sbin/httpd.worker切换MPM</p>
+</blockquote>
+<p><strong>DOS动态装卸载</strong></p>
+<ul>
+<li><p>LoadModule <mod_name><mod_path></mod_path></mod_name></p>
+<blockquote>
+<p>模块文件路径使用相对路径</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>Http站点访问控制</strong></p>
+<ul>
+<li><p>文件系统/URL路径</p>
+<blockquote>
+<directory "="" var="" www="" html"=""><br><br>…<br><br></directory>
+
+<p>​</p>
+<file "=""><br><br>…<br><br></file>
+
+<p>​</p>
+<filematch "pattern"=""><br><br>…<br><br></filematch>
+
+<p>使用正则表达式模式匹配</p>
+<location ""=""><br><br>…<br><br></location>
+</blockquote>
+</li>
+<li><p>Options Indexes FollowSymlinks</p>
+<blockquote>
+<p>Options定义此目录内资源访问的特性，控制被定义多目录下所指定多各种资源多被访问模式，后跟一个或多个空白字符分割多选项列表</p>
+<p>indexs指明多URL路径不存在与定义多主页面资源相符的资源文件时候，返回索引列表给用户，目录浏览功能，一般关掉</p>
+<p>FollowSymlinks 允许跟踪符号连接文件所指向的源文件</p>
+<p>跟踪符号链接，如果目录下存在软连接，则可以访问软连接指向多文件</p>
+<p>Includes     //允许启用服务端包含</p>
+<p>SymLinlifOwnerMatch        //源文件和链接多目标文件多属主属组相同多时候才允许跟踪访问</p>
+<p>ExecCGI        //允许执行CGI脚本</p>
+<p>MultiViews        //允许执行内容协商</p>
+<p>None        //全部都不</p>
+<p>ALL            //所有都</p>
+<p>AllowOverride    //与访问控制相关的那些执行可以放在.htacesss文件中，每个目录下都可以有一个，但是使用.htacess会使网站对目录多资源解析变多非常慢，不推荐使用。</p>
+</blockquote>
+</li>
+<li><p>基于源地址定义访问规则</p>
+<blockquote>
+<p>Order    allow,deny</p>
+<p>ALlow    for    all</p>
+<p>Order定义生效法则，写在后面表示默认法则</p>
+<p>Allow from all，Deny from 来源ip或者网络地址</p>
+<p>示例:</p>
+<p>​    Order allow,deny</p>
+<p>​    Deny from 172.18.100.1</p>
+<p>​    allow form 172.18</p>
+<p>仅仅允许172.18除了100.1的地址访问</p>
+<p>​</p>
+<p>目录别名</p>
+<p>vim /etc/httpd/conf/httpd.conf</p>
+<p>/Alias后加</p>
+<p>Alias /aa/ “var/www/html/bb/“</p>
+<p>后面必须为绝对路径</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>Http日志相关设定</strong></p>
+<ul>
+<li><p>错误日志</p>
+<blockquote>
+<p>定义: ErrorLog logs/error_log</p>
+</blockquote>
+</li>
+<li><p>错误日志级别</p>
+<ul>
+<li>debug    所有信息，只要产生就全部记录</li>
+<li>info         所有多信息数据</li>
+<li>notice     引起注意</li>
+<li>warn       警告</li>
+<li>error       发生错误</li>
+<li>crit           级别很严重</li>
+<li>alert         红色警戒</li>
+<li>emerg      引起恐慌</li>
+</ul>
+</li>
+<li><p>访问日志</p>
+<blockquote>
+<p>定义 CustomLog logs/access_log combined</p>
+<p>格式 日志路径 日志格式{combined|common|referer|agent}</p>
+<p>日志格式定义</p>
+<blockquote>
+<p>LogFormat “%h %l %u %t \”%r\” %&gt;s %b \”%{Referer}i\” \”%{User-Agent}i\”” combined<br>LogFormat “%h %l %u %t \”%r\” %&gt;s %b” common<br>LogFormat “%{Referer}i -&gt; %U” referer<br>LogFormat “%{User-agent}i” agent</p>
+</blockquote>
+<p>“%h %l %u”可以称为宏或者是通配符</p>
+<p>日志格式示例</p>
+<p>172.18.100.7 - - [20/Apr/2017:14:58:02 +0800] “GET /a/ HTTP/1.1” 404 262 “-“ “Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:52.0) Gecko/20100101 Firefox/52.0”</p>
+<p>客户端地址 登录名 认证名 时间 请求首部 状态吗 响应报文大小 从那个页面跳过来 浏览器类型</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>基于用户的访问控制</strong></p>
+<ul>
+<li><p>常见多用户认证方式</p>
+<blockquote>
+<p>http协议自身提供多认证(明文)–&gt;basic 明文认证</p>
+<p>表单认证–&gt;digest消息摘要认证</p>
+</blockquote>
+</li>
+<li><p>认证质询</p>
+<blockquote>
+<p>www-authenticate</p>
+<p>​    响应码为401,拒绝客户端请求，并说明要求提供客户端帐号密码</p>
+<p>authorization    </p>
+<p>​    客户端用户填入帐号密码后再次发送请求报文，认证通过时，则服务器发送响应多资源</p>
+<p>安全域，需要用户认证后才能访问多路径。应该通过名称对其进行标识，以便告知用户认证多原因</p>
+<p>用户帐号密码存放多位置</p>
+<p>​    虚拟帐号:仅用于访问某服务时用到多认证标识</p>
+<p>​    存储: 文本文件、sql数据库、LDAP轻量级目录访问协议</p>
+</blockquote>
+</li>
+<li><p>Basic认证配置步骤</p>
+<blockquote>
+<directiry ""="">
+
+<p>AuthType Basic<br>AuthName “String”<br>AuthUserFile “/PATH/TO/HTTPD_USER_PASSWD_FILE”</p>
+<p># AuthGroupFile “/PATH/TO/HTTPD_GROUP_FILE” #基于组来认证<br>Require user username1 username2…</p>
+<p># Require group grpname1 grpname2 …</p>
+<p></p>
+<p>示例:</p>
+<blockquote>
+<directory "="" data="" www=""><br>Options None<br>AllowOverride None<br>AuthType Basic<br>AuthName “Admin Realm,show something”<br>AuthUserFile “/etc/httpd/conf/.htpasswd”<br>Require user tom<br><br># Require user vaild-user //允许所有用户登录<br><br></directory>
+
+</blockquote>
+<p>新建密码文件</p>
+<p>htpasswd -c -m /etc/httpd/conf/.htpasswd</p>
+<p>​    -c 第一次创建密码文件时使用</p>
+<p>​    -m md5</p>
+<p>​    -s force sha encrypt the password</p>
+<p>​    -D delete the spacifien user</p>
+</directiry></blockquote>
+</li>
+</ul>
+<p><strong>Http虚拟主机</strong></p>
+<ul>
+<li><p>实现方式</p>
+<ul>
+<li>基于ip</li>
+<li>基于port</li>
+<li>基于FQDN</li>
+</ul>
+</li>
+<li><p>配置</p>
+<ul>
+<li><p>注释DocumentRoot指令，禁用Main主机</p>
+</li>
+<li><p>配置语法</p>
+<blockquote>
+<virtualhost ip:port=""><br><br>​    ServerName FQDN<br><br>​    DocumentRoot “ “ //站点路径<br><br></virtualhost>
+
+<p>可用的指令</p>
+<p>​    ServerAlias           虚拟主机的别名</p>
+<p>​    Errorlog            </p>
+<p>​    CustomLog        日志</p>
+<p>​    <directory ""=""> ..</directory></p>
+</blockquote>
+</li>
+<li><p>示例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">&lt;VirtualHost 172.18.50.61:80&gt;</div><div class="line">    DocumentRoot /data/www/a</div><div class="line">&lt;/VirtualHost&gt;</div><div class="line"></div><div class="line">&lt;VirtualHost 172.18.50.61:800&gt;</div><div class="line">    DocumentRoot /data/www/b</div><div class="line">&lt;/VirtualHost&gt;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+</ul>
+<p><strong>Http状态页面</strong></p>
+<ul>
+<li><p>开启status模块</p>
+<blockquote>
+<p>LoadModule status_module modules/mod_status.so</p>
+</blockquote>
+</li>
+<li><p>启动状态访问页面</p>
+<blockquote>
+<location server-status=""><br><br>    SetHandler server-status<br>    Order deny,allow<br>    Allow from all<br>    Allow from .example.com<br></location>
+</blockquote>
+</li>
+<li><p>工作进程状态</p>
+<ul>
+<li>- 等待连接请求</li>
+<li>Ｗ正处于工作状态　发送响应报文进程</li>
+<li>S  正在创建</li>
+<li>R 正在读取请求</li>
+<li>K 正在保持连接</li>
+<li>D 正在执行DNS查询</li>
+<li>C 正在关闭连接</li>
+<li>L 正在记录日志</li>
+<li>G 正在优雅多关闭</li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/18/dropbear.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -2383,412 +2968,13 @@ set +C:允许覆盖
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/02/index.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Hee shen">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Linux-2017">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/04/02/index.html" itemprop="url">
-                  notes
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-02T12:00:09+08:00">
-                2017-04-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="复习"><a href="#复习" class="headerlink" title="复习"></a>复习</h1><p>PS1<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">PS1=&quot;\[\E[31m\][\u@\h \w]\\$\[\e[0m\]]&quot;</div></pre></td></tr></table></figure></p>
-<p>\e \033         \u 当前用户<br>\h 主机名简称     \H 主机名<br>\w 当前工作目录     \W 当前工作目录基名<br>\t 24小时时间格式\T 12小时时间格式<br>! 命令历史数     #开机后命令历史数</p>
-<h2 id="shell中可执行命令有两类"><a href="#shell中可执行命令有两类" class="headerlink" title="shell中可执行命令有两类"></a>shell中可执行命令有两类</h2><p>内部命令:由shell自带的，而且可以通过某命令形式提供</p>
-<pre><code>help 内部命令列表
-enable cmd 启用
-enable -n cmd 禁用内部命令
-enable -n 查看所有禁用的内部命令
-</code></pre><p>外部命令:在文件系统路径下有对应的可执行程序文件</p>
-<h2 id="查看路径-which-a-–skip-alias-whereis"><a href="#查看路径-which-a-–skip-alias-whereis" class="headerlink" title="查看路径:which -a | –skip-alias; whereis"></a>查看路径:which -a | –skip-alias; whereis</h2><h2 id="查看制定的命令是内部还是外部-type-command"><a href="#查看制定的命令是内部还是外部-type-command" class="headerlink" title="查看制定的命令是内部还是外部 type command"></a>查看制定的命令是内部还是外部 type command</h2><h2 id="执行外部命令"><a href="#执行外部命令" class="headerlink" title="执行外部命令"></a>执行外部命令</h2><h3 id="Hash缓存表"><a href="#Hash缓存表" class="headerlink" title="Hash缓存表"></a>Hash缓存表</h3><pre><code>系统初始hash表为空，当外部命令执行时，默认会到PATH路径下寻找该命令，找到后会将这条命令的路径记录到hash表中，当再次使用该命令时，shell解释器首先会查看hash表，存在将执行之，如果不存在，将会去path路径下寻找。利用hash缓存表可大大提供命令的调用速率。
-</code></pre><h3 id="常见的用法"><a href="#常见的用法" class="headerlink" title="常见的用法"></a>常见的用法</h3><pre><code>hash 显示hash缓存
-hash -l 显示hash缓存，可作为输入使用
-hash -p path name 将命令全路径path起别名为name
-hash -t name 打印缓存中name的路径
-hash -d name 清除name缓存
-hash -r 清楚缓存
-</code></pre><h3 id="如果命令别名同原命令同名，如果要执行原命令，可使用-command"><a href="#如果命令别名同原命令同名，如果要执行原命令，可使用-command" class="headerlink" title="如果命令别名同原命令同名，如果要执行原命令，可使用\command"></a>如果命令别名同原命令同名，如果要执行原命令，可使用\command</h3><h3 id="date"><a href="#date" class="headerlink" title="date"></a>date</h3><p>系统时钟:由Linux内核通过cpu工作频率进行的<br>硬件时钟:主板<br>hwclock,clock:显示硬件时钟<br>/etc/localtime 时区</p>
-<h3 id="screen"><a href="#screen" class="headerlink" title="screen"></a>screen</h3><p>创建:screen -S [session]<br>键入:screen -x<br>剥离当前screen会话:ctrl+a,d<br>显示所有:screen -ls<br>恢复:screen -r </p>
-<h2 id="echo"><a href="#echo" class="headerlink" title="echo"></a>echo</h2><p>-E 默认 不支持\解释功能<br>-n 不自动换行<br>-e 启用\字符的解释功能</p>
-<pre><code>\a 发出警告声
-\b 退格键
-\c 最后不加上换行符号
-\n 换行且光标移至行首
-\r 回车，即光标移至行首
-\t 插入tab
-\\插入\字符
-\0nnn 插入nnn(八进制) 所代表的ASCII字符
-\xHH插入HH(十六进制) 所代表的ASCII字
-</code></pre><h2 id="双击TAB键"><a href="#双击TAB键" class="headerlink" title="双击TAB键"></a>双击TAB键</h2><p>command 2tab 所有命令行补全<br>string2tab 以string开头命令<br>/2tab 显示所有根目录下一级目录，包括隐藏目录<br>./2tab 当前目录下的子目录，包括隐藏目录<br>*2tab 当前目录下子目录，不包括隐藏目录<br>～2tab 所有用户列表<br>$2tab 所有变量<br>@2tab /etc/hosts记录<br>=2tab 相当与ls -A</p>
-<h2 id="命令行历史"><a href="#命令行历史" class="headerlink" title="命令行历史"></a>命令行历史</h2><p>重复前一个命令，有四种方法<br>    ！！<br>    ！-1<br>    ctrl + p<br>    上方向键<br>ctrl + n 显示当前历史中的下一条命令，但不执行<br>！n 执行history命令输出对应序号n的命令<br>！-n 执行history历史中倒数的第n个命令<br>！string 重复前一个以“string”开头的命令<br>！string:p 仅打印 不执行<br>！$:p 打印输出!$的内容<br>！<em>:p 打印输出!</em>(所有参数)的内容<br>^string 删除上一条命令中的string<br>^string1^string2 将上一条命令中的第一个string1替换为string2<br>!!:gs/string1/string2 将上一条命令中所有的string1都替换为string2<br>调用前一个命令的最后一个参数:$!;esc .;alt .;<br>command !^:上一个命令的一个参数做cmd的参数<br>    !$:最后一个参数<br>    !<em>:全部参数<br>    !:n:第n个参数<br>command !n:^ 调用第n条命令的第一个参数<br>    !n:$<br>    !n:m<br>    !n:</em><br>command !string:^ 从命令历史中搜索以string开头的命令，并获取它的第一个参数<br>    !string:$<br>    !string:n<br>    !string:*<br>history<br>    -c 情况命令历史<br>    -d offset 删除历史中第offset个命令<br>     n 显示最近的n条历史<br>    -a 追加本次会话新执行的命令历史列表至历史文件<br>    -n 读历史文件中未读的行到历史列表<br>    -r 读历史文件附加到历史列表<br>    -w 保存历史列表到指定的历史文件<br>    -p 展开历史参数成多行，但不存在历史列表中<br>    -s 展开历史参数成一行，附加在历史列表后<br>HISTSIZE：命令历史记录的条数<br>HISTFILE：指定历史文件，默认为～/.bash_history<br>HISTFILESIZE:命令历史文件记录历史的条数<br>HISTTIMEFORMAT=“%F %T” 显示时间<br>HISTIGNORE=“str1:str2:…” 忽略string1,string2历史<br>控制命令历史的记录方式:<br>环境变量:HISTCONTROL</p>
-<pre><code>ignoredups 默认,忽略重复的命令，连续且相同为”重复“
-ignorespace 忽略所有以空白开头的命令
-ignoreboth edups and space
-erasedups 删除重复命令
-</code></pre><p>export 变量名=”值“</p>
-<p>bash 快捷键<br>ctrl + l 清屏<br>ctrl + o 执行当前命令，并重新显示本命令<br>ctrl + s 阻止屏幕输出，锁定<br>ctrl + q 允许屏幕输出<br>ctrl + c 终止命令<br>ctrl + z 挂起命令<br>ctrl + a 光标移动到命令行首,相当与home<br>ctrl + e 光标移动到行尾，相当与end<br>ctrl + f 光标向右移动一个字符<br>ctrl + b 光标向左移动一个字符<br>alt + f 光标向右移动一个单词尾<br>alt + b 光标向左移动一个单词首<br>ctrl + xx 光标在命令行首和光标之间移动<br>ctrl + u 从光标处删除至命令行尾<br>ctrl + k 从光标处删除至命令行尾<br>ctrl + w 从光标处向左删除只单词首<br>alt + d 从光标处向右删除至单词尾<br>ctrl + d 删除光标处的一个字符<br>ctrl + h 删除光标前的一个字符<br>ctrl + y 将删除的字符粘贴至光标后<br>alt + c 从光标出开始向右更改为首字母大写的单词<br>alt + u 从光标处开始向右更改为全部大写的单词<br>alt + l 从光标处更改为全部小写的单词<br>ctrl + t 交换光标处和之前字符位置<br>alt + t 交换光标处和之前的单词位置<br>alt + N 提示输入指定字符后，重复显示该字符Ｎ次<br>注意:alt组合快捷键经常和其他软件冲突</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/30/blog.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Hee shen">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Linux-2017">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/03/30/blog.html" itemprop="url">
-                  未命名
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-30T16:20:24+08:00">
-                2017-03-30
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h1 id="文件查找与解压缩"><a href="#文件查找与解压缩" class="headerlink" title="文件查找与解压缩"></a>文件查找与解压缩</h1><h2 id="Locate"><a href="#Locate" class="headerlink" title="Locate"></a>Locate</h2><p>查询系统上预建的文件索引数据库<br>/var/lib/mlocate/mlocate.db<br>依赖于事先构建的索引<br>索引的构建是在系统较为空闲时自动进行(周期性任务),管理员手动更新数据库(updatedb)<br>索引构建过程需要遍历整个根文件系统,极消耗资源<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">locate KEYWORD</div><div class="line">	-i 不区分大小写的搜索</div><div class="line">	-n N 之列举N个匹配项目</div><div class="line">	-r 使用Regex来搜索</div></pre></td></tr></table></figure></p>
-<h2 id="Find"><a href="#Find" class="headerlink" title="Find"></a>Find</h2><p>find [OPTION]… [查找路径] [查找条件] [处理动作]<br>查找路径:指定具体目标路径;默认为当前目录<br>查找条件:指定的查找标准,可以文件名、大小、类型、权限等标准进行;默认为找出指定路径下的所有文件<br>处理动作:对符合条件的文件做操作,默认输出至屏幕<br>指搜索层级</p>
-<pre><code>-maxdepth level 最大搜索目录深度,指定目录为第1级
--mindepth level 最大搜索目录深度
-</code></pre><p>根据文件名和inode查找:</p>
-<pre><code>-name &quot;文件名称&quot;:支持使用glob *, ?, [], [^]
--iname &quot;文件名称&quot;:不区分字母大小写
--inum n 按inode号查找
--samefile name 相同inode号的文件
--links n 链接数为n的文件
--regex &quot;PATTERN&quot;:以PATTERN匹配整个文件路径字符串,而不仅仅是文件名称
-</code></pre><p>根据属主、属组查找:</p>
-<pre><code>-user USERNAME:查找属主为指定用户(UID)的文件
--group GRPNAME: 查找属组为指定组(GID)的文件
--uid UserID:查找属主为指定的UID号的文件
--gid GroupID:查找属组为指定的GID号的文件
--nouser:查找没有属主的文件
--nogroup:查找没有属组的文件
-</code></pre><p>根据文件类型查找:</p>
-<pre><code>-type TYPE:
-• f: 普通文件
-• d: 目录文件
-• l: 符号链接文件
-• s:套接字文件
-• b: 块设备文件
-• c: 字符设备文件
-• p: 管道文件
-</code></pre><p> 组合条件:</p>
-<pre><code>与:-a
-或:-o
-非:-not, !
-</code></pre><p>德· 摩根定律:<br>(非 A) 或 (非 B) = 非(A 且 B)<br>(非 A) 且 (非 B) = 非(A 或 B)<br> 示例:<br>!A -a !B = !(A -o B)<br>!A -o !B = !(A -a B)</p>
-<p>根据权限查找:</p>
-<pre><code>-perm [/|-]MODE
-MODE: 精确权限匹配
-/MODE:任何一类(u,g,o)对象的权限中只要能一位匹配即可,或关系,+ 从centos7开始淘汰
--MODE:每一类对象都必须同时拥有指定权限,与关系0 表示不关注
-• find -perm 755 会匹配权限模式恰好是755的文件
-• 只要当任意人有写权限时,find -perm +222就会匹配
-• 只有当每个人都有写权限时,find -perm -222才会匹配
-• 只有当其它人(other)有写权限时,find -perm -002才会匹配
-</code></pre><p>处理动作</p>
-<pre><code>-print:默认的处理动作,显示至屏幕
--ls:类似于对查找到的文件执行“ls -l”命令
--delete:删除查找到的文件
--fls file:查找到的所有文件的长格式信息保存至指定文件中
--ok COMMAND {} \; 对查找到的每个文件执行由 COMMAND指定的命令,对于每个文件执行命令之前,
--exec COMMAND {} \; 对查找到的每个文件执行由COMMAND指定的命令
-{}: 用于引用查找到的文件名称自身
-find传递查找到的文件至后面指定的命令时,查找到所有符合条件的文件一次性传递给后面的命令都会交互式要求用户确认
-</code></pre><p>参数替换xargs</p>
-<pre><code>由于很多命令不支持管道|来传递参数,而日常工作中有这个必要,所以就有了xargs命令
-xargs用于产生某个命令的参数,xargs 可以读入 stdin 的数据,并且以空格符或回车符将 stdin 的数据分隔成为arguments
-注意:文件名或者是其他意义的名词内含有空格符的情况
-有些命令不能接受过多参数,命令执行可能会失败,xargs可以解决
-</code></pre><p> 示例:</p>
-<pre><code>ls f* |xargs rm
-find /sbin -perm +700 |ls -l 这个命令是错误的
-find /sbin -perm +7000 | xargs ls –l
-find和xargs格式:find | xargs COMMAND
-</code></pre><h2 id="压缩、解压缩及归档工具"><a href="#压缩、解压缩及归档工具" class="headerlink" title="压缩、解压缩及归档工具"></a>压缩、解压缩及归档工具</h2><pre><code>file-roller
-compress/uncompress: .Z
-gzip/gunzip: .gz
-bzip2/bunzip2: .bz2
-xz/unxz: .xz
-zip/unzip
-tar
-cpio
-</code></pre><h3 id="compress-uncompress"><a href="#compress-uncompress" class="headerlink" title="compress/uncompress"></a>compress/uncompress</h3><p> compress [-dfvcVr] [-b maxbits] [file …]</p>
-<pre><code>-d: 解压缩,相当于uncompress
--c: 结果输出至标准输出,不删除原文件
--v: 显示详情
-</code></pre><p> uncompress 解压缩<br> zcat file.Z &gt;file</p>
-<h3 id="gzip-gunzip"><a href="#gzip-gunzip" class="headerlink" title="gzip/gunzip"></a>gzip/gunzip</h3><p>gzip [OPTION]… FILE …</p>
-<pre><code>-d: 解压缩,相当于gunzip
--c: 将压缩或解压缩的结果输出至标准输出
--#:1-9,指定压缩比,值越大压缩比越大
-zcat:不显式解压缩的前提下查看文本文件内容
-实例:
-gzip -c messages &gt;messages.gz
-gzip -c -d messages.gz &gt; messages
-zcat messages.gz &gt; messages
-</code></pre><h3 id="bzip2-bunzip2-bzcat"><a href="#bzip2-bunzip2-bzcat" class="headerlink" title="bzip2/bunzip2/bzcat"></a>bzip2/bunzip2/bzcat</h3><p>bzip2 [OPTION]… FILE …</p>
-<pre><code>-k: keep, 保留原文件
--d:解压缩
--#:1-9,压缩比,默认为6
-</code></pre><p>bzcat:不显式解压缩的前提下查看文本文件内容</p>
-<h3 id="xz-unxz-xzcat"><a href="#xz-unxz-xzcat" class="headerlink" title="xz/unxz/xzcat"></a>xz/unxz/xzcat</h3><p>xz [OPTION]… FILE …</p>
-<pre><code>-k: keep, 保留原文件
--d:解压缩
--#:1-9,压缩比,默认为6
-</code></pre><p>xzcat: 不显式解压缩的前提下查看文本文件内容</p>
-<h2 id="tar工具"><a href="#tar工具" class="headerlink" title="tar工具"></a>tar工具</h2><p>Tar(Tape ARchive,磁带归档的缩写)<br>tar [OPTION]…<br>(1) 创建归档<br>tar -c -f /PATH/TO/SOMEFILE.tar FILE…<br>(2) 追加文件至归档: 注:不支持对压缩文件追加<br>tar -r -f /PATH/TO/SOMEFILE.tar FILE…<br>(3) 查看归档文件中的文件列表<br>tar -t -f /PATH/TO/SOMEFILE.tar<br>(4) 展开归档<br>tar -x -f /PATH/TO/SOMEFILE.tar<br>tar -x -f /PATH/TO/SOMEFILE.tar -C /PATH/<br>(5) 结合压缩工具实现:归档并压缩<br>-j: bzip2, -z: gzip, -J: xz<br>-T选项指定输入文件,-X选项指定包含要排除的文件列表<br>tar zcvf mybackup.tgz -T /root/includefilelist -X<br>/root/excludefilelist<br>分割大的 tar 文件为多份小文件:<br>split –b Size –d tar-file-name prefix-name<br>split -b 1M –d mybackup.tgz mybackup-parts<br>split -b 1M mybackup.tgz mybackup-parts<br>合并:<br>cat mybackup-parts* &gt; mybackup.tar.gz</p>
-<h2 id="cpio"><a href="#cpio" class="headerlink" title="cpio"></a>cpio</h2><p>cpio命令是通过重定向的方式将文件打包备份，还原恢复的工具，它可以解压已”.cpio”结尾或者”.tar”<br>cpio [选项] &gt; 文件名或者设备名<br>cpio [选项] &lt; 文件名或者设备名<br>选项</p>
-<pre><code>-o 将文件拷贝打包成文件或者将文件输出到设备上
--i 解包，将打包文件解压或将设备上的备份还原到系统
--t 预览，查看文件内容或者输出到设备上的文件内容
--v 显示打包过程中的文件名称
--d 解包生产目录，在cpio还原时，自动的建立目录
--c 一种较新的存储方式
-</code></pre><p>示例</p>
-<pre><code>将Etc目录备份
-    fin ./etc -print|cpio -ov &gt;etc.cpio
-内容预览
-    cpio -tv &lt; etc.cpio 
-</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ls /etc</div><div class="line">pwd</div><div class="line">ls</div></pre></td></tr></table></figure>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+  </nav>
+
 
 
           </div>
@@ -2831,7 +3017,7 @@ zcat messages.gz &gt; messages
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">12</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -2842,7 +3028,7 @@ zcat messages.gz &gt; messages
             
             <div class="site-state-item site-state-categories">
               <a href="/categories/index.html">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -2853,7 +3039,7 @@ zcat messages.gz &gt; messages
             
             <div class="site-state-item site-state-tags">
               <a href="/tags/index.html">
-                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-count">9</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
