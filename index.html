@@ -290,6 +290,179 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/24/lamp源码包安装.html">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Hee shen">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Linux-2017">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/04/24/lamp源码包安装.html" itemprop="url">
+                  未命名
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-24T11:05:39+08:00">
+                2017-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="centos7-3构建lamp环境"><a href="#centos7-3构建lamp环境" class="headerlink" title="centos7.3构建lamp环境"></a>centos7.3构建lamp环境</h2><h3 id="apache"><a href="#apache" class="headerlink" title="apache"></a><strong>apache</strong></h3><ul>
+<li><p>安装httpd依赖包</p>
+<ul>
+<li>yum install gcc gcc-c++</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>apr</p>
+<blockquote>
+<p>wget  <a href="http://apache.fayea.com//apr/apr-1.5.2.tar.bz2" target="_blank" rel="external">http://apache.fayea.com//apr/apr-1.5.2.tar.bz2</a></p>
+<p>tar xvf apr-x</p>
+<p>./configure –prefix=/usr/local/apr  </p>
+<p>make &amp;&amp; make install</p>
+</blockquote>
+</li>
+<li><p>apr-util</p>
+<blockquote>
+<p>wget <a href="http://apache.fayea.com//apr/apr-util-1.5.4.tar.bz2" target="_blank" rel="external">http://apache.fayea.com//apr/apr-util-1.5.4.tar.bz2</a></p>
+<p>tar xvf apr-x</p>
+<p>./configure –prefix=/usr/local/apr-util  –with-apr=/usr/local/apr</p>
+<p>make &amp;&amp; make install</p>
+</blockquote>
+</li>
+<li><p>pcre</p>
+<blockquote>
+<p>wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.39.tar.bz2</p>
+<p>tar xvf pcrex</p>
+<p>cd pcrex</p>
+<p>./configure –prefix=/usr/local/pcre</p>
+<p>make &amp;&amp; make install</p>
+</blockquote>
+</li>
+<li><p>openssl</p>
+<blockquote>
+<p>wget <a href="http://distfiles.macports.org/openssl/openssl-1.0.2k.tar.gz" target="_blank" rel="external">http://distfiles.macports.org/openssl/openssl-1.0.2k.tar.gz</a></p>
+<p>tar xvf openx</p>
+<p>cd oepnx</p>
+<p>./config –prefix=/usr/local/openssl</p>
+</blockquote>
+</li>
+</ul>
+<ul>
+<li><p>编译安装httpd-2.4.25</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./configure --prefix=/usr/local/apache24 --enable-so --enable-ssl  --enable-rewrite --with-zlib --with-pcre=/usr/local/pcre --with-apr=/usr/local/apr --with-apr-util=/usr/local/apr-util --with-ssl=/usr/local/openssl --sysconfdir=/etc/httpd</div></pre></td></tr></table></figure>
+<p>在make的时候出现了一个error,如下</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">/usr/bin/ld: /usr/local/openssl/lib/libssl.a(s3_srvr.o): relocation R_X86_64_32 against `.rodata&apos; can not be used when making a shared object; recompile with -fPIC</div><div class="line">/usr/local/openssl/lib/libssl.a: error adding symbols: Bad value</div><div class="line">collect2: error: ld returned 1 exit status</div></pre></td></tr></table></figure>
+<p>重新编译openssl后解决</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">./config -fPIC --prefix=/usr/local/openssl/ enable-shared</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>centos7 almp.sh<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line">#Author:shen</div><div class="line">#date:Saturday, April 22, 2017 AM10:21:54 CST</div><div class="line">#description: centos 7 lamp</div><div class="line"></div><div class="line">ip=`ifconfig | sed -n &apos;2p&apos;|awk &apos;&#123;print $2&#125;&apos;`</div><div class="line"></div><div class="line"></div><div class="line">yum install httpd php php-fpm php-mysql mariadb-server -y </div><div class="line"></div><div class="line"></div><div class="line">systemctl enable httpd    &amp;&gt;&gt; /tmp/lamp.log</div><div class="line">systemctl enable php-fpm  &amp;&gt;&gt; /tmp/lamp.log</div><div class="line">systemctl enable mariadb  &amp;&gt;&gt; /tmp/lamp.log</div><div class="line"></div><div class="line">systemctl start httpd &amp;&gt;&gt; /tmp/lamp.log</div><div class="line">systemctl start php-fpm &amp;&gt;&gt; /tmp/lamp.log</div><div class="line">systemctl start mariadb&amp;&gt;&gt; /tmp/lamp.log</div><div class="line"></div><div class="line">touch /tmp/testdb.txt</div><div class="line">cat &gt; /tmp/testdb.txt &lt;&lt; of</div><div class="line">create database shen;</div><div class="line">grant all privileges on *.* to shen@&apos;%&apos; identified by &apos;123456&apos;;</div><div class="line">flush privileges;</div><div class="line">of</div><div class="line"></div><div class="line">echo test &gt; /var/www/html/index.html</div><div class="line"></div><div class="line">cat &gt; /var/www/html/phpinfo.php &lt;&lt; of</div><div class="line">&lt;?php</div><div class="line"></div><div class="line">phpinfo ();</div><div class="line"></div><div class="line">?&gt;</div><div class="line">of</div><div class="line"></div><div class="line"></div><div class="line">cat &gt; /var/www/html/testdb.php &lt;&lt; of</div><div class="line">&lt;?php</div><div class="line"></div><div class="line">\$conn = mysql_connect(&apos;$ip&apos;,&apos;shen&apos;,&apos;123456&apos;);</div><div class="line"></div><div class="line">if (\$conn)</div><div class="line">	echo &quot;ok&quot;;</div><div class="line">else</div><div class="line">	echo &quot;not ok&quot;</div><div class="line">?&gt;</div><div class="line">of</div><div class="line"></div><div class="line"></div><div class="line">mysql &lt; /tmp/testdb.txt</div></pre></td></tr></table></figure></p>
+<p>  ​</p>
+
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/20/http-ca.html">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -313,7 +486,7 @@
               
                 
                 <a class="post-title-link" href="/2017/04/20/http-ca.html" itemprop="url">
-                  https部署
+                  Http two
                 </a>
               
             
@@ -389,7 +562,7 @@
       
         
           
-            <h2 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h2><h4 id="Curl"><a href="#Curl" class="headerlink" title="Curl"></a><strong>Curl</strong></h4><blockquote>
+            <h2 id="HTTP2"><a href="#HTTP2" class="headerlink" title="HTTP2"></a>HTTP2</h2><h4 id="Curl"><a href="#Curl" class="headerlink" title="Curl"></a><strong>Curl</strong></h4><blockquote>
 <p>基于URL语法在命令行方式下工作多文件传输工具</p>
 </blockquote>
 <p><strong>一些选项</strong></p>
@@ -442,9 +615,95 @@
 </li>
 <li><p>安装ssl模块</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">yum install mod_ssl</div><div class="line">httpd -M | grep ssl</div><div class="line">vim /etc/httpd/conf.d/ssl.conf</div><div class="line">SSLCertificateFile /etc/httpd/ssl/httpd.crt</div><div class="line">SSLCertificateKeyFile /etc/httpd/ssl/httpd.key</div></pre></td></tr></table></figure>
-<p>​</p>
 </li>
 </ul>
+<p><strong>Http自带工具</strong></p>
+<ul>
+<li><p>Httpasswd</p>
+<blockquote>
+<p>basic认证基于文件实现时，用到多帐号文件生成工具</p>
+</blockquote>
+</li>
+<li><p>Apachectl</p>
+<blockquote>
+<p>httpd自带多服务控制脚本，支持start和stop</p>
+</blockquote>
+</li>
+<li><p>Apxs</p>
+<blockquote>
+<p>由httpd-devel包提供，扩展Http使用第三方模块的工具</p>
+</blockquote>
+</li>
+<li><p>Rotatelogs</p>
+<blockquote>
+<p>日志滚动工具</p>
+</blockquote>
+</li>
+<li><p>Suexec</p>
+<blockquote>
+<p>访问某些有特殊权限配置的资源，临时切换至用户身份运行</p>
+</blockquote>
+</li>
+<li><p>Ab</p>
+</li>
+</ul>
+<p><strong>Http2.4新模块</strong></p>
+<ul>
+<li>mod_proxy_fcgi    支持PHP等动态语言</li>
+<li>mod_proxy_scgi SCGI protocol  支持python</li>
+<li>mod_remoteip  获取远端真实访问ip</li>
+</ul>
+<p><strong>Http Reponse报文的语法格式</strong></p>
+<ul>
+<li><p>version Http协议版本，HTTP/\<major>.\<minor></minor></major></p>
+</li>
+<li><p>status  响应状态码，标记请求过程中所发生的情况</p>
+</li>
+<li><p>reason-phrase  原因短语，状态码所标记状态多详细版本</p>
+</li>
+<li><p>hearders  用来标记请求和响应属性</p>
+</li>
+<li><p>entity-bady  响应主体部分，响应时候附加数据</p>
+</li>
+<li><p>格式</p>
+<blockquote>
+<p>version status reason-phrase</p>
+<p>headers</p>
+<p>entity-body</p>
+</blockquote>
+</li>
+</ul>
+<p><strong>常见多Method的方法</strong></p>
+<ul>
+<li>GET:从服务器获取一个资源</li>
+<li>HEAD:只从服务器获取文档响应首部</li>
+<li>POST:向服务器发送要处理多数据，放在请求报文的\<entity-body>中</entity-body></li>
+<li>PUT:与post相反，将请求的主体部分存储在服务器上</li>
+<li>DELETE:请求删除服务器上指定的文档</li>
+<li>TRACE:追踪请求到达服务器中间经过的代理服务器</li>
+<li>OPTIONS:请求服务器返回对追定资源支持使用多请求方法</li>
+</ul>
+<p><strong>状态码分类</strong></p>
+<ul>
+<li>1xx:100-101 额外信息提示</li>
+<li>2xx:200-206 表示成功类响应</li>
+<li>3xx:300-305 重定向</li>
+<li>4xx:400-415 错误类响应码，由于客户端发生错误，如客户端请求一个根本不存在的资源</li>
+<li>5xx:500-505 错误类信息，服务器端错误，服务器本身一些问题导致请求无法成功</li>
+</ul>
+<p><strong>状态码的分类</strong></p>
+<ul>
+<li>200    请求成功 OK</li>
+<li>301  永久重定向  Moved Permanently</li>
+<li>302  临时重定向  Found</li>
+<li>304  请求资源未发生改变 Not Modified</li>
+<li>401  输入帐号和密码认证之后才能访问资源</li>
+<li>403  请求被禁止 Fornodden</li>
+<li>404  服务无法找到客户端请求多资源  </li>
+<li>500  服务器内部错误 Internal Server Error</li>
+<li>502  代理服务器从后端服务器收到一条伪响应 bad gateway</li>
+</ul>
+<p>  ​</p>
 
           
         
@@ -652,17 +911,22 @@
 <p><strong>Http站点访问控制</strong></p>
 <ul>
 <li><p>文件系统/URL路径</p>
-<directory "="" var="" www="" html"=""><br><br>…<br><br></directory>
-
+<p>\<directory "="" var="" www="" html"=""></directory></p>
+<p>…</p>
+<p>\</p>
 <p>​</p>
-<file "=""><br><br>…<br><br></file>
-
+<p>\<file "=""></file></p>
+<p>…</p>
+<p>\</p>
 <p>​</p>
-<filematch "pattern"=""><br><br>…<br><br></filematch>
-
+<p>\<filematch "pattern"=""></filematch></p>
+<p>…</p>
+<p>\</p>
 <blockquote>
 <p>使用正则表达式模式匹配</p>
-<location ""=""><br><br>…<br><br></location>
+<p>\<location ""=""></location></p>
+<p>…</p>
+<p>\</p>
 </blockquote>
 </li>
 <li><p>Options Indexes FollowSymlinks</p>
@@ -2788,186 +3052,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/03/page.html">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Hee shen">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Linux-2017">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/04/03/page.html" itemprop="url">
-                  笔记
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-03T14:06:11+08:00">
-                2017-04-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Linux/" itemprop="url" rel="index">
-                    <span itemprop="name">Linux</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <h2 id="ls"><a href="#ls" class="headerlink" title="ls"></a>ls</h2><p>ls  -a 　all<br>    -l  额外的信息<br>    -R 递归<br>    -ld 目录和符合链接信息<br>    -1 文件分行显示<br>    -S 按文件大小排序<br>    -t mtime排序<br>    -u 配合-t选项，显示并按atime从新到旧排序<br>    -U 按目录存放顺序显示<br>    -X 按文件后缀排序</p>
-<h2 id="stat"><a href="#stat" class="headerlink" title="stat"></a>stat</h2><p>access time 读取文件内容<br>modify time 改变文件内容(数据)<br>change time 元数据发生改变</p>
-<p>##　文件通配符<br>[:digit]<br>[:lower:]<br>[:upper:]<br>[:alpha:]<br>[:alnum:]<br>[:blank:] 水平空白字符<br>[:space:] 水平或垂直空白字符<br>[:punct:] 标点符号<br>[:print:] 可打印字符<br>[:cntrl:] 控制字符<br>[:graph:] 图形字符<br>[:xigit:] 十六进制字符</p>
-<h2 id="cp"><a href="#cp" class="headerlink" title="cp"></a>cp</h2><p>-i 交互式<br>-r,-R 递归<br>-a 归档，相当与-dR –preserv=all<br>-d: –no-dereference –preserv=link 不复制原文件，只复制链接名<br>–preserv=[=ATTR_LIST]</p>
-<pre><code>mode:权限
-ownership:属主属组
-timestamp:
-links
-xattr
-context
-all
-</code></pre><p>-p:等于–preserv=mode,ownership,timestamp<br>-v:–verbose</p>
-<h2 id="硬链接"><a href="#硬链接" class="headerlink" title="硬链接"></a>硬链接</h2><p>创建硬链接会增加额外的记录项以引用文件<br>对应与同一文件系统上一个物理文件<br>每个目录引用相同的inode号<br>创建时链接数递增<br>删除文件时:</p>
-<pre><code>rm命令递减计数的链接
-文件要存在，至少有一个链接数
-当链接数为０，文件则被删除
-</code></pre><p>不能跨越分区或驱动器</p>
-<h2 id="软链接"><a href="#软链接" class="headerlink" title="软链接"></a>软链接</h2><p>１．一个符合链接指向另一个文件<br>２．ls -l 显示链接名和引用的文件<br>３．一个符合链接的内容是它引用文件的名称<br>４．可以对目录进行<br>５．可以跨分区<br>５指向的是另一个文件的路径；其大小为指向的路径字符串的长度；不增加或减少目标文件inode的引用计数；</p>
-<h2 id="file-确定文件内容"><a href="#file-确定文件内容" class="headerlink" title="file 确定文件内容"></a>file 确定文件内容</h2><p>file [option] filename<br>-b 列出文件辨识结果，不显示文件名<br>-f 列车指定文件中内容的文件类型<br>-F 使用指定分割符合替换输出文件名后默认的”:”分割符<br>-L 查看对应软链接对应文件的文件类型</p>
-<p>##　管道与重定向</p>
-<pre><code>&gt; 把STDOUT重定向到文件
-２&gt;　把STDERR重定向到文件
-&amp;&gt; 把所有输出重定向到文件
-&gt;文件内容会被覆盖 
-set -C:全局禁止覆盖
-set +C:允许覆盖
-&gt;&gt; 追加
-2&gt; 覆盖重定向错误输出数据流
-２&gt;&gt; 追加重定向错误输出数据流
-():合并多个程序的STDOUT
-( cal 2007 ; cal 2008 ) &gt; all.txt
-</code></pre><h2 id="tr"><a href="#tr" class="headerlink" title="tr"></a>tr</h2><p>tr [option] set1 set2<br>-c 取字符集的补集<br>-d –delete<br>-s 去重复<br>-t 将第一个字符集对应的字符转换为第二个字符集</p>
-<h2 id="文件权限"><a href="#文件权限" class="headerlink" title="文件权限"></a>文件权限</h2><p>文件<br>r 可使用文件查看类工具获取其内容<br>w 可修改其内容<br>x 可以把此文件提请内核启动为一个进程<br>目录<br>r 可以使用ls查看次目录中文件列表<br>w 可在此目录中创建文件，也可删除此目录中的文件<br>x 可以使用ls -l查看此目录中文件列表，可以cd进去<br>目录 X:只给目录x权限，不给文件x权限</p>
-<h2 id="特殊权限"><a href="#特殊权限" class="headerlink" title="特殊权限"></a>特殊权限</h2><p>###　可执行文件上的SUID权限<br>１.任何一个可执行程序文件能不能启动为进程:取决发起者对程序文件是否拥有执行权限<br>２.启动为进程之后，其进程的属主为原程序文件的属主<br>３.SUID只对二进制可执行程序有效<br>４.SUID设置在目录上无意义<br>权限设定:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chmod u+s file</div><div class="line">chmod u-s file</div></pre></td></tr></table></figure></p>
-<h3 id="可执行文件上的SGID权限"><a href="#可执行文件上的SGID权限" class="headerlink" title="可执行文件上的SGID权限"></a>可执行文件上的SGID权限</h3><p>１．任何一个可执行程序文件能不能启动为进程；取决发起者对程序文件是否拥有执行权限<br>２．启动为进程之后，其进程的属主为远程序文件的属组<br>３．权限设定<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chmod g+s file</div><div class="line">chmod g-s file</div></pre></td></tr></table></figure></p>
-<h3 id="目录上的SGID权限"><a href="#目录上的SGID权限" class="headerlink" title="目录上的SGID权限"></a>目录上的SGID权限</h3><p>１．默认情况下，用户创建文件时，其属组为此用户所属的主组<br>２．一旦某目录被设定了SGID,则对此目录有写权限的用户在此目录中创建的文件所属的组为此目录的属组．<br>３．通常用于创建一个协作目录<br>４．权限设定<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chmod g+s dir</div><div class="line">chmod g-s dir</div></pre></td></tr></table></figure></p>
-<h3 id="Sticky位"><a href="#Sticky位" class="headerlink" title="Sticky位"></a>Sticky位</h3><p>１．具有写权限的目录通常用户可以删除该目录中的任何文件，无论该文件的权限或拥有权<br>２．在目录设置Sticky位，只有文件的所有者或root可以删除该文件<br>３．Sticky设置在文件上无意义<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">chmod o+t dir</div><div class="line">chmod o-t dir</div></pre></td></tr></table></figure></p>
-<h3 id="设定文件特点属性"><a href="#设定文件特点属性" class="headerlink" title="设定文件特点属性"></a>设定文件特点属性</h3><p>chattr +i 不能删除，改名，更改<br>chattr +a 只能追加内容<br>lsattr 显示特定属性</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -3017,7 +3101,7 @@ set +C:允许覆盖
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-count">13</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

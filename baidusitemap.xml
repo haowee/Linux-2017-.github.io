@@ -4,17 +4,13 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/04/20/httpd-notes.html</loc>
-    <lastmod>2017-04-20T10:47:36.514Z</lastmod>
+    <loc>http://yoursite.com/2017/04/24/lamp%E6%BA%90%E7%A0%81%E5%8C%85%E5%AE%89%E8%A3%85.html</loc>
+    <lastmod>2017-04-24T03:05:39.465Z</lastmod>
     <data>
         <display>
-        <title>httpd常见指令及其配置</title>
-        <pubTime>2017-04-20T01:54:53.000Z</pubTime>
+        <title></title>
+        <pubTime>2017-04-24T03:05:39.465Z</pubTime>
         
-        <tag>Httpd</tag>
-         
-        <tag>web</tag>
-         
          
            
         </display>
@@ -24,10 +20,10 @@
     
   <url>
     <loc>http://yoursite.com/2017/04/20/http-ca.html</loc>
-    <lastmod>2017-04-20T09:33:42.071Z</lastmod>
+    <lastmod>2017-04-21T10:58:39.112Z</lastmod>
     <data>
         <display>
-        <title>https部署</title>
+        <title>Http two</title>
         <pubTime>2017-04-20T08:08:51.000Z</pubTime>
         
         <tag>Http</tag>
@@ -39,6 +35,25 @@
              
               <breadCrumb title="Https" url="http://yoursite.com/categories/Https/"/>
           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/04/20/httpd-notes.html</loc>
+    <lastmod>2017-04-20T11:11:34.205Z</lastmod>
+    <data>
+        <display>
+        <title>httpd常见指令及其配置</title>
+        <pubTime>2017-04-20T01:54:53.000Z</pubTime>
+        
+        <tag>Httpd</tag>
+         
+        <tag>web</tag>
+         
+         
+           
         </display>
     </data>
     </url>
