@@ -1,0 +1,478 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Hee shen">
+  
+  
+  
+  
+    <meta name="description" content="Httpd   Configure the source tree
+configure脚本配置Apache的源码树并且将其安装到指定的平台上。
+
+语法
+./configure [OPTION]… [VAR=VALUE]…
+
+选项
+配置选项
+
+下列选项会影响configure脚本自身的行为。方括号”[]”内是默认值。
+
+12345678910-C--config-cache  	等价于 --c...">
+  
+  <title>Http Configure the source tree [ Linux-2017 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/05/02/iptables.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        iptables/netfilter入门到进阶
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/04/29/lamp源码包安装.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg"/>
+          <div id="homelink">Linux-2017</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>Http Configure the source tree</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">Created at 2017-04-29</span>
+      
+        <span id = "post-title-updated">Updated at 2017-04-29</span>
+      
+      
+      
+      <span id = "post-title-tags">
+      Tag
+      
+      
+        
+        
+        <a href="/tags/HTTP/">HTTP</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/modules/">modules</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="Httpd-Configure-the-source-tree"><a href="#Httpd-Configure-the-source-tree" class="headerlink" title="Httpd   Configure the source tree"></a>Httpd   Configure the source tree</h3><blockquote>
+<p>configure脚本配置Apache的源码树并且将其安装到指定的平台上。</p>
+</blockquote>
+<h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a><strong>语法</strong></h4><blockquote>
+<p>./configure [OPTION]… [VAR=VALUE]…</p>
+</blockquote>
+<h4 id="选项"><a href="#选项" class="headerlink" title="选项"></a><strong>选项</strong></h4><ul>
+<li><p>配置选项</p>
+<blockquote>
+<p>下列选项会影响configure脚本自身的行为。方括号”[]”内是默认值。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">-C</div><div class="line">--config-cache  </div><div class="line">	等价于 --cache-file=config.cache</div><div class="line">--cache-file=FILE</div><div class="line">	在FILE文件中缓存测试结果(默认禁用)。</div><div class="line">-q</div><div class="line">--quiet</div><div class="line">	不显示脚本工作期间输出的&quot;checking ...&quot;消息</div><div class="line">--srcdir=DIR</div><div class="line">	指定源代码所在目录DIR</div></pre></td></tr></table></figure>
+</li>
+<li><p>安装目录</p>
+<blockquote>
+<p>这些选项控制着安装目录的结构。安装目录的结构取决于所选择的布局。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">--prefix=PREFIX</div><div class="line">	体系无关文件的顶级安装目录PREFIX,也就是Apache的安装目录。默认安装目录[/usr/local/apache2]</div><div class="line">--exec-prefix=EPREFIX</div><div class="line">	体系相关文件的顶级安装目录PEPREFIX,把体系相关文件安装到不同的位置可以方便的在不同主机之间共享体系相关的文件。默认情况下,make install将会把所有文件分别安装到/usr/local/apache2/bin,/usr/local/apache2/lib目录下。可以用--prefix指定一个不同与/usr/local/apache2的安装前缀,比如:--prefix=$HOME</div></pre></td></tr></table></figure>
+<blockquote>
+<p>定义一个目录布局</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">--enable-layout=LAYOUT</div><div class="line">	使用名为LAYOUT的布局配置所有源代码和编译脚本。这样就允许你在安装apache时分别指定不同文件的安装位置。config.lauout文件中包含了默认布局的示例，如下:</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div><div class="line">173</div><div class="line">174</div><div class="line">175</div><div class="line">176</div><div class="line">177</div><div class="line">178</div><div class="line">179</div><div class="line">180</div><div class="line">181</div><div class="line">182</div><div class="line">183</div><div class="line">184</div><div class="line">185</div><div class="line">186</div><div class="line">187</div><div class="line">188</div><div class="line">189</div><div class="line">190</div><div class="line">191</div><div class="line">192</div><div class="line">193</div><div class="line">194</div><div class="line">195</div><div class="line">196</div><div class="line">197</div><div class="line">198</div><div class="line">199</div><div class="line">200</div><div class="line">201</div><div class="line">202</div><div class="line">203</div><div class="line">204</div><div class="line">205</div><div class="line">206</div><div class="line">207</div><div class="line">208</div><div class="line">209</div><div class="line">210</div><div class="line">211</div><div class="line">212</div><div class="line">213</div><div class="line">214</div><div class="line">215</div><div class="line">216</div><div class="line">217</div><div class="line">218</div><div class="line">219</div><div class="line">220</div><div class="line">221</div><div class="line">222</div><div class="line">223</div><div class="line">224</div><div class="line">225</div><div class="line">226</div><div class="line">227</div><div class="line">228</div><div class="line">229</div><div class="line">230</div><div class="line">231</div><div class="line">232</div><div class="line">233</div><div class="line">234</div><div class="line">235</div><div class="line">236</div><div class="line">237</div><div class="line">238</div><div class="line">239</div><div class="line">240</div><div class="line">241</div><div class="line">242</div><div class="line">243</div><div class="line">244</div><div class="line">245</div><div class="line">246</div><div class="line">247</div><div class="line">248</div><div class="line">249</div><div class="line">250</div><div class="line">251</div><div class="line">252</div><div class="line">253</div><div class="line">254</div><div class="line">255</div><div class="line">256</div><div class="line">257</div><div class="line">258</div><div class="line">259</div><div class="line">260</div><div class="line">261</div><div class="line">262</div><div class="line">263</div><div class="line">264</div><div class="line">265</div><div class="line">266</div><div class="line">267</div><div class="line">268</div><div class="line">269</div><div class="line">270</div><div class="line">271</div><div class="line">272</div><div class="line">273</div><div class="line">274</div><div class="line">275</div><div class="line">276</div><div class="line">277</div><div class="line">278</div><div class="line">279</div><div class="line">280</div><div class="line">281</div><div class="line">282</div><div class="line">283</div><div class="line">284</div><div class="line">285</div><div class="line">286</div><div class="line">287</div><div class="line">288</div><div class="line">289</div><div class="line">290</div><div class="line">291</div><div class="line">292</div><div class="line">293</div><div class="line">294</div><div class="line">295</div><div class="line">296</div><div class="line">297</div><div class="line">298</div><div class="line">299</div><div class="line">300</div><div class="line">301</div><div class="line">302</div><div class="line">303</div><div class="line">304</div><div class="line">305</div><div class="line">306</div><div class="line">307</div><div class="line">308</div><div class="line">309</div><div class="line">310</div><div class="line">311</div><div class="line">312</div><div class="line">313</div><div class="line">314</div><div class="line">315</div><div class="line">316</div><div class="line">317</div><div class="line">318</div><div class="line">319</div><div class="line">320</div><div class="line">321</div><div class="line">322</div><div class="line">323</div><div class="line">324</div><div class="line">325</div><div class="line">326</div><div class="line">327</div><div class="line">328</div><div class="line">329</div><div class="line">330</div><div class="line">331</div><div class="line">332</div><div class="line">333</div><div class="line">334</div><div class="line">335</div><div class="line">336</div><div class="line">337</div><div class="line">338</div><div class="line">339</div><div class="line">340</div><div class="line">341</div><div class="line">342</div><div class="line">343</div><div class="line">344</div><div class="line">345</div><div class="line">346</div><div class="line">347</div><div class="line">348</div><div class="line">349</div><div class="line">350</div><div class="line">351</div><div class="line">352</div><div class="line">353</div><div class="line">354</div><div class="line">355</div><div class="line">356</div><div class="line">357</div><div class="line">358</div></pre></td><td class="code"><pre><div class="line">[root@72 httpd-2.4.25]# cat config.layout </div><div class="line">##</div><div class="line">##  config.layout -- Pre-defined Installation Path Layouts</div><div class="line">##</div><div class="line">##  Hints:</div><div class="line">##  - layouts can be loaded with configure&apos;s --enable-layout=ID option</div><div class="line">##  - when no --enable-layout option is given, the default layout is `Apache&apos;</div><div class="line">##  - a trailing plus character (`+&apos;) on paths is replaced with a </div><div class="line">##    `/&lt;target&gt;&apos; suffix where &lt;target&gt; is currently hardcoded to &apos;apache2&apos;.</div><div class="line">##    (This may become a configurable parameter at some point.)</div><div class="line">##</div><div class="line">#   Classical Apache path layout.</div><div class="line">&lt;Layout Apache&gt;</div><div class="line">    prefix:        /usr/local/apache2</div><div class="line">    exec_prefix:   $&#123;prefix&#125;</div><div class="line">    bindir:        $&#123;exec_prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;exec_prefix&#125;/bin</div><div class="line">    libdir:        $&#123;exec_prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;exec_prefix&#125;/modules</div><div class="line">    mandir:        $&#123;prefix&#125;/man</div><div class="line">    sysconfdir:    $&#123;prefix&#125;/conf</div><div class="line">    datadir:       $&#123;prefix&#125;</div><div class="line">    installbuilddir: $&#123;datadir&#125;/build</div><div class="line">    errordir:      $&#123;datadir&#125;/error</div><div class="line">    iconsdir:      $&#123;datadir&#125;/icons</div><div class="line">    htdocsdir:     $&#123;datadir&#125;/htdocs</div><div class="line">    manualdir:     $&#123;datadir&#125;/manual</div><div class="line">    cgidir:        $&#123;datadir&#125;/cgi-bin</div><div class="line">    includedir:    $&#123;prefix&#125;/include</div><div class="line">    localstatedir: $&#123;prefix&#125;</div><div class="line">    runtimedir:    $&#123;localstatedir&#125;/logs</div><div class="line">    logfiledir:    $&#123;localstatedir&#125;/logs</div><div class="line">    proxycachedir: $&#123;localstatedir&#125;/proxy</div><div class="line">&lt;/Layout&gt;</div><div class="line">#   GNU standards conforming path layout.</div><div class="line">#   See FSF&apos;s GNU project `make-stds&apos; document for details.</div><div class="line">&lt;Layout GNU&gt;</div><div class="line">    prefix:        /usr/local</div><div class="line">    exec_prefix:   $&#123;prefix&#125;</div><div class="line">    bindir:        $&#123;exec_prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;exec_prefix&#125;/sbin</div><div class="line">    libdir:        $&#123;exec_prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;exec_prefix&#125;/libexec</div><div class="line">    mandir:        $&#123;prefix&#125;/man</div><div class="line">    sysconfdir:    $&#123;prefix&#125;/etc+</div><div class="line">    datadir:       $&#123;prefix&#125;/share+</div><div class="line">    installbuilddir: $&#123;datadir&#125;/build</div><div class="line">    errordir:      $&#123;datadir&#125;/error</div><div class="line">    iconsdir:      $&#123;datadir&#125;/icons</div><div class="line">    htdocsdir:     $&#123;datadir&#125;/htdocs</div><div class="line">    manualdir:     $&#123;datadir&#125;/manual</div><div class="line">    cgidir:        $&#123;datadir&#125;/cgi-bin</div><div class="line">    includedir:    $&#123;prefix&#125;/include+</div><div class="line">    localstatedir: $&#123;prefix&#125;/var+</div><div class="line">    runtimedir:    $&#123;localstatedir&#125;/run</div><div class="line">    logfiledir:    $&#123;localstatedir&#125;/log</div><div class="line">    proxycachedir: $&#123;localstatedir&#125;/proxy</div><div class="line">&lt;/Layout&gt;</div><div class="line">#   Mac OS X Server (Rhapsody)</div><div class="line">&lt;Layout Mac OS X Server&gt;</div><div class="line">    prefix:        /Local/Library/WebServer</div><div class="line">    exec_prefix:   /usr</div><div class="line">    bindir:        $&#123;exec_prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;exec_prefix&#125;/sbin</div><div class="line">    libdir:        $&#123;exec_prefix&#125;/lib</div><div class="line">    libexecdir:    /System/Library/Apache/Modules</div><div class="line">    mandir:        $&#123;exec_prefix&#125;/share/man</div><div class="line">    sysconfdir:    $&#123;prefix&#125;/Configuration</div><div class="line">    datadir:       $&#123;prefix&#125;</div><div class="line">    installbuilddir: /System/Library/Apache/Build</div><div class="line">    errordir:      /System/Library/Apache/Error</div><div class="line">    iconsdir:      /System/Library/Apache/Icons</div><div class="line">    manualdir:     /System/Library/Apache/Manual</div><div class="line">    htdocsdir:     $&#123;datadir&#125;/Documents</div><div class="line">    cgidir:        $&#123;datadir&#125;/CGI-Executables</div><div class="line">    includedir:    /System/Library/Frameworks/Apache.framework/Versions/2.0/Headers</div><div class="line">    localstatedir: /var</div><div class="line">    runtimedir:    $&#123;prefix&#125;/Logs</div><div class="line">    logfiledir:    $&#123;prefix&#125;/Logs</div><div class="line">    proxycachedir: $&#123;prefix&#125;/ProxyCache</div><div class="line">&lt;/Layout&gt;</div><div class="line">#   Darwin/Mac OS Layout</div><div class="line">&lt;Layout Darwin&gt;</div><div class="line">    prefix:        /usr</div><div class="line">    exec_prefix:   $&#123;prefix&#125;</div><div class="line">    bindir:        $&#123;exec_prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;exec_prefix&#125;/sbin</div><div class="line">    libdir:        $&#123;exec_prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;exec_prefix&#125;/libexec+</div><div class="line">    mandir:        $&#123;prefix&#125;/share/man</div><div class="line">    datadir:       /Library/WebServer</div><div class="line">    sysconfdir:    /etc+</div><div class="line">    installbuilddir: $&#123;prefix&#125;/share/httpd/build</div><div class="line">    errordir:      $&#123;prefix&#125;/share/httpd/error</div><div class="line">    iconsdir:      $&#123;prefix&#125;/share/httpd/icons</div><div class="line">    htdocsdir:     $&#123;datadir&#125;/Documents</div><div class="line">    manualdir:     $&#123;datadir&#125;/share/httpd/manual</div><div class="line">    cgidir:        $&#123;datadir&#125;/CGI-Executables</div><div class="line">    includedir:    $&#123;prefix&#125;/include+</div><div class="line">    localstatedir: /var</div><div class="line">    runtimedir:    $&#123;localstatedir&#125;/run</div><div class="line">    logfiledir:    $&#123;localstatedir&#125;/log+</div><div class="line">    proxycachedir: $&#123;runtimedir&#125;/proxy</div><div class="line">&lt;/Layout&gt;</div><div class="line">#   Red Hat Linux 7.x layout</div><div class="line">&lt;Layout RedHat&gt;</div><div class="line">    prefix:        /usr</div><div class="line">    exec_prefix:   $&#123;prefix&#125;</div><div class="line">    bindir:        $&#123;prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;prefix&#125;/sbin</div><div class="line">    libdir:        $&#123;prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;prefix&#125;/lib/apache</div><div class="line">    mandir:        $&#123;prefix&#125;/man</div><div class="line">    sysconfdir:    /etc/httpd/conf</div><div class="line">    datadir:       /var/www</div><div class="line">    installbuilddir: $&#123;datadir&#125;/build</div><div class="line">    errordir:      $&#123;datadir&#125;/error</div><div class="line">    iconsdir:      $&#123;datadir&#125;/icons</div><div class="line">    htdocsdir:     $&#123;datadir&#125;/html</div><div class="line">    manualdir:     $&#123;datadir&#125;/manual</div><div class="line">    cgidir:        $&#123;datadir&#125;/cgi-bin</div><div class="line">    includedir:    $&#123;prefix&#125;/include/apache</div><div class="line">    localstatedir: /var</div><div class="line">    runtimedir:    $&#123;localstatedir&#125;/run</div><div class="line">    logfiledir:    $&#123;localstatedir&#125;/log/httpd</div><div class="line">    proxycachedir: $&#123;localstatedir&#125;/cache/httpd</div><div class="line">&lt;/Layout&gt;     </div><div class="line">#   According to the /opt filesystem conventions</div><div class="line">&lt;Layout opt&gt;</div><div class="line">    prefix:        /opt/apache</div><div class="line">    exec_prefix:   $&#123;prefix&#125;</div><div class="line">    bindir:        $&#123;exec_prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;exec_prefix&#125;/sbin</div><div class="line">    libdir:        $&#123;exec_prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;exec_prefix&#125;/libexec</div><div class="line">    mandir:        $&#123;prefix&#125;/man</div><div class="line">    sysconfdir:    /etc$&#123;prefix&#125;</div><div class="line">    datadir:       $&#123;prefix&#125;/share</div><div class="line">    installbuilddir: $&#123;datadir&#125;/build</div><div class="line">    errordir:      $&#123;datadir&#125;/error</div><div class="line">    iconsdir:      $&#123;datadir&#125;/icons</div><div class="line">    htdocsdir:     $&#123;datadir&#125;/htdocs</div><div class="line">    manualdir:     $&#123;datadir&#125;/manual</div><div class="line">    cgidir:        $&#123;datadir&#125;/cgi-bin</div><div class="line">    includedir:    $&#123;prefix&#125;/include</div><div class="line">    localstatedir: /var$&#123;prefix&#125;</div><div class="line">    runtimedir:    $&#123;localstatedir&#125;/run</div><div class="line">    logfiledir:    $&#123;localstatedir&#125;/logs</div><div class="line">    proxycachedir: $&#123;localstatedir&#125;/proxy</div><div class="line">&lt;/Layout&gt;</div><div class="line">#   SuSE 6.x layout</div><div class="line">&lt;Layout SuSE&gt;</div><div class="line">    prefix:        /usr</div><div class="line">    exec_prefix:   $&#123;prefix&#125;</div><div class="line">    bindir:        $&#123;prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;prefix&#125;/sbin</div><div class="line">    libdir:        $&#123;prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;prefix&#125;/lib/apache</div><div class="line">    mandir:        $&#123;prefix&#125;/share/man</div><div class="line">    sysconfdir:    /etc/httpd</div><div class="line">    datadir:       /usr/local/httpd</div><div class="line">    installbuilddir: $&#123;datadir&#125;/build</div><div class="line">    errordir:      $&#123;datadir&#125;/error</div><div class="line">    iconsdir:      $&#123;datadir&#125;/icons</div><div class="line">    htdocsdir:     $&#123;datadir&#125;/htdocs</div><div class="line">    manualdir:     $&#123;datadir&#125;/manual</div><div class="line">    cgidir:        $&#123;datadir&#125;/cgi-bin</div><div class="line">    includedir:    $&#123;prefix&#125;/include/apache</div><div class="line">    localstatedir: /var/lib/httpd</div><div class="line">    runtimedir:    /var/run</div><div class="line">    logfiledir:    /var/log/httpd</div><div class="line">    proxycachedir: /var/cache/httpd</div><div class="line">&lt;/Layout&gt;</div><div class="line">#   BSD/OS layout</div><div class="line">&lt;Layout BSDI&gt;</div><div class="line">    prefix:        /var/www</div><div class="line">    exec_prefix:   /usr/contrib</div><div class="line">    bindir:        $&#123;exec_prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;exec_prefix&#125;/bin</div><div class="line">    libdir:        $&#123;exec_prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;exec_prefix&#125;/libexec/apache</div><div class="line">    mandir:        $&#123;exec_prefix&#125;/man</div><div class="line">    sysconfdir:    $&#123;prefix&#125;/conf</div><div class="line">    datadir:       $&#123;prefix&#125;</div><div class="line">    installbuilddir: $&#123;datadir&#125;/build</div><div class="line">    errordir:      $&#123;datadir&#125;/error</div><div class="line">    iconsdir:      $&#123;datadir&#125;/icons</div><div class="line">    htdocsdir:     $&#123;datadir&#125;/htdocs</div><div class="line">    manualdir:     $&#123;datadir&#125;/manual</div><div class="line">    cgidir:        $&#123;datadir&#125;/cgi-bin</div><div class="line">    includedir:    $&#123;exec_prefix&#125;/include/apache</div><div class="line">    localstatedir: /var</div><div class="line">    runtimedir:    $&#123;localstatedir&#125;/run</div><div class="line">    logfiledir:    $&#123;localstatedir&#125;/log/httpd</div><div class="line">    proxycachedir: $&#123;localstatedir&#125;/proxy</div><div class="line">&lt;/Layout&gt;</div><div class="line">#   Solaris 8 Layout</div><div class="line">&lt;Layout Solaris&gt;</div><div class="line">    prefix:        /usr/apache</div><div class="line">    exec_prefix:   $&#123;prefix&#125;</div><div class="line">    bindir:        $&#123;exec_prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;exec_prefix&#125;/bin</div><div class="line">    libdir:        $&#123;exec_prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;exec_prefix&#125;/libexec</div><div class="line">    mandir:        $&#123;exec_prefix&#125;/man</div><div class="line">    sysconfdir:    /etc/apache</div><div class="line">    datadir:       /var/apache</div><div class="line">    installbuilddir: $&#123;datadir&#125;/build</div><div class="line">    errordir:      $&#123;datadir&#125;/error</div><div class="line">    iconsdir:      $&#123;datadir&#125;/icons</div><div class="line">    htdocsdir:     $&#123;datadir&#125;/htdocs</div><div class="line">    manualdir:     $&#123;datadir&#125;/manual</div><div class="line">    cgidir:        $&#123;datadir&#125;/cgi-bin</div><div class="line">    includedir:    $&#123;exec_prefix&#125;/include</div><div class="line">    localstatedir: $&#123;prefix&#125;</div><div class="line">    runtimedir:    /var/run</div><div class="line">    logfiledir:    $&#123;datadir&#125;/logs</div><div class="line">    proxycachedir: $&#123;datadir&#125;/proxy</div><div class="line">&lt;/Layout&gt;</div><div class="line">#   OpenBSD Layout</div><div class="line">&lt;Layout OpenBSD&gt;</div><div class="line">    prefix:        /var/www</div><div class="line">    exec_prefix:   /usr</div><div class="line">    bindir:        $&#123;exec_prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;exec_prefix&#125;/sbin</div><div class="line">    libdir:        $&#123;exec_prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;exec_prefix&#125;/lib/apache/modules</div><div class="line">    mandir:        $&#123;exec_prefix&#125;/share/man</div><div class="line">    sysconfdir:    $&#123;prefix&#125;/conf</div><div class="line">    datadir:       $&#123;prefix&#125;</div><div class="line">    installbuilddir: $&#123;prefix&#125;/build</div><div class="line">    errordir:      $&#123;prefix&#125;/error</div><div class="line">    iconsdir:      $&#123;prefix&#125;/icons</div><div class="line">    htdocsdir:     $&#123;prefix&#125;/htdocs</div><div class="line">    manualdir:     $&#123;datadir&#125;/manual</div><div class="line">    cgidir:        $&#123;prefix&#125;/cgi-bin</div><div class="line">    includedir:    $&#123;exec_prefix&#125;/lib/apache/include</div><div class="line">    localstatedir: $&#123;prefix&#125;</div><div class="line">    runtimedir:    $&#123;prefix&#125;/logs</div><div class="line">    logfiledir:    $&#123;prefix&#125;/logs</div><div class="line">    proxycachedir: $&#123;prefix&#125;/proxy</div><div class="line">&lt;/Layout&gt;</div><div class="line"># FreeBSD Layout</div><div class="line">&lt;Layout FreeBSD&gt;</div><div class="line">  prefix:        /usr/local</div><div class="line">  exec_prefix:   $&#123;prefix&#125;</div><div class="line">  bindir:        $&#123;exec_prefix&#125;/bin</div><div class="line">  sbindir:       $&#123;exec_prefix&#125;/sbin</div><div class="line">  libdir:        $&#123;exec_prefix&#125;/lib</div><div class="line">  libexecdir:    $&#123;exec_prefix&#125;/libexec/apache2</div><div class="line">  mandir:        $&#123;prefix&#125;/man</div><div class="line">  sysconfdir:    $&#123;prefix&#125;/etc/apache2</div><div class="line">  datadir:       $&#123;prefix&#125;/www</div><div class="line">  installbuilddir: $&#123;prefix&#125;/share/apache2/build</div><div class="line">  errordir:      $&#123;datadir&#125;/error</div><div class="line">  iconsdir:      $&#123;datadir&#125;/icons</div><div class="line">  htdocsdir:     $&#123;datadir&#125;/data</div><div class="line">  manualdir:     $&#123;prefix&#125;/share/doc/apache2</div><div class="line">  cgidir:        $&#123;datadir&#125;/cgi-bin</div><div class="line">  includedir:    $&#123;prefix&#125;/include/apache2</div><div class="line">  localstatedir: /var</div><div class="line">  runtimedir:    $&#123;localstatedir&#125;/run</div><div class="line">  logfiledir:    $&#123;localstatedir&#125;/log</div><div class="line">  proxycachedir: $&#123;datadir&#125;/proxy</div><div class="line">&lt;/Layout&gt;</div><div class="line"># Debian layout</div><div class="line">&lt;Layout Debian&gt;</div><div class="line">    prefix:        </div><div class="line">    exec_prefix:   $&#123;prefix&#125;/usr</div><div class="line">    bindir:        $&#123;exec_prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;exec_prefix&#125;/sbin</div><div class="line">    libdir:        $&#123;exec_prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;exec_prefix&#125;/lib/apache2/modules</div><div class="line">    mandir:        $&#123;exec_prefix&#125;/share/man</div><div class="line">    sysconfdir:    $&#123;prefix&#125;/etc/apache2</div><div class="line">    datadir:       $&#123;exec_prefix&#125;/share/apache2</div><div class="line">    iconsdir:      $&#123;datadir&#125;/icons</div><div class="line">    htdocsdir:     $&#123;prefix&#125;/usr/share/apache2/default-site/htdocs</div><div class="line">    manualdir:     $&#123;htdocsdir&#125;/manual</div><div class="line">    cgidir:        $&#123;prefix&#125;/usr/lib/cgi-bin</div><div class="line">    includedir:    $&#123;exec_prefix&#125;/include/apache2</div><div class="line">    localstatedir: $&#123;prefix&#125;/var/lock/apache2</div><div class="line">    runtimedir:    $&#123;prefix&#125;/var/run/apache2</div><div class="line">    logfiledir:    $&#123;prefix&#125;/var/log/apache2</div><div class="line">    proxycachedir: $&#123;prefix&#125;/var/cache/apache2/proxy</div><div class="line">    infodir:       $&#123;exec_prefix&#125;/share/info</div><div class="line">    installbuilddir: $&#123;prefix&#125;/usr/share/apache2/build</div><div class="line">    errordir:      $&#123;datadir&#125;/error</div><div class="line">&lt;/Layout&gt;</div><div class="line"># Generic RPM layout</div><div class="line">&lt;Layout RPM&gt;</div><div class="line">    prefix:        /usr</div><div class="line">    exec_prefix:   $&#123;prefix&#125;</div><div class="line">    bindir:        $&#123;prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;prefix&#125;/sbin</div><div class="line">    libdir:        $&#123;prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;libdir&#125;/httpd/modules</div><div class="line">    mandir:        $&#123;prefix&#125;/share/man</div><div class="line">    sysconfdir:    /etc/httpd/conf</div><div class="line">    installbuilddir: $&#123;libdir&#125;/httpd/build</div><div class="line">    includedir:    $&#123;prefix&#125;/include/httpd</div><div class="line">    localstatedir: /var</div><div class="line">    datadir:       $&#123;localstatedir&#125;/www</div><div class="line">    errordir:      $&#123;datadir&#125;/error</div><div class="line">    iconsdir:      $&#123;datadir&#125;/icons</div><div class="line">    htdocsdir:     $&#123;datadir&#125;/html</div><div class="line">    manualdir:     $&#123;datadir&#125;/manual</div><div class="line">    cgidir:        $&#123;datadir&#125;/cgi-bin</div><div class="line">    runtimedir:    $&#123;localstatedir&#125;/run</div><div class="line">    logfiledir:    $&#123;localstatedir&#125;/log/httpd</div><div class="line">    proxycachedir: $&#123;localstatedir&#125;/cache/httpd/cache-root</div><div class="line">&lt;/Layout&gt;</div><div class="line"># AIX layout</div><div class="line">&lt;Layout AIX&gt;</div><div class="line">    prefix:        /opt/httpd</div><div class="line">    exec_prefix:   /opt/httpd</div><div class="line">    bindir:        $&#123;exec_prefix&#125;/bin</div><div class="line">    sbindir:       $&#123;exec_prefix&#125;/sbin</div><div class="line">    libdir:        $&#123;exec_prefix&#125;/lib</div><div class="line">    libexecdir:    $&#123;exec_prefix&#125;/libexec</div><div class="line">    mandir:        /usr/share/man</div><div class="line">    sysconfdir:    /etc/httpd</div><div class="line">    datadir:       /var/httpd</div><div class="line">    installbuilddir: $&#123;datadir&#125;/build</div><div class="line">    errordir:      $&#123;datadir&#125;/error</div><div class="line">    htdocsdir:     $&#123;datadir&#125;/htdocs</div><div class="line">    cgidir:        $&#123;datadir&#125;/cgi-bin</div><div class="line">    iconsdir:      $&#123;prefix&#125;/icons</div><div class="line">    manualdir:     $&#123;prefix&#125;/manual</div><div class="line">    includedir:    $&#123;prefix&#125;/include</div><div class="line">    localstatedir: /var/httpd</div><div class="line">    runtimedir:    $&#123;localstatedir&#125;/run</div><div class="line">    logfiledir:    $&#123;localstatedir&#125;/logs</div><div class="line">    proxycachedir: $&#123;localstatedir&#125;/proxy</div><div class="line">&lt;/Layout&gt;</div><div class="line"># FHS layout</div><div class="line">&lt;Layout Slackware-FHS&gt;</div><div class="line">    prefix:          /usr</div><div class="line">    exec_prefix:     $&#123;prefix&#125;</div><div class="line">    bindir:          $&#123;prefix&#125;/bin</div><div class="line">    sbindir:         $&#123;prefix&#125;/sbin</div><div class="line">    libdir:          $&#123;prefix&#125;/lib/httpd</div><div class="line">    libexecdir:      $&#123;prefix&#125;/lib/httpd/modules</div><div class="line">    installbuilddir: $&#123;prefix&#125;/lib/httpd/build</div><div class="line">    mandir:          $&#123;prefix&#125;/man</div><div class="line">    sysconfdir:      /etc/httpd</div><div class="line">    datadir:         /srv/httpd</div><div class="line">    iconsdir:        $&#123;datadir&#125;/icons</div><div class="line">    htdocsdir:       $&#123;datadir&#125;/htdocs</div><div class="line">    manualdir:       $&#123;htdocsdir&#125;/manual</div><div class="line">    cgidir:          $&#123;datadir&#125;/cgi-bin</div><div class="line">    errordir:        $&#123;datadir&#125;/error</div><div class="line">    includedir:      $&#123;prefix&#125;/include/httpd</div><div class="line">    localstatedir:   /var</div><div class="line">    runtimedir:      $&#123;localstatedir&#125;/run/httpd</div><div class="line">    logfiledir:      $&#123;localstatedir&#125;/log/httpd</div><div class="line">    proxycachedir:   $&#123;localstatedir&#125;/cache/httpd</div><div class="line">&lt;/Layout&gt;</div></pre></td></tr></table></figure>
+<blockquote>
+<p>安装目录微调</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line">--bindir=DIR</div><div class="line">	用户可执行目录dir</div><div class="line">--datadir=DIR</div><div class="line">	web服务器只读的体系无关数据目录DIR，虽然autoconf提供了该选项，但Apache并未使用它</div><div class="line">--includedir=DIR</div><div class="line">	Apache的头文件DIR</div><div class="line">--infodir=DIR</div><div class="line">	信息文档目录DIR 。虽然autoconf提供了该选项，但Apache并未使用它。</div><div class="line">--libdir=DIR</div><div class="line">--libexecdir=DIR</div><div class="line">	程序可执行目录DIR，也就是动态加载模块目录。</div><div class="line">--localstatedir=DIR</div><div class="line">	可写的单一数据目录DIR。</div><div class="line">--mandir=DIR</div><div class="line">--oldincludedir=DIR</div><div class="line">	非gcc的C头文件目录DIR</div><div class="line">--sbindir=DIR</div><div class="line">--sharedstatedir=DIR</div><div class="line">	可写的体系无关数据目录DIR。</div><div class="line">--sysconfdir=DIR</div><div class="line">	配置文件目录，只读的单一数据目录DIR，用于存放httpd.conf和mime.types之类的服务器配置文件。</div></pre></td></tr></table></figure>
+</li>
+<li><p>系统类型</p>
+<blockquote>
+<p>这些选项用于交叉编译在其他平台上运行的Apache HTTP服务器。在同一平台编译和运行Apache不需要使用这些选项。</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">--build=BUILD</div><div class="line">	指定编译文件所在的系统类型BUILD</div><div class="line">--host=HOST</div><div class="line">	指定Apache HTTP服务器将要运行的目标系统类型HOST</div><div class="line">--target=TARGET</div></pre></td></tr></table></figure>
+</li>
+<li><p>模块选项</p>
+<blockquote>
+<p>有两种使用模块的方法:一是静态连接进核心，二是作为DSO模块动态加载;如果编译中包含任何DSO模块，则mod_so会被自动包含进核心。如果希望核心能够装载DSO，但不实际编译任何DSO模块，需指明”–enable-so=static”</p>
+</blockquote>
+<ul>
+<li>一般语法:<ul>
+<li>–disable-MODULE    禁用module模块<ul>
+<li>–enable-MODULE=shared将MODULE编译为DSO(可用于所有模块)</li>
+<li>–enable-MODULE=static将MODULE静态连接进核心(仅用于扩展和实验模块)</li>
+<li>–enable-mod-shared=MODULE-LIST将MODULE-LIST中的所有模块都编译成DSO</li>
+<li>–enable-modules=MODULES-LIST将MODULE-LIST静态连接进核心</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>上述MODULES-LIST可以是:</p>
+<p>​    1.用引号并且用空格分割的模块列表</p>
+<p>​        <code>--enable-mods-shared=&#39;headers rewrite dav&#39;</code></p>
+<p>​    2.”<code>most</code>“(大多数模块［遇见错误模块时忽略该模块而不中断配置过程］)<br>​    3.”<code>all</code>“(所有模块［遇见错误模块时中断配置过程并报错］)</p>
+<p>​            <code>--enable-mods-shared=most</code>    </p>
+<p><strong>注意</strong>:configure将忽略MODULE和MODULE-LIST中的拼写错误，注意仔细拼写。用于MODULE和MODULE-LIST中的名称是”mod<em>NAME”中去掉”mod</em>“并将剩余部分中的下划线”_”替换为连字符”-“以后的结果，比如”mod_log_config”模块应当表示为”log-config”。</p>
+<ul>
+<li><p>多路处理模块(MPM)</p>
+<p>必须有而且只能有一个MPM模块包含进核心，可以使用下面配置进行选择:</p>
+<p>​    –with-mpm=MPM</p>
+<p>​其中，MPM是你想要使用的多路处理模块的名字，如果不使用这个选项，将会使用默认,centos的默认MPM为prefork</p>
+</li>
+<li><p>第三方模块</p>
+<p>有至少两种方法可以添加第三方模块，最简单的方法是作为配置参数提供，语法如下：</p>
+<ul>
+<li><p><code>--with-module=module-type:module-file[, module-type:module-file]</code></p>
+<p><code>module-file</code>是模块的源代码文件名，该文件必须位于Apahe源代码目录树的”<code>modules/module-type</code>“目录下，如果<code>configure</code>没有在那里找到module-file ，则将它看作一个绝对路径名并尝试将其复制到”<code>modules/module-type</code>“目录中，如果”<code>modules/module-type</code>“目录不存在，<code>configure</code>将新建一个”<code>modules/module-type</code>“目录并在其中放置一个标准的<code>Makefile.in</code>文件。这种方法有两个明显的缺陷：模块的源代码必须是单一文件模块只能静态连接进核心，而不能作为DSO模块所以一般并不使用此方法，而是使用<code>apxs</code>(Apache扩展工具)来添加第三方模块支持。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>特殊程序包选项</p>
+<ul>
+<li><p>–with-apr=DIR</p>
+</li>
+<li><p>–with-apr-util=DIR</p>
+</li>
+<li><p>–with-ssl=DIR</p>
+</li>
+<li><p>–with-z=DIR</p>
+<blockquote>
+<p>如果你启用了压缩模块(比如<code>mod_deflate</code>)，<code>configure</code>脚本将会自动搜寻已经安装的<code>zlib</code>库，你可以在这里指定它的安装路径。</p>
+</blockquote>
+</li>
+<li><p>–with-perl=DIR</p>
+</li>
+<li><p>–with-prcre=DIR</p>
+</li>
+<li><p>–with-ldap=DIR</p>
+</li>
+</ul>
+</li>
+<li><p>环境变量</p>
+<ul>
+<li>CC<br>  C编译器</li>
+<li>CFLAGS<br>  C编译器的flags</li>
+<li>CPP<br>  C预处理程序</li>
+<li>CPPGLAGS<br>  C/C++预处理程序flags,比如使用”-Iincludedir”指定一个非标准的头文件目录includedir</li>
+<li>LDFLAGS<br>  连接器flags<br>  ​</li>
+</ul>
+</li>
+</ul>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Httpd-Configure-the-source-tree"><span class="toc-text">Httpd   Configure the source tree</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#语法"><span class="toc-text">语法</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#选项"><span class="toc-text">选项</span></a></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/05/02/iptables.html" class="prev">&larr; Prev post iptables/netfilter入门到进阶</a>
+  
+
+  
+
+  
+    <a href="/2017/04/29/lamp源码包安装.html" class="next">Next post  &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Hee shen using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg">
+    <p id="description">my notes</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com/">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.douban.com">
+        
+          <i class="icon iconfont douban">&#xe60f;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
