@@ -4,6 +4,25 @@
 
     
   <url>
+    <loc>http://yoursite.com/2017/05/13/lvs-nat-1.html</loc>
+    <lastmod>2017-05-13T07:47:05.157Z</lastmod>
+    <data>
+        <display>
+        <title>keepalived实现lvs-nat</title>
+        <pubTime>2017-05-13T07:37:08.000Z</pubTime>
+        
+        <tag>lvs</tag>
+         
+        <tag>keepalived</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yoursite.com/2017/05/13/nfs.html</loc>
     <lastmod>2017-05-13T07:43:44.942Z</lastmod>
     <data>
@@ -14,25 +33,6 @@
         <tag>nfs</tag>
          
         <tag>文件共享</tag>
-         
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yoursite.com/2017/05/13/lvs-nat-1.html</loc>
-    <lastmod>2017-05-13T07:40:27.723Z</lastmod>
-    <data>
-        <display>
-        <title>keepalived实现lvs-nat</title>
-        <pubTime>2017-05-13T07:37:08.000Z</pubTime>
-        
-        <tag>lvs</tag>
-         
-        <tag>keepalived</tag>
          
          
            
