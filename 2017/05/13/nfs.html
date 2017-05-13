@@ -16,9 +16,13 @@
   
   
   
-    <meta name="description" content="aaaaaaaaaaaaa">
+    <meta name="description" content="nfs实践作业
+(1) nfs server导出/data/application/web，在目录中提供wordpress;
+(2) nfs client挂载nfs server导出的文件系统至/var/www/html；
+(3) 客户端（lamp）部署wordpress，并让其正常访问；要确保能正常发文章，上传图片；
+(4) 客户端2(lamp)，挂载nfs server导出的文件系统至/...">
   
-  <title>tags [ Linux-2017 ]</title>
+  <title>nfs [ Linux-2017 ]</title>
   
   
     <link rel="shortcut icon" href="/favicon.ico">
@@ -37,6 +41,15 @@
 <body>
 <div class="side-navigate hide-area">
   
+  
+    <div class="item next">
+      <a href="/2017/05/13/lvs-nat-1.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        keepalived实现lvs-nat
+      </div>
+    </div>
   
 </div>
 <div id="outer-container" class="hide-area">
@@ -69,7 +82,7 @@
           </li>
         
           
-            <li class="active">
+            <li>
           
             <a href="/tags">Tags</a>
             
@@ -108,15 +121,61 @@
     <div id="content-inner">
       
       
-  <article id="page">
+  <article id="post">
+    <h1>nfs</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">Created at 2017-05-13</span>
+      
+        <span id = "post-title-updated">Updated at 2017-05-13</span>
+      
+      
+      
+      <span id = "post-title-tags">
+      Tag
+      
+      
+        
+        
+        <a href="/tags/nfs/">nfs</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/文件共享/">文件共享</a>
+      
+      </span>
+      
+    </p>
     
-    
-      <h1 class="center-title">tags</h1>
-      <div class="tag-cloud-tags">
-        <a href="/tags/Ca/" style="font-size: 16px; color: #999">Ca</a> <a href="/tags/HTTP/" style="font-size: 16px; color: #999">HTTP</a> <a href="/tags/Http/" style="font-size: 16px; color: #999">Http</a> <a href="/tags/Httpd/" style="font-size: 16px; color: #999">Httpd</a> <a href="/tags/Https/" style="font-size: 16px; color: #999">Https</a> <a href="/tags/Iptables/" style="font-size: 16px; color: #999">Iptables</a> <a href="/tags/Linux/" style="font-size: 32px; color: #444">Linux</a> <a href="/tags/Notes/" style="font-size: 16px; color: #999">Notes</a> <a href="/tags/bind/" style="font-size: 16px; color: #999">bind</a> <a href="/tags/keepalived/" style="font-size: 16px; color: #999">keepalived</a> <a href="/tags/linux/" style="font-size: 24px; color: #6f6f6f">linux</a> <a href="/tags/lvs/" style="font-size: 16px; color: #999">lvs</a> <a href="/tags/modules/" style="font-size: 16px; color: #999">modules</a> <a href="/tags/nfs/" style="font-size: 16px; color: #999">nfs</a> <a href="/tags/web/" style="font-size: 16px; color: #999">web</a> <a href="/tags/文件共享/" style="font-size: 16px; color: #999">文件共享</a>
-      </div>
-    
+    <h2 id="nfs实践作业"><a href="#nfs实践作业" class="headerlink" title="nfs实践作业"></a>nfs实践作业</h2><blockquote>
+<p>(1) nfs server导出/data/application/web，在目录中提供wordpress;</p>
+<p>(2) nfs client挂载nfs server导出的文件系统至/var/www/html；</p>
+<p>(3) 客户端（lamp）部署wordpress，并让其正常访问；要确保能正常发文章，上传图片；</p>
+<p>(4) 客户端2(lamp)，挂载nfs server导出的文件系统至/var/www/html；验正其wordpress是否可被访问； 要确保能正常发文章，上传图片；</p>
+</blockquote>
+<h3 id="nfs-server端"><a href="#nfs-server端" class="headerlink" title="nfs server端"></a>nfs server端</h3><ul>
+<li><p>安装配置nfs</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">yum install nfs-utiles -y</div><div class="line">vim /etc/exports</div><div class="line">/data/application/web/  172.18.0.0/16(rw,async)</div><div class="line">chmod -R 777 //data/application/web/wordpress</div></pre></td></tr></table></figure>
+</li>
+<li><p>client1</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">yum install httpd mairadb-server php-fpm php php-mysql</div><div class="line">mysql</div><div class="line">create database wp;</div><div class="line">grant all privileges on *.* to wp@&apos;%&apos; identified by &apos;123&apos;;</div><div class="line">flush privileges;</div><div class="line">quit;</div><div class="line">mount -t nfs nfs server ip:/data/application/web /var/www/html/</div></pre></td></tr></table></figure>
+</li>
+<li><p>client2</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">yum install httpd mairadb-server php-fpm php php-mysql</div><div class="line">mount -t nfs nfs server ip:/data/application/web /var/www/html/</div></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ul>
+
   </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#nfs实践作业"><span class="toc-text">nfs实践作业</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#nfs-server端"><span class="toc-text">nfs server端</span></a></li></ol></li></ol>
+  </div>
+</div>
 
   
 <nav id="pagination">
@@ -124,6 +183,8 @@
 
   
 
+  
+    <a href="/2017/05/13/lvs-nat-1.html" class="next">Next post keepalived实现lvs-nat &rarr;</a>
   
 </nav>
 
@@ -266,6 +327,8 @@ var unsplashConfig = {"gravity":"north"};
 var turnoffBackgroundImage = false;
 
 
+
+  turnoffBackgroundImage = true;
 
 
 var backgroundColor = "34495E";

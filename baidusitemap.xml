@@ -4,8 +4,76 @@
 
     
   <url>
+    <loc>http://yoursite.com/2017/05/13/nfs.html</loc>
+    <lastmod>2017-05-13T07:43:44.942Z</lastmod>
+    <data>
+        <display>
+        <title>nfs</title>
+        <pubTime>2017-05-13T07:42:51.000Z</pubTime>
+        
+        <tag>nfs</tag>
+         
+        <tag>文件共享</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/05/13/lvs-nat-1.html</loc>
+    <lastmod>2017-05-13T07:40:27.723Z</lastmod>
+    <data>
+        <display>
+        <title>keepalived实现lvs-nat</title>
+        <pubTime>2017-05-13T07:37:08.000Z</pubTime>
+        
+        <tag>lvs</tag>
+         
+        <tag>keepalived</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/05/07/Nginx%E9%85%8D%E7%BD%AE%E5%8F%8A%E4%BC%98%E5%8C%96.html</loc>
+    <lastmod>2017-05-07T05:28:28.517Z</lastmod>
+    <data>
+        <display>
+        <title></title>
+        <pubTime>2017-05-07T05:28:28.517Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/05/06/io%E6%A8%A1%E5%9E%8B.html</loc>
+    <lastmod>2017-05-06T12:21:12.504Z</lastmod>
+    <data>
+        <display>
+        <title></title>
+        <pubTime>2017-05-06T12:21:46.264Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yoursite.com/2017/05/02/iptables.html</loc>
-    <lastmod>2017-05-02T06:43:52.771Z</lastmod>
+    <lastmod>2017-05-02T06:51:08.356Z</lastmod>
     <data>
         <display>
         <title>iptables/netfilter入门到进阶</title>

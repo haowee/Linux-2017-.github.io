@@ -16,9 +16,14 @@
   
   
   
-    <meta name="description" content="aaaaaaaaaaaaa">
+    <meta name="description" content="i/o模型同步和异步关注的是消息通知机制
+同步:调用发出之后不会立即返回，但一旦返回，即是最终结果
+异步:调用发出之后立即返回消息，但返回的并非最终结果;被调用者通过状态、通知机制等来通知调用者，或通过回调函数来处理
+阻塞和非阻塞关注的是调用者等待被调用者返回结果时的状态
+阻塞:调用结果返回之前，调用者会被挂起，调用者只有在得到返回结果之后才能继续;
+非阻塞:调用者在返回结果之前，不会被挂起...">
   
-  <title>tags [ Linux-2017 ]</title>
+  <title> [ Linux-2017 ]</title>
   
   
     <link rel="shortcut icon" href="/favicon.ico">
@@ -37,6 +42,24 @@
 <body>
 <div class="side-navigate hide-area">
   
+    <div class="item prev">
+      <a href="/2017/05/07/Nginx配置及优化.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/05/02/iptables.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        iptables/netfilter入门到进阶
+      </div>
+    </div>
   
 </div>
 <div id="outer-container" class="hide-area">
@@ -69,7 +92,7 @@
           </li>
         
           
-            <li class="active">
+            <li>
           
             <a href="/tags">Tags</a>
             
@@ -108,22 +131,48 @@
     <div id="content-inner">
       
       
-  <article id="page">
+  <article id="post">
+    <h1>No Title</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">Created at 2017-05-06</span>
+      
+        <span id = "post-title-updated">Updated at 2017-05-06</span>
+      
+      
+      
+    </p>
     
-    
-      <h1 class="center-title">tags</h1>
-      <div class="tag-cloud-tags">
-        <a href="/tags/Ca/" style="font-size: 16px; color: #999">Ca</a> <a href="/tags/HTTP/" style="font-size: 16px; color: #999">HTTP</a> <a href="/tags/Http/" style="font-size: 16px; color: #999">Http</a> <a href="/tags/Httpd/" style="font-size: 16px; color: #999">Httpd</a> <a href="/tags/Https/" style="font-size: 16px; color: #999">Https</a> <a href="/tags/Iptables/" style="font-size: 16px; color: #999">Iptables</a> <a href="/tags/Linux/" style="font-size: 32px; color: #444">Linux</a> <a href="/tags/Notes/" style="font-size: 16px; color: #999">Notes</a> <a href="/tags/bind/" style="font-size: 16px; color: #999">bind</a> <a href="/tags/keepalived/" style="font-size: 16px; color: #999">keepalived</a> <a href="/tags/linux/" style="font-size: 24px; color: #6f6f6f">linux</a> <a href="/tags/lvs/" style="font-size: 16px; color: #999">lvs</a> <a href="/tags/modules/" style="font-size: 16px; color: #999">modules</a> <a href="/tags/nfs/" style="font-size: 16px; color: #999">nfs</a> <a href="/tags/web/" style="font-size: 16px; color: #999">web</a> <a href="/tags/文件共享/" style="font-size: 16px; color: #999">文件共享</a>
-      </div>
-    
+    <h1 id="i-o模型"><a href="#i-o模型" class="headerlink" title="i/o模型"></a><strong>i/o模型</strong></h1><h3 id="同步和异步"><a href="#同步和异步" class="headerlink" title="同步和异步"></a>同步和异步</h3><p>关注的是消息通知机制</p>
+<p>同步:调用发出之后不会立即返回，但一旦返回，即是最终结果</p>
+<p>异步:调用发出之后立即返回消息，但返回的并非最终结果;被调用者通过状态、通知机制等来通知调用者，或通过回调函数来处理</p>
+<h3 id="阻塞和非阻塞"><a href="#阻塞和非阻塞" class="headerlink" title="阻塞和非阻塞"></a>阻塞和非阻塞</h3><p>关注的是调用者等待被调用者返回结果时的状态</p>
+<p>阻塞:调用结果返回之前，调用者会被挂起，调用者只有在得到返回结果之后才能继续;</p>
+<p>非阻塞:调用者在返回结果之前，不会被挂起，即调用不会阻塞调用者;</p>
+<h3 id="i-o复用模型"><a href="#i-o复用模型" class="headerlink" title="i/o复用模型"></a>i/o复用模型</h3><p>I/O复用模型会用到select或者poll函数，这两个函数会使进程阻塞，但是和阻塞不同的是，这个函数可以同时阻塞多个I/O操作。而且可以同时对多个读操作，多个i/o函数进行检测，直到有数据可读或可写时，才真正调用i/o操作函数。</p>
+<h3 id="信号驱动I-O模型"><a href="#信号驱动I-O模型" class="headerlink" title="信号驱动I/O模型"></a>信号驱动I/O模型</h3><p>该模型也叫做事件驱动的I/O模型，这个模型首先允许套接口进行信号驱动I/O，并安装一个信号处理函数，进程继续运行时并不阻塞。当数据准备好时，进程会受到一个SIGIO信号，可以在信号处理函数中调用I/O操作函数处理数据。</p>
+<h3 id="异步I-O模型"><a href="#异步I-O模型" class="headerlink" title="异步I/O模型"></a>异步I/O模型</h3><p>调用aio_read函数，告诉内核描述子，缓冲区指针，缓存区大小，文件偏移以及通知的方式，然后立刻返回。当内核数据拷贝到缓冲区后，在通知应用程序。</p>
+<p>### </p>
+
   </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#i-o模型"><span class="toc-text">i/o模型</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#同步和异步"><span class="toc-text">同步和异步</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#阻塞和非阻塞"><span class="toc-text">阻塞和非阻塞</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#i-o复用模型"><span class="toc-text">i/o复用模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#信号驱动I-O模型"><span class="toc-text">信号驱动I/O模型</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#异步I-O模型"><span class="toc-text">异步I/O模型</span></a></li></ol></li></ol></li></ol>
+  </div>
+</div>
 
   
 <nav id="pagination">
   
+    <a href="/2017/05/07/Nginx配置及优化.html" class="prev">&larr; Prev post </a>
+  
 
   
 
+  
+    <a href="/2017/05/02/iptables.html" class="next">Next post iptables/netfilter入门到进阶 &rarr;</a>
   
 </nav>
 
@@ -266,6 +315,8 @@ var unsplashConfig = {"gravity":"north"};
 var turnoffBackgroundImage = false;
 
 
+
+  turnoffBackgroundImage = true;
 
 
 var backgroundColor = "34495E";

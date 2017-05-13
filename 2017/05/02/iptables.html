@@ -44,6 +44,15 @@ filter
 <body>
 <div class="side-navigate hide-area">
   
+    <div class="item prev">
+      <a href="/2017/05/06/io模型.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        
+      </div>
+    </div>
+  
   
     <div class="item next">
       <a href="/2017/04/29/http-modules.html">
@@ -191,28 +200,34 @@ filter
 <li><p>COMMAND</p>
 <ul>
 <li>链管理<ul>
-<li>-P    定义默认策略</li>
-<li>-X      删除自定义链</li>
-<li>-N    新建自定义链</li>
-<li>-E    修改chain名</li>
-<li>-F    删除表中所有规则</li>
-<li>-Z    将表中数据包计数器和流量计数器归零</li>
+<li>-P    定义默认策略<ul>
+<li>-X  删除自定义链</li>
+<li>-N新建自定义链</li>
+<li>-E修改chain名</li>
+<li>-F删除表中所有规则</li>
+<li>-Z将表中数据包计数器和流量计数器归零</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>规则管理<ul>
-<li>-A    追加</li>
-<li>-I    插入</li>
-<li>-R    替换</li>
-<li>-D    删除</li>
+<li>-A    追加<ul>
+<li>-I插入</li>
+<li>-R替换</li>
+<li>-D删除</li>
+</ul>
+</li>
 </ul>
 </li>
 <li>查看<ul>
-<li>-L    查看</li>
-<li>-n    数字输出。IP地址和端口号将打印在数字格式。</li>
-<li>-v    详细</li>
-<li>-x    展开数字显示数据包和字节计数器的确切值，而不是仅K中的舍入数</li>
-<li>–line-numbers    显示链行号</li>
-<li>-S     Print all rules in the selected chain</li>
+<li>-L    查看<ul>
+<li>-n数字输出。IP地址和端口号将打印在数字格式。</li>
+<li>-v详细</li>
+<li>-x展开数字显示数据包和字节计数器的确切值，而不是仅K中的舍入数</li>
+<li>–line-numbers显示链行号</li>
+<li>-S Print all rules in the selected chain</li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -221,12 +236,14 @@ filter
 <ul>
 <li><p>基本匹配PARAMETERS</p>
 <ul>
-<li>-s    source</li>
-<li>-d    destination</li>
-<li>-p    protocol</li>
-<li>-i    流入接口</li>
-<li>-o    流出接口</li>
-<li>-m    模块</li>
+<li>-s    source<ul>
+<li>-ddestination</li>
+<li>-pprotocol</li>
+<li>-i流入接口</li>
+<li>-o流出接口</li>
+<li>-m模块</li>
+</ul>
+</li>
 </ul>
 </li>
 <li><p>扩展匹配条件</p>
@@ -385,6 +402,12 @@ filter
 <p>允许已经建立和相关的连接</p>
 <p>iptables -A INOUT -m state –state ESTABLISHED,RELATED -j ACCEPT</p>
 <p>iptables -A OUTPUT -m state –state  ESTABLISHED,RELATED -j ACCEPT</p>
+<p>放行smb服务</p>
+<p>iptables -I INPUT 2 -d 172.18.50.72 -p tcp -m multiport –dports 139,445 -m state –state NEW -j ACCEPT</p>
+<p>放行vsftpd</p>
+<p>iptables -I INPUT 2 -d 172.18.50.72 -m state –state ESTABLISHED,RELATED -j ACCEPT</p>
+<p>需要装载ftp模块</p>
+<p>modprobe nf_conntrack_ftp</p>
 </blockquote>
 <p><strong>保存和载入规则</strong></p>
 <ul>
@@ -447,6 +470,8 @@ filter
 
   
 <nav id="pagination">
+  
+    <a href="/2017/05/06/io模型.html" class="prev">&larr; Prev post </a>
   
 
   
