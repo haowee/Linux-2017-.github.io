@@ -4,6 +4,25 @@
 
     
   <url>
+    <loc>http://yoursite.com/2017/05/14/Nginx%E9%85%8D%E7%BD%AE%E5%8F%8A%E4%BC%98%E5%8C%96.html</loc>
+    <lastmod>2017-05-14T03:51:30.861Z</lastmod>
+    <data>
+        <display>
+        <title>nginx配置及调优</title>
+        <pubTime>2017-05-14T07:42:51.000Z</pubTime>
+        
+        <tag>web</tag>
+         
+        <tag>nginx</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yoursite.com/2017/05/13/lvs-nat-1.html</loc>
     <lastmod>2017-05-13T07:47:05.157Z</lastmod>
     <data>
@@ -34,21 +53,6 @@
          
         <tag>文件共享</tag>
          
-         
-           
-        </display>
-    </data>
-    </url>
-
-    
-  <url>
-    <loc>http://yoursite.com/2017/05/07/Nginx%E9%85%8D%E7%BD%AE%E5%8F%8A%E4%BC%98%E5%8C%96.html</loc>
-    <lastmod>2017-05-07T05:28:28.517Z</lastmod>
-    <data>
-        <display>
-        <title></title>
-        <pubTime>2017-05-07T05:28:28.517Z</pubTime>
-        
          
            
         </display>
@@ -115,9 +119,9 @@
         <title>httpd常见指令及其配置</title>
         <pubTime>2017-04-20T01:54:53.000Z</pubTime>
         
-        <tag>Httpd</tag>
-         
         <tag>web</tag>
+         
+        <tag>Httpd</tag>
          
          
            
