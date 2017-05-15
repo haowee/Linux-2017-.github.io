@@ -1,0 +1,380 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Hee shen">
+  
+  
+  
+  
+    <meta name="description" content="Keepalived
+DR1
+
+12345678910111213141516171819202122232425262728293031323334353637383940414243[root@71 keepalived]# cat  keepalived.conf ! Configuration File for keepalivedglobal_defs &#123;   notif...">
+  
+  <title>keepalived双主模型 [ Linux-2017 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2017/05/15/nginx负载均衡.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        nginx负载均衡
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg"/>
+          <div id="homelink">Linux-2017</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>keepalived双主模型</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">Created at 2017-05-15</span>
+      
+        <span id = "post-title-updated">Updated at 2017-05-15</span>
+      
+      
+      
+      <span id = "post-title-tags">
+      Tag
+      
+      
+        
+        
+        <a href="/tags/keepalived/">keepalived</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/负载均衡/">负载均衡</a>
+      
+      </span>
+      
+    </p>
+    
+    <h4 id="Keepalived"><a href="#Keepalived" class="headerlink" title="Keepalived"></a><strong>Keepalived</strong></h4><ul>
+<li>DR1</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">[root@71 keepalived]# cat  keepalived.conf </div><div class="line">! Configuration File for keepalived</div><div class="line"></div><div class="line">global_defs &#123;</div><div class="line">   notification_email &#123;</div><div class="line">     acassen@firewall.loc</div><div class="line">     failover@firewall.loc</div><div class="line">     sysadmin@firewall.loc</div><div class="line">   &#125;</div><div class="line">   notification_email_from Alexandre.Cassen@firewall.loc</div><div class="line">   smtp_server 192.168.200.1</div><div class="line">   smtp_connect_timeout 30</div><div class="line">   router_id LVS_DEVEL</div><div class="line">   vrrp_mcast_group4 224.0.0.50</div><div class="line">&#125;</div><div class="line">vrrp_instance ip1 &#123;</div><div class="line">    state MASTER</div><div class="line">    interface enp0s3</div><div class="line">    virtual_router_id 50</div><div class="line">    priority 100</div><div class="line">    advert_int 1</div><div class="line">    authentication &#123;</div><div class="line">        auth_type PASS</div><div class="line">        auth_pass 1111</div><div class="line">    &#125;</div><div class="line">    virtual_ipaddress &#123;</div><div class="line">         172.18.50.100/16 dev enp0s3</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">vrrp_instance ip2 &#123;</div><div class="line">    state BACKUP</div><div class="line">    interface enp0s3</div><div class="line">    virtual_router_id 51</div><div class="line">    priority 80</div><div class="line">    advert_int 1</div><div class="line">    authentication &#123;</div><div class="line">        auth_type PASS</div><div class="line">        auth_pass 22222</div><div class="line">    &#125;</div><div class="line">    virtual_ipaddress &#123;</div><div class="line">         172.18.50.200/16 dev enp0s3</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>DR2</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div></pre></td><td class="code"><pre><div class="line">[root@72 keepalived]# cat keepalived.conf </div><div class="line">! Configuration File for keepalived</div><div class="line"></div><div class="line">global_defs &#123;</div><div class="line">   notification_email &#123;</div><div class="line">     acassen@firewall.loc</div><div class="line">     failover@firewall.loc</div><div class="line">     sysadmin@firewall.loc</div><div class="line">   &#125;</div><div class="line">   notification_email_from Alexandre.Cassen@firewall.loc</div><div class="line">   smtp_server 192.168.200.1</div><div class="line">   smtp_connect_timeout 30</div><div class="line">   router_id LVS_DEVEL</div><div class="line">   vrrp_mcast_group4 224.0.0.50</div><div class="line">&#125;</div><div class="line">vrrp_instance ip1 &#123;</div><div class="line">    state BACKUP</div><div class="line">    interface enp0s3</div><div class="line">    virtual_router_id 50</div><div class="line">    priority 90</div><div class="line">    advert_int 1</div><div class="line">    authentication &#123;</div><div class="line">        auth_type PASS</div><div class="line">        auth_pass 1111</div><div class="line">    &#125;</div><div class="line">    virtual_ipaddress &#123;</div><div class="line">         172.18.50.100/16 dev enp0s3</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line">vrrp_instance ip2 &#123;</div><div class="line">    state MASTER</div><div class="line">    interface enp0s3</div><div class="line">    virtual_router_id 51</div><div class="line">    priority 90</div><div class="line">    advert_int 1</div><div class="line">    authentication &#123;</div><div class="line">        auth_type PASS</div><div class="line">        auth_pass 22222</div><div class="line">    &#125;</div><div class="line">    virtual_ipaddress &#123;</div><div class="line">         172.18.50.200/16 dev enp0s3</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>示例通知脚本：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line">#</div><div class="line">contact=&apos;root@localhost&apos;</div><div class="line"></div><div class="line">notify() &#123;</div><div class="line">	mailsubject=&quot;$(hostname) to be $1, vip floating&quot;</div><div class="line">	mailbody=&quot;$(date +&apos;%F %T&apos;): vrrp transition, $(hostname) changed to be $1&quot;</div><div class="line">	echo &quot;$mailbody&quot; | mail -s &quot;$mailsubject&quot; $contact</div><div class="line">				&#125;</div><div class="line"></div><div class="line">case $1 in</div><div class="line">master)</div><div class="line">	notify master</div><div class="line">	;;</div><div class="line">backup)</div><div class="line">	notify backup</div><div class="line">	;;</div><div class="line">fault)</div><div class="line">	notify fault</div><div class="line">	;;</div><div class="line">*)</div><div class="line">	echo &quot;Usage: $(basename $0) &#123;master|backup|fault&#125;&quot;</div><div class="line">	exit 1</div><div class="line">    ;;</div><div class="line">esac</div></pre></td></tr></table></figure>
+<ul>
+<li>调用方法</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">notify_master &quot;/etc/keepalived/notify.sh master&quot;</div><div class="line">notify_backup &quot;/etc/keepalived/notify.sh backup&quot;</div><div class="line">notify_fault &quot;/etc/keepalived/notify.sh fault&quot;</div></pre></td></tr></table></figure>
+<ul>
+<li>高可用ipvs配置示例</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">virtual_server 172.18.50.100 &#123;</div><div class="line">	delay_loop 3</div><div class="line">	lb_algo rr</div><div class="line">	lb_kind DR</div><div class="line">	protocol TCP</div><div class="line"></div><div class="line">	sorry_server 127.0.0.1 80</div><div class="line"></div><div class="line">	real_server 10.1.0.69 80 &#123;</div><div class="line">		weight 1</div><div class="line">		HTTP_GET &#123;</div><div class="line">		url &#123;</div><div class="line">			path /</div><div class="line">			status_code 200</div><div class="line">		&#125;</div><div class="line">		connect_timeout 1</div><div class="line">		nb_get_retry 3</div><div class="line">		delay_before_retry 1</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">	real_server 10.1.0.71 80 &#123;</div><div class="line">		weight 1</div><div class="line">		HTTP_GET &#123;</div><div class="line">		url &#123;</div><div class="line">			path /</div><div class="line">			status_code 200</div><div class="line">		&#125;</div><div class="line">		connect_timeout 1</div><div class="line">		nb_get_retry 3</div><div class="line">		delay_before_retry 1</div><div class="line">		&#125;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>参数详解</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div></pre></td><td class="code"><pre><div class="line">delay_loop &lt;INT&gt;：服务轮询的时间间隔；</div><div class="line">lb_algo rr|wrr|lc|wlc|lblc|sh|dh：定义调度方法；</div><div class="line">lb_kind NAT|DR|TUN：集群的类型；</div><div class="line">persistence_timeout &lt;INT&gt;：持久连接时长；</div><div class="line">protocol TCP：服务协议，仅支持TCP；</div><div class="line">sorry_server &lt;IPADDR&gt; &lt;PORT&gt;：备用服务器地址；</div><div class="line">real_server &lt;IPADDR&gt; &lt;PORT&gt;</div><div class="line">&#123;</div><div class="line">	 weight &lt;INT&gt;</div><div class="line">	 notify_up &lt;STRING&gt;|&lt;QUOTED-STRING&gt;</div><div class="line">	 notify_down &lt;STRING&gt;|&lt;QUOTED-STRING&gt;</div><div class="line">	 HTTP_GET|SSL_GET|TCP_CHECK|SMTP_CHECK|MISC_CHECK &#123; ... &#125;：定义当前主机的健康状态检测方法；</div><div class="line">&#125;</div><div class="line">HTTP_GET|SSL_GET：应用层检测</div><div class="line"></div><div class="line">HTTP_GET|SSL_GET &#123;</div><div class="line">	url &#123;</div><div class="line">		path &lt;URL_PATH&gt;：定义要监控的URL；</div><div class="line">		status_code &lt;INT&gt;：判断上述检测机制为健康状态的响应码；</div><div class="line">		digest &lt;STRING&gt;：判断上述检测机制为健康状态的响应的内容的校验码；</div><div class="line">	&#125;</div><div class="line">	nb_get_retry &lt;INT&gt;：重试次数；</div><div class="line">	delay_before_retry &lt;INT&gt;：重试之前的延迟时长；</div><div class="line">	connect_ip &lt;IP ADDRESS&gt;：向当前RS的哪个IP地址发起健康状态检测请求</div><div class="line">	connect_port &lt;PORT&gt;：向当前RS的哪个PORT发起健康状态检测请求</div><div class="line">	bindto &lt;IP ADDRESS&gt;：发出健康状态检测请求时使用的源地址；</div><div class="line">	bind_port &lt;PORT&gt;：发出健康状态检测请求时使用的源端口；</div><div class="line">	connect_timeout &lt;INTEGER&gt;：连接请求的超时时长；</div><div class="line">&#125;</div><div class="line"> TCP_CHECK &#123;</div><div class="line">	connect_ip &lt;IP ADDRESS&gt;：向当前RS的哪个IP地址发起健康状态检测请求</div><div class="line">	connect_port &lt;PORT&gt;：向当前RS的哪个PORT发起健康状态检测请求</div><div class="line">	bindto &lt;IP ADDRESS&gt;：发出健康状态检测请求时使用的源地址；</div><div class="line">	bind_port &lt;PORT&gt;：发出健康状态检测请求时使用的源端口；</div><div class="line">	connect_timeout &lt;INTEGER&gt;：连接请求的超时时长；</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#Keepalived"><span class="toc-text">Keepalived</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2017/05/15/nginx负载均衡.html" class="next">Next post nginx负载均衡 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Hee shen using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg">
+    <p id="description">my notes</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com/">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.douban.com">
+        
+          <i class="icon iconfont douban">&#xe60f;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

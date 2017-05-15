@@ -4,6 +4,25 @@
 
     
   <url>
+    <loc>http://yoursite.com/2017/05/15/keepalived.html</loc>
+    <lastmod>2017-05-15T13:50:47.074Z</lastmod>
+    <data>
+        <display>
+        <title>keepalived双主模型</title>
+        <pubTime>2017-05-15T13:24:00.000Z</pubTime>
+        
+        <tag>keepalived</tag>
+         
+        <tag>负载均衡</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yoursite.com/2017/05/15/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1.html</loc>
     <lastmod>2017-05-15T12:57:46.156Z</lastmod>
     <data>
@@ -49,9 +68,9 @@
         <title>keepalived实现lvs-nat</title>
         <pubTime>2017-05-13T07:37:08.000Z</pubTime>
         
-        <tag>lvs</tag>
-         
         <tag>keepalived</tag>
+         
+        <tag>lvs</tag>
          
          
            
