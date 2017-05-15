@@ -4,6 +4,25 @@
 
     
   <url>
+    <loc>http://yoursite.com/2017/05/15/nginx%E8%B4%9F%E8%BD%BD%E5%9D%87%E8%A1%A1.html</loc>
+    <lastmod>2017-05-15T12:57:46.156Z</lastmod>
+    <data>
+        <display>
+        <title>nginx负载均衡</title>
+        <pubTime>2017-05-15T08:20:11.000Z</pubTime>
+        
+        <tag>nginx</tag>
+         
+        <tag>负载均衡</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yoursite.com/2017/05/14/Nginx%E9%85%8D%E7%BD%AE%E5%8F%8A%E4%BC%98%E5%8C%96.html</loc>
     <lastmod>2017-05-14T03:51:30.861Z</lastmod>
     <data>

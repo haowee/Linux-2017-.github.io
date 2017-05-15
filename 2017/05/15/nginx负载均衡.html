@@ -1,0 +1,486 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Hee shen">
+  
+  
+  
+  
+    <meta name="description" content="Nginx负载均衡
+四层
+ngx_stream_core_module
+
+配置 
+
+1234567891011注释nginx.conf下http上下文(:.,$s/^/#/g)加入sreamstream &#123;        upstream webs &#123;                server 172.18.50.72:80;                server...">
+  
+  <title>nginx负载均衡 [ Linux-2017 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2017/05/14/Nginx配置及优化.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        nginx配置及调优
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg"/>
+          <div id="homelink">Linux-2017</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>nginx负载均衡</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">Created at 2017-05-15</span>
+      
+        <span id = "post-title-updated">Updated at 2017-05-15</span>
+      
+      
+      
+      <span id = "post-title-tags">
+      Tag
+      
+      
+        
+        
+        <a href="/tags/nginx/">nginx</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/负载均衡/">负载均衡</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="Nginx负载均衡"><a href="#Nginx负载均衡" class="headerlink" title="Nginx负载均衡"></a>Nginx负载均衡</h3><blockquote>
+<h4 id="四层"><a href="#四层" class="headerlink" title="四层"></a>四层</h4></blockquote>
+<p><strong>ngx_stream_core_module</strong></p>
+<ul>
+<li>配置 </li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">注释nginx.conf下http上下文(:.,$s/^/#/g)</div><div class="line">加入sream</div><div class="line">stream &#123;</div><div class="line">        upstream webs &#123;</div><div class="line">                server 172.18.50.72:80;</div><div class="line">                server 172.18.50.73:80;</div><div class="line">        &#125;</div><div class="line">        server &#123;</div><div class="line">                listen 80;</div><div class="line">                proxy_pass webs;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><strong>ngx_stream_core_module</strong></p>
+<blockquote>
+<p>The ngx_stream_proxy_module module (1.9.0) allows proxying data streams over TCP, UDP (1.9.13), and UNIX-domain sockets.</p>
+</blockquote>
+<ul>
+<li>proxy_pass address</li>
+</ul>
+<blockquote>
+<p>Sets the address of a proxied server. The address can be specified as a domain name or IP address, and a port or as a UNIX-domain socket path.    </p>
+</blockquote>
+<ul>
+<li>proxy_timeout timeout;</li>
+</ul>
+<blockquote>
+<p>Sets the timeout between two successive read or write operations on client or proxied server connections. If no data is transmitted within this time, the connection is closed.</p>
+</blockquote>
+<ul>
+<li>proxy_connect_timeout time</li>
+</ul>
+<blockquote>
+<p>设置nginx与被代理的服务器尝试建立连接的超时时长；默认为60s；</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">示例：</div><div class="line">	stream &#123;</div><div class="line">		upstream sshsrvs &#123;</div><div class="line">			server 192.168.10.130:22;</div><div class="line">			server 192.168.10.131:22;</div><div class="line">			hash $remote_addr consistent;</div><div class="line">		&#125;</div><div class="line"></div><div class="line">		server &#123;</div><div class="line">			listen 172.16.100.6:22202;</div><div class="line">			proxy_pass sshsrvs; </div><div class="line">			proxy_timeout 60s;</div><div class="line">			proxy_connect_timeout 10s;</div><div class="line">		&#125;</div><div class="line">	&#125;</div></pre></td></tr></table></figure>
+<blockquote>
+<h4 id="七层"><a href="#七层" class="headerlink" title="七层"></a>七层</h4></blockquote>
+<p><strong>ngx_http_upstream_module</strong></p>
+<blockquote>
+<p>The ngx_http_upstream_module module is used to define groups of servers that can be referenced by the proxy_pass, fastcgi_pass, uwsgi_pass, scgi_pass, and memcached_pass directives.</p>
+</blockquote>
+<ul>
+<li><p>upstream name {…}</p>
+<blockquote>
+<p>定义后端服务器组;引入一个新的上下文;只能用于http{}上下文中;</p>
+<p>默认的调度方法是wrr;</p>
+</blockquote>
+</li>
+<li><p>server address [parameters]</p>
+<blockquote>
+<p>定义服务器地址和相关的参数</p>
+<p>​    地址格式：</p>
+<p>​        IP·[:PORT]</p>
+<p>​        HOSTNAME[:PORT]</p>
+<p>​        unix:/PATH/TO/SOME_SOCK_FILE</p>
+<p>​    参数:weight=number</p>
+<p>​            权重，默认为1;</p>
+<p>​    max_fails=number</p>
+<p>​        失败尝试的最大次数</p>
+<p>​    fail_timeout=time</p>
+<p>​        设置服务器为不可用状态的超时时长</p>
+<p>​    backup</p>
+<p>​        把服务器标记为备用状态</p>
+<p>​    down</p>
+<p>​        手动标记其为不可用</p>
+</blockquote>
+</li>
+<li><p>least_conn</p>
+<blockquote>
+<p>最少连接调度算法;当server拥有不同的权重时为wlc;当所有后端主机的连接数相同时，则使用wrr进行调度;</p>
+</blockquote>
+</li>
+<li><p>least_time header | last_byte</p>
+<blockquote>
+<p>最短平均响应时长和最少连接</p>
+<p>header:response_header</p>
+<p>last_byte:full_response</p>
+<p>仅Nginx Plus有效</p>
+</blockquote>
+</li>
+<li><p>ip_hash</p>
+<blockquote>
+<p>源地址hash算法;能够将来自同一个源ip地址的请求发往同一个upstream server;</p>
+</blockquote>
+</li>
+<li><p>hash key [consistent]</p>
+<blockquote>
+<p>基于指定的key的has表实现请求调度，此处的key可以文本、变量或二者的组合;</p>
+<p>consistent:参数，指定使用一致性hash算法;</p>
+<p>实例：</p>
+<p>​    hash $request_uri consitent</p>
+<p>​    hash $remote_addr</p>
+<p>​    hash $cookie_name</p>
+</blockquote>
+</li>
+<li><p>keepalive connections</p>
+<blockquote>
+<p>可使用长连接的连接数量</p>
+</blockquote>
+</li>
+<li><p>health_check [parameters]</p>
+<blockquote>
+<p>定义对后端主机的健康检测机制之;只能用于localtion上下文</p>
+<p>​    可用参数:</p>
+<p>​        interval=time:检测频率，默认为每隔5秒钟;</p>
+<p>​        fails=number:判断服务器状态为失败需要检测的次数;</p>
+<p>​        passes=number:判断服务器状态转为成功需要检测的次数</p>
+<p>​        uri=uri:判断其健康与否使用的uri</p>
+<p>​        match=name:基于制定的match来衡量检测结果的成败</p>
+<p>​        port=number:使用独立的端口进行检测</p>
+<p>​    仅Nginx Plus有效</p>
+</blockquote>
+</li>
+<li><p>match name {…}</p>
+<blockquote>
+<p>定义衡量某检测结果是否为成功的衡量机制</p>
+<p>专用机制：</p>
+<p>​    status CODE</p>
+<p>​    status !CODE</p>
+<p>​    …</p>
+<p>​    header:基于响应报文的首部进行判断</p>
+<p>​        header HEADER=VALUE</p>
+<p>​        header HEADER ~ VALUE</p>
+<p>​    body:基于响应保温的内容进行判断</p>
+<p>​        body ~ “PATTERN”</p>
+<p>​        body !~ “PATTERN”</p>
+<p>​    仅Nginx Plusu有效</p>
+</blockquote>
+</li>
+</ul>
+<p>示例</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">vim nginx.conf</div><div class="line">worker_processes  1;</div><div class="line">events &#123;</div><div class="line">    worker_connections  1024;</div><div class="line">&#125;</div><div class="line">http &#123;</div><div class="line">    keepalive_timeout  65;</div><div class="line">    include upstream.conf;</div><div class="line">&#125; </div><div class="line">vim upstream.conf</div><div class="line">upstream debugo_servers &#123;</div><div class="line">	server debugo03:80 weight=5;</div><div class="line">	server debugo04:80 weight=10;</div><div class="line">&#125;</div><div class="line">server &#123;</div><div class="line">	listen	debugo01:80;</div><div class="line">	location / &#123;</div><div class="line">		proxy_pass http://debugo_servers;</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#Nginx负载均衡"><span class="toc-text">Nginx负载均衡</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#四层"><span class="toc-text">四层</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#七层"><span class="toc-text">七层</span></a></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2017/05/14/Nginx配置及优化.html" class="next">Next post nginx配置及调优 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Hee shen using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg">
+    <p id="description">my notes</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com/">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.douban.com">
+        
+          <i class="icon iconfont douban">&#xe60f;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
