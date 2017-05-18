@@ -1,0 +1,413 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Hee shen">
+  
+  
+  
+  
+    <meta name="description" content="web站点的动静分离及高可用
+要求：动静分离部署wordpress，动静都要能实现负载均衡，
+全局12iptables -Fsetenforce 0
+
+Ca生成私钥
+
+(umask 066;openssl genrsa -out /etc/pki/CA/private/cakey.pem 4096)
+
+自颁发证书
+
+cd /etc/pki/CAopenssl req -new -x509 -...">
+  
+  <title>web站点的动静分离及高可用 [ Linux-2017 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2017/05/18/lvs-nat.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg"/>
+          <div id="homelink">Linux-2017</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>web站点的动静分离及高可用</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">Created at 2017-05-18</span>
+      
+        <span id = "post-title-updated">Updated at 2017-05-18</span>
+      
+      
+      <span id = "post-title-categories">Category
+      
+      
+        
+        
+        <a href="/categories/Haproxy/">Haproxy</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      Tag
+      
+      
+        
+        
+        <a href="/tags/Haproxy/">Haproxy</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/Keepalived/">Keepalived</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="web站点的动静分离及高可用"><a href="#web站点的动静分离及高可用" class="headerlink" title="web站点的动静分离及高可用"></a>web站点的动静分离及高可用</h3><blockquote>
+<p><strong>要求</strong>：动静分离部署wordpress，动静都要能实现负载均衡，<br><img src="http://omsab2via.bkt.clouddn.com/haproxy.png" alt="enter image description here"></p>
+<h4 id="全局"><a href="#全局" class="headerlink" title="全局"></a>全局</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iptables -F</div><div class="line">setenforce 0</div></pre></td></tr></table></figure>
+</blockquote>
+<h4 id="Ca"><a href="#Ca" class="headerlink" title="Ca"></a>Ca</h4><p>生成私钥</p>
+<blockquote>
+<p>(umask 066;openssl genrsa -out /etc/pki/CA/private/cakey.pem 4096)</p>
+</blockquote>
+<p>自颁发证书</p>
+<blockquote>
+<p>cd /etc/pki/CA<br>openssl req -new -x509 -key private/cakey.pem -out cacert.pem -days 99999<br>touch /etc/pki/CA/index.txt<br>echo 01 &gt; /etc/pki/CA/serial</p>
+</blockquote>
+<p>颁发</p>
+<blockquote>
+<p>opensl ca -in test.csr -out /etc/pki/CA/certs/test.crt -days 365</p>
+</blockquote>
+<h4 id="Nfs"><a href="#Nfs" class="headerlink" title="Nfs"></a>Nfs</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">yum -y install nfs-utils</div><div class="line">vim /etc/exprot</div><div class="line">/www 172.18.0.0/16(rw,async)</div><div class="line">systemctl start nfs</div><div class="line">exportfs -ar</div></pre></td></tr></table></figure>
+<h4 id="Mysql"><a href="#Mysql" class="headerlink" title="Mysql"></a>Mysql</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">yum -y install mysql-server</div><div class="line">create database wp;</div><div class="line">grant all privileges on wp.* to wp@&apos;172.18.50.61&apos; by &apos;1234&apos;;</div><div class="line">grant all privileges on wp.* to wp@&apos;172.18.50.62&apos; by &apos;1234&apos;;</div><div class="line">flush privileges;</div></pre></td></tr></table></figure>
+<h4 id="static端"><a href="#static端" class="headerlink" title="static端"></a>static端</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">yum -y install httpd </div><div class="line">mkdir -v /www</div><div class="line">mount -t nfs 172.18.50.73:/www /www</div></pre></td></tr></table></figure>
+<p>记录真实ip需要将httpd的log格式%h改为%{X-Forwarded-For}i，同时haproxy需开启forwardfor这个option</p>
+<h4 id="php端"><a href="#php端" class="headerlink" title="php端"></a>php端</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">yum -y install httpd php</div><div class="line">service start httpd</div><div class="line">mkdir -v /www</div><div class="line">mount -t nfs 172.18.50.73:/www /www</div></pre></td></tr></table></figure>
+<p>记录真实ip需要将httpd的log格式%h改为%{X-Forwarded-For}i，同时haproxy需开启forwardfor这个option</p>
+<h4 id="Haproxy-1"><a href="#Haproxy-1" class="headerlink" title="Haproxy 1"></a>Haproxy 1</h4><p><strong>申请证书</strong></p>
+<ul>
+<li>建立私钥并生产申请文件<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">(umask 077;openssl genrsa -out /etc/pki/tls/private/test.key 1024)</div><div class="line">cd /etc/pki/tls/private</div><div class="line">openssl req -new -key test.key -out /etc/pki/tls/test.csr -days 365</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>将申请文件scp到ca端颁发证书<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mkdir -pv /etc/ssl</div><div class="line">cat  demo.crt demo.key &gt; demo.pem  #crt后的证书文件要求PEM格式，且同时包含证书和与之匹配的所有私钥；</div></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">yum -y install haproxy</div><div class="line">yum -y install keepalived</div></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div></pre></td><td class="code"><pre><div class="line">[root@71 ~]# cat /etc/haproxy/haproxy.cfg</div><div class="line">#---------------------------------------------------------------------</div><div class="line"># Example configuration for a possible web application.  See the</div><div class="line"># full configuration options online.</div><div class="line">#</div><div class="line">#   http://haproxy.1wt.eu/download/1.4/doc/configuration.txt</div><div class="line">#</div><div class="line">#---------------------------------------------------------------------</div><div class="line"></div><div class="line">#---------------------------------------------------------------------</div><div class="line"># Global settings</div><div class="line">#---------------------------------------------------------------------</div><div class="line">global</div><div class="line">    # to have these messages end up in /var/log/haproxy.log you will</div><div class="line">    # need to:</div><div class="line">    #</div><div class="line">    # 1) configure syslog to accept network log events.  This is done</div><div class="line">    #    by adding the &apos;-r&apos; option to the SYSLOGD_OPTIONS in</div><div class="line">    #    /etc/sysconfig/syslog</div><div class="line">    #</div><div class="line">    # 2) configure local2 events to go to the /var/log/haproxy.log</div><div class="line">    #   file. A line like the following can be added to</div><div class="line">    #   /etc/sysconfig/syslog</div><div class="line">    #</div><div class="line">    #    local2.*                       /var/log/haproxy.log</div><div class="line">    #</div><div class="line">    log         127.0.0.1 local2</div><div class="line"></div><div class="line">    chroot      /var/lib/haproxy</div><div class="line">    pidfile     /var/run/haproxy.pid</div><div class="line">    maxconn     4000</div><div class="line">    user        haproxy</div><div class="line">    group       haproxy</div><div class="line">    daemon</div><div class="line"></div><div class="line">    # turn on stats unix socket</div><div class="line">    stats socket /var/lib/haproxy/stats</div><div class="line"></div><div class="line">#---------------------------------------------------------------------</div><div class="line"># common defaults that all the &apos;listen&apos; and &apos;backend&apos; sections will</div><div class="line"># use if not designated in their block</div><div class="line">#---------------------------------------------------------------------</div><div class="line">defaults</div><div class="line">    mode                    http</div><div class="line">    log                     global</div><div class="line">    option                  httplog</div><div class="line">    option                  dontlognull</div><div class="line">    option http-server-close</div><div class="line">    option forwardfor       except 127.0.0.0/8</div><div class="line">    option                  redispatch</div><div class="line">    retries                 3</div><div class="line">    timeout http-request    10s</div><div class="line">    timeout queue           1m</div><div class="line">    timeout connect         10s</div><div class="line">    timeout client          1m</div><div class="line">    timeout server          1m</div><div class="line">    timeout http-keep-alive 10s</div><div class="line">    timeout check           10s</div><div class="line">    maxconn                 3000</div><div class="line"></div><div class="line">#---------------------------------------------------------------------</div><div class="line"># main frontend which proxys to the backends</div><div class="line">#---------------------------------------------------------------------</div><div class="line">frontend  localhost</div><div class="line">    bind *:80</div><div class="line">    bind *:443 ssl crt /etc/ssl/ssl.pem</div><div class="line">    mode http</div><div class="line">    redirect scheme https if !&#123; ssl_fc &#125;</div><div class="line"></div><div class="line">    acl url_static       path_end       -i .jpg .gif .png </div><div class="line">    use_backend static          if url_static</div><div class="line">    default_backend dy </div><div class="line">    option forwardfor</div><div class="line"></div><div class="line"></div><div class="line">listen stats</div><div class="line">	bind *:10000</div><div class="line">	acl admin_src src 172.18.100.7</div><div class="line">	stats enable</div><div class="line">	stats uri /haproxy?admin</div><div class="line">	stats auth admin:admin</div><div class="line">	block  if ! admin_src</div><div class="line">	</div><div class="line">#---------------------------------------------------------------------</div><div class="line"># static backend for serving up images, stylesheets and such</div><div class="line">#---------------------------------------------------------------------</div><div class="line">backend static</div><div class="line">    balance     roundrobin</div><div class="line">    server      static 172.18.50.50:80 check</div><div class="line">    server      static 172.18.50.73:80 check</div><div class="line"></div><div class="line">#---------------------------------------------------------------------</div><div class="line"># round robin balancing between the various backends</div><div class="line">#---------------------------------------------------------------------</div><div class="line">backend dy</div><div class="line">    balance     roundrobin</div><div class="line">    server  app1 172.18.50.61:80 check</div><div class="line">    server  app2 172.18.50.62:80 check</div></pre></td></tr></table></figure>
+<p><strong>keepalived</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">[root@71 ~]# cat /etc/keepalived/keepalived.conf </div><div class="line">! Configuration File for keepalived</div><div class="line"></div><div class="line">global_defs &#123;</div><div class="line">   notification_email &#123;</div><div class="line">     acassen@firewall.loc</div><div class="line">     failover@firewall.loc</div><div class="line">     sysadmin@firewall.loc</div><div class="line">   &#125;</div><div class="line">   notification_email_from Alexandre.Cassen@firewall.loc</div><div class="line">   smtp_server 192.168.200.1</div><div class="line">   smtp_connect_timeout 30</div><div class="line">   router_id LVS_DEVEL</div><div class="line">   vrrp_mcast_group4 224.0.0.50</div><div class="line">&#125;</div><div class="line"></div><div class="line">vrrp_instance ha1 &#123;</div><div class="line">    state MASTER</div><div class="line">    interface ens33</div><div class="line">    virtual_router_id 50</div><div class="line">    priority 100</div><div class="line">    advert_int 1</div><div class="line">    authentication &#123;</div><div class="line">        auth_type PASS</div><div class="line">        auth_pass password</div><div class="line">    &#125;</div><div class="line">    virtual_ipaddress &#123;</div><div class="line"></div><div class="line">	172.18.50.71/16 dev ens33</div><div class="line">    </div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="Haproxy-2"><a href="#Haproxy-2" class="headerlink" title="Haproxy 2"></a>Haproxy 2</h4><p>haproxy 2 proxy配置与 1一致<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">yum install -y haproxy keepalived</div><div class="line">[root@72 keepalived]# cat /etc/keepalived/keepalived.conf </div><div class="line">! Configuration File for keepalived</div><div class="line"></div><div class="line">global_defs &#123;</div><div class="line">   notification_email &#123;</div><div class="line">     acassen@firewall.loc</div><div class="line">     failover@firewall.loc</div><div class="line">     sysadmin@firewall.loc</div><div class="line">   &#125;</div><div class="line">   notification_email_from Alexandre.Cassen@firewall.loc</div><div class="line">   smtp_server 192.168.200.1</div><div class="line">   smtp_connect_timeout 30</div><div class="line">   router_id LVS_DEVEL</div><div class="line">   vrrp_mcast_group4 224.0.0.50</div><div class="line">&#125;</div><div class="line"></div><div class="line">vrrp_instance ha1 &#123;</div><div class="line">    state BACKUP</div><div class="line">    interface ens33</div><div class="line">    virtual_router_id 50</div><div class="line">    priority 98</div><div class="line">    advert_int 1</div><div class="line">    authentication &#123;</div><div class="line">        auth_type PASS</div><div class="line">        auth_pass password</div><div class="line">    &#125;</div><div class="line">    virtual_ipaddress &#123;</div><div class="line"></div><div class="line">	172.18.50.71/16 dev ens33</div><div class="line">    </div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><blockquote>
+<p>haproxy是否动静分离<br><img src="http://omsab2via.bkt.clouddn.com/h1.png" alt="enter image description here"></p>
+</blockquote>
+<p><img src="http://omsab2via.bkt.clouddn.com/h2.png" alt="enter image description here"></p>
+<p><img src="http://omsab2via.bkt.clouddn.com/h3.png" alt="enter image description here"></p>
+<p><img src="http://omsab2via.bkt.clouddn.com/chrome.png" alt="enter image description here"><br>chrome浏览器会提示不安全的脚本</p>
+<blockquote>
+<p>验证keepalived<br>haproxy1：systemctl stop haproxy keepalived后ha2成功拿到ip<br><img src="http://omsab2via.bkt.clouddn.com/1.png" alt="enter image description here"><img src="http://omsab2via.bkt.clouddn.com/2.png" alt="enter image description here"><br>web正常</p>
+</blockquote>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#web站点的动静分离及高可用"><span class="toc-text">web站点的动静分离及高可用</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#全局"><span class="toc-text">全局</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Ca"><span class="toc-text">Ca</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Nfs"><span class="toc-text">Nfs</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Mysql"><span class="toc-text">Mysql</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#static端"><span class="toc-text">static端</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#php端"><span class="toc-text">php端</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Haproxy-1"><span class="toc-text">Haproxy 1</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#Haproxy-2"><span class="toc-text">Haproxy 2</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#验证"><span class="toc-text">验证</span></a></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2017/05/18/lvs-nat.html" class="next">Next post  &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Hee shen using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg">
+    <p id="description">my notes</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com/">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.douban.com">
+        
+          <i class="icon iconfont douban">&#xe60f;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
