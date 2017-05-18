@@ -16,17 +16,15 @@
   
   
   
-    <meta name="description" content="web站点的动静分离及高可用
-要求：动静分离部署wordpress，动静都要能实现负载均衡，
+    <meta name="description" content="web站点的动静分离及高可用要求：动静分离部署wordpress，动静都要能实现负载均衡，
 全局12iptables -Fsetenforce 0
-
 Ca生成私钥
 
 (umask 066;openssl genrsa -out /etc/pki/CA/private/cakey.pem 4096)
 
 自颁发证书
 
-cd /etc/pki/CAopenssl req -new -x509 -...">
+cd /etc/pki/CAopenssl req -new -x509 -ke...">
   
   <title>web站点的动静分离及高可用 [ Linux-2017 ]</title>
   
@@ -163,10 +161,8 @@ cd /etc/pki/CAopenssl req -new -x509 -...">
       
     </p>
     
-    <h3 id="web站点的动静分离及高可用"><a href="#web站点的动静分离及高可用" class="headerlink" title="web站点的动静分离及高可用"></a>web站点的动静分离及高可用</h3><blockquote>
-<p><strong>要求</strong>：动静分离部署wordpress，动静都要能实现负载均衡，<br><img src="http://omsab2via.bkt.clouddn.com/haproxy.png" alt="enter image description here"></p>
+    <h3 id="web站点的动静分离及高可用"><a href="#web站点的动静分离及高可用" class="headerlink" title="web站点的动静分离及高可用"></a>web站点的动静分离及高可用</h3><p><strong>要求</strong>：动静分离部署wordpress，动静都要能实现负载均衡，<img src="http://omsab2via.bkt.clouddn.com/haproxy.png" alt="enter image description here"></p>
 <h4 id="全局"><a href="#全局" class="headerlink" title="全局"></a>全局</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">iptables -F</div><div class="line">setenforce 0</div></pre></td></tr></table></figure>
-</blockquote>
 <h4 id="Ca"><a href="#Ca" class="headerlink" title="Ca"></a>Ca</h4><p>生成私钥</p>
 <blockquote>
 <p>(umask 066;openssl genrsa -out /etc/pki/CA/private/cakey.pem 4096)</p>
@@ -196,14 +192,17 @@ cd /etc/pki/CAopenssl req -new -x509 -...">
 <p><strong>keepalived</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">[root@71 ~]# cat /etc/keepalived/keepalived.conf </div><div class="line">! Configuration File for keepalived</div><div class="line"></div><div class="line">global_defs &#123;</div><div class="line">   notification_email &#123;</div><div class="line">     acassen@firewall.loc</div><div class="line">     failover@firewall.loc</div><div class="line">     sysadmin@firewall.loc</div><div class="line">   &#125;</div><div class="line">   notification_email_from Alexandre.Cassen@firewall.loc</div><div class="line">   smtp_server 192.168.200.1</div><div class="line">   smtp_connect_timeout 30</div><div class="line">   router_id LVS_DEVEL</div><div class="line">   vrrp_mcast_group4 224.0.0.50</div><div class="line">&#125;</div><div class="line"></div><div class="line">vrrp_instance ha1 &#123;</div><div class="line">    state MASTER</div><div class="line">    interface ens33</div><div class="line">    virtual_router_id 50</div><div class="line">    priority 100</div><div class="line">    advert_int 1</div><div class="line">    authentication &#123;</div><div class="line">        auth_type PASS</div><div class="line">        auth_pass password</div><div class="line">    &#125;</div><div class="line">    virtual_ipaddress &#123;</div><div class="line"></div><div class="line">	172.18.50.71/16 dev ens33</div><div class="line">    </div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h4 id="Haproxy-2"><a href="#Haproxy-2" class="headerlink" title="Haproxy 2"></a>Haproxy 2</h4><p>haproxy 2 proxy配置与 1一致<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div></pre></td><td class="code"><pre><div class="line">yum install -y haproxy keepalived</div><div class="line">[root@72 keepalived]# cat /etc/keepalived/keepalived.conf </div><div class="line">! Configuration File for keepalived</div><div class="line"></div><div class="line">global_defs &#123;</div><div class="line">   notification_email &#123;</div><div class="line">     acassen@firewall.loc</div><div class="line">     failover@firewall.loc</div><div class="line">     sysadmin@firewall.loc</div><div class="line">   &#125;</div><div class="line">   notification_email_from Alexandre.Cassen@firewall.loc</div><div class="line">   smtp_server 192.168.200.1</div><div class="line">   smtp_connect_timeout 30</div><div class="line">   router_id LVS_DEVEL</div><div class="line">   vrrp_mcast_group4 224.0.0.50</div><div class="line">&#125;</div><div class="line"></div><div class="line">vrrp_instance ha1 &#123;</div><div class="line">    state BACKUP</div><div class="line">    interface ens33</div><div class="line">    virtual_router_id 50</div><div class="line">    priority 98</div><div class="line">    advert_int 1</div><div class="line">    authentication &#123;</div><div class="line">        auth_type PASS</div><div class="line">        auth_pass password</div><div class="line">    &#125;</div><div class="line">    virtual_ipaddress &#123;</div><div class="line"></div><div class="line">	172.18.50.71/16 dev ens33</div><div class="line">    </div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <h4 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h4><blockquote>
-<p>haproxy是否动静分离<br><img src="http://omsab2via.bkt.clouddn.com/h1.png" alt="enter image description here"></p>
+<p>haproxy是否动静分离</p>
 </blockquote>
+<p><img src="http://omsab2via.bkt.clouddn.com/h1.png" alt="enter image description here"></p>
 <p><img src="http://omsab2via.bkt.clouddn.com/h2.png" alt="enter image description here"></p>
 <p><img src="http://omsab2via.bkt.clouddn.com/h3.png" alt="enter image description here"></p>
 <p><img src="http://omsab2via.bkt.clouddn.com/chrome.png" alt="enter image description here"><br>chrome浏览器会提示不安全的脚本</p>
 <blockquote>
-<p>验证keepalived<br>haproxy1：systemctl stop haproxy keepalived后ha2成功拿到ip<br><img src="http://omsab2via.bkt.clouddn.com/1.png" alt="enter image description here"><img src="http://omsab2via.bkt.clouddn.com/2.png" alt="enter image description here"><br>web正常</p>
+<p>验证keepalived</p>
+<p>haproxy1：systemctl stop haproxy keepalived后ha2成功拿到ip</p>
 </blockquote>
+<p><img src="http://omsab2via.bkt.clouddn.com/1.png" alt="enter image description here"><img src="http://omsab2via.bkt.clouddn.com/2.png" alt="enter image description here"><br>web正常</p>
 
   </article>
   <div class="random-toc-area">
