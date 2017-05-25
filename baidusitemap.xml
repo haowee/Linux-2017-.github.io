@@ -4,15 +4,20 @@
 
     
   <url>
-    <loc>http://yoursite.com/2017/05/25/HTTP%20HEADER.html</loc>
-    <lastmod>2017-05-25T07:31:53.662Z</lastmod>
+    <loc>http://yoursite.com/2017/05/25/http_header.html</loc>
+    <lastmod>2017-05-25T10:08:34.439Z</lastmod>
     <data>
         <display>
-        <title></title>
-        <pubTime>2017-05-25T07:32:09.398Z</pubTime>
+        <title>HTTP HEADER</title>
+        <pubTime>2017-05-25T07:30:49.000Z</pubTime>
         
+        <tag>HTTP HEADER</tag>
+         
          
            
+             
+              <breadCrumb title="HTTP HEADER" url="http://yoursite.com/categories/HTTP-HEADER/"/>
+          
         </display>
     </data>
     </url>
