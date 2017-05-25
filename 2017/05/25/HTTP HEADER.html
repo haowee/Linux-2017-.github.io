@@ -1,0 +1,432 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Hee shen">
+  
+  
+  
+  
+    <meta name="description" content="title: HTTP HEADERdate: 2017-05-25 15:30:49categories: “HTTP HEADER”tags: HTTP HEADER
+HTTP HEADER
+Accept-Ranges：表明服务器是否支持指定范围请求及那种类型的分段请求
+Age：从原始服务器到代理缓存形成的估算时间
+Allow：对某网络资源的有效请求行为，不允许则返回405
+Cache-...">
+  
+  <title> [ Linux-2017 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+  
+    <div class="item next">
+      <a href="/2017/05/25/Tomcat session共享.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Tomcat session共享
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg"/>
+          <div id="homelink">Linux-2017</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>No Title</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">Created at 2017-05-25</span>
+      
+        <span id = "post-title-updated">Updated at 2017-05-25</span>
+      
+      
+      
+    </p>
+    
+    <p>title: HTTP HEADER<br>date: 2017-05-25 15:30:49<br>categories: “HTTP HEADER”<br>tags: HTTP HEADER</p>
+<h4 id="HTTP-HEADER"><a href="#HTTP-HEADER" class="headerlink" title="HTTP HEADER"></a>HTTP HEADER</h4><ul>
+<li>Accept-Ranges：表明服务器是否支持指定范围请求及那种类型的分段请求</li>
+<li>Age：从原始服务器到代理缓存形成的估算时间</li>
+<li>Allow：对某网络资源的有效请求行为，不允许则返回405</li>
+<li>Cache-Contril：告诉所有的缓存机制是否可以缓存及哪种类型</li>
+<li>Content-Encoding：web服务器支持返回内容压缩编码类型</li>
+<li>Content-Language：响应体的语言</li>
+<li>Content-Length：响应体的长度</li>
+<li>Content-Location：请求资源可替代的备用的另一地址</li>
+<li>Content-MD5：返回资源的MD5校验值</li>
+<li>Content-Range：在整个返回体中本部分的字节位置</li>
+<li>Centent-Type：返回内容的MIME类型</li>
+<li>Date：原始服务器消息发出的时间</li>
+<li>ETag：请求变量的实体标签的当前值</li>
+<li>Expires：响应过期的日期和时间</li>
+<li>Last-Modified：请求资源的最后修改时间</li>
+<li>Location：用来重定向接收方到非请求URL的位置来完成请求或标识新的资源</li>
+<li>Pragma：包括实现特定的指令，他可应用呢到响应链上的任何接收方</li>
+<li>Proxy-Authenticte：它指出认证方案可应用到代理的该URL上的参数</li>
+<li>refresh：应用于重定向或一个新的资源被创造，在5秒之后重定向</li>
+<li>Retry-After：如果实体暂时不可取，通知客户端在指定时间之后再次尝试</li>
+<li>Server：web服务器软件名称</li>
+<li>Set-Cookie：设置Http Cookie</li>
+<li>Trailer：指出头域在分块传输编码的尾部存在</li>
+<li>Transfer-Encoding：文件传输编码</li>
+<li>Vary：告诉下游代理是使用缓存响应 还是从原始服务器请求</li>
+<li>Via：告知代理客户端响应是通过哪里发送的</li>
+<li>Warning：警告实体可能存在的问题</li>
+<li>WWW-Authenticate：表面客户端请求实体应该使用的授权方案</li>
+</ul>
+<p><strong>HTTP Request的Header信息</strong></p>
+<ol>
+<li><p>Http请求方式</p>
+<p>GET    向服务器请求一个文件</p>
+<p>POST    向WEB服务器发送数据让WEB服务器进行处理</p>
+<p>PUT    向WEB服务器发送数据并存储在WEB服务器内部</p>
+<p>HEAD    检查一个对象是否存在</p>
+<p>DELNET    从服务器删除一个文件</p>
+<p>CONNECT    对通道提供支持</p>
+<p>TRACE    跟踪到服务器的路径</p>
+<p>OPTIONS    查询Web服务器的性能</p>
+</li>
+<li><p>Host</p>
+<p>请求的web服务器域名地址</p>
+</li>
+<li><p>User-Agent</p>
+<p>HTTP客户端运行的浏览器类型的详细信息。通过该头部信息，web服务器可以判断到当前Http请求的客户端浏览器类别</p>
+</li>
+<li><p>Accept</p>
+<p>指明客户端能够接受的内容类型，内容类型中的先后次序表示客户端接收的先后次序。</p>
+</li>
+<li><p>Accept-Language</p>
+<p>指明Http客户端浏览器用来展示返回信息所优先选择的语言</p>
+</li>
+<li><p>Accept-Encoding</p>
+<p>指定客户端浏览器可以支持的web浏览器返回内容压缩编码类型。表示允许服务器在将输出内容发送到客户端以前进行压缩，以节约带宽。这里设置的就是客户端浏览器所能够支持的返回压缩格式</p>
+<p>​    Accept-Encoding: gzip,deflate</p>
+</li>
+<li><p>Accept-Charset</p>
+<p>浏览器可以接受的字符编码集</p>
+</li>
+<li><p>Content-Type</p>
+<p>显示此HTTP请求提交的内容类型。一般只有post提交时才需要设置该属性。</p>
+</li>
+<li><p>Connection</p>
+<p>表示是否需要持久连接。如果web服务器端看到这里的值为”Keep-Alive”,或者看到请求使用的是HTTP 1.1(HTTP 1.1默认进行持久连接)，它就可以利用持久连接的优点，当页面包含多个元素时(例如Applet，图片)，显著地减少下载所需要的时间。要实现这一点，web服务器需要在返回客户端HTTP头信息中发送一个Content-Length(返回信息正文的长度)头，最简单的实现方法是：先把内容写入ByteArrayOutputStream，然后在正式写出内容之前计算它的大小。</p>
+</li>
+<li><p>Keep-Alive</p>
+<p>显示此HTTP连接的Keep-Alive时间。示客户端到服务器端的连接持续有效，当出现对服务器的后继请求时，Keep-Alive功能避免了建立或者重新建立连接。</p>
+<p>从HTTP/1.1协议之后，就有了长连接，即在规定的Keep-Alive时间内，连接是不会断开的。</p>
+</li>
+<li><p>cookie</p>
+<p>HTTP请求发送时，会把保存在该请求域名下的所有cookie值一起发往给web服务器。</p>
+</li>
+<li><p>包含一个URL,用户从该URL代表的页面出发访问当前请求的页面</p>
+</li>
+</ol>
+<p><strong>服务器返回HTTP头部信息</strong></p>
+<ol>
+<li><p>Content-Length</p>
+<p>表示web服务器返回消息正文的长度</p>
+</li>
+<li><p>Content-Type</p>
+<p>返回数据的类型</p>
+</li>
+<li><p>Date</p>
+<p>显示当前时间</p>
+</li>
+</ol>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    <ol class="toc"><li class="toc-item toc-level-4"><a class="toc-link" href="#HTTP-HEADER"><span class="toc-text">HTTP HEADER</span></a></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+
+  
+
+  
+    <a href="/2017/05/25/Tomcat session共享.html" class="next">Next post Tomcat session共享 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Hee shen using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg">
+    <p id="description">my notes</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com/">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.douban.com">
+        
+          <i class="icon iconfont douban">&#xe60f;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

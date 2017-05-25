@@ -4,6 +4,41 @@
 
     
   <url>
+    <loc>http://yoursite.com/2017/05/25/HTTP%20HEADER.html</loc>
+    <lastmod>2017-05-25T07:31:53.662Z</lastmod>
+    <data>
+        <display>
+        <title></title>
+        <pubTime>2017-05-25T07:32:09.398Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/05/25/Tomcat%20session%E5%85%B1%E4%BA%AB.html</loc>
+    <lastmod>2017-05-25T07:31:17.022Z</lastmod>
+    <data>
+        <display>
+        <title>Tomcat session共享</title>
+        <pubTime>2017-05-25T07:30:49.000Z</pubTime>
+        
+        <tag>session</tag>
+         
+         
+           
+             
+              <breadCrumb title="Tomcat" url="http://yoursite.com/categories/Tomcat/"/>
+          
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yoursite.com/2017/05/18/web%E7%AB%99%E7%82%B9%E7%9A%84%E5%8A%A8%E9%9D%99%E5%88%86%E7%A6%BB%E5%8F%8A%E9%AB%98%E5%8F%AF%E7%94%A8.html</loc>
     <lastmod>2017-05-18T08:40:54.307Z</lastmod>
     <data>

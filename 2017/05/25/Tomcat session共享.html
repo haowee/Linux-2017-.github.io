@@ -1,0 +1,388 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Hee shen">
+  
+  
+  
+  
+    <meta name="description" content="Tomcat session共享通过memcached-session-manager实现，项目地址https://github.com/magro/memcached-session-manager，实验拓扑如下：
+50.71安装配置ansible1234567891011121314151617yum -y install ansiblevim /etc/ansible/hosts#加入...">
+  
+  <title>Tomcat session共享 [ Linux-2017 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/05/25/HTTP HEADER.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/05/18/web站点的动静分离及高可用.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        web站点的动静分离及高可用
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg"/>
+          <div id="homelink">Linux-2017</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>Tomcat session共享</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">Created at 2017-05-25</span>
+      
+        <span id = "post-title-updated">Updated at 2017-05-25</span>
+      
+      
+      <span id = "post-title-categories">Category
+      
+      
+        
+        
+        <a href="/categories/Tomcat/">Tomcat</a>
+      
+      </span>
+      
+      
+      <span id = "post-title-tags">
+      Tag
+      
+      
+        
+        
+        <a href="/tags/session/">session</a>
+      
+      </span>
+      
+    </p>
+    
+    <h2 id="Tomcat-session共享"><a href="#Tomcat-session共享" class="headerlink" title="Tomcat session共享"></a>Tomcat session共享</h2><p>通过memcached-session-manager实现，项目地址<a href="https://github.com/magro/memcached-session-manager，实验拓扑如下：" target="_blank" rel="external">https://github.com/magro/memcached-session-manager，实验拓扑如下：</a><br><img src="http://omsab2via.bkt.clouddn.com/session.png" alt="enter image description here"></p>
+<h3 id="50-71"><a href="#50-71" class="headerlink" title="50.71"></a>50.71</h3><p>安装配置ansible<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">yum -y install ansible</div><div class="line"></div><div class="line">vim /etc/ansible/hosts</div><div class="line">#加入</div><div class="line">[tcs]</div><div class="line">172.18.50.72</div><div class="line">172.18.50.73</div><div class="line">[mems]</div><div class="line">172.18.50.61</div><div class="line">172.18.50.62</div><div class="line">#生成key并copy至tcs及mems</div><div class="line">ssh-keygen </div><div class="line">ssh-copy-id root@172.18.50.72</div><div class="line">ssh-copy-id root@172.18.50.73</div><div class="line">ssh-copy-id root@172.18.50.61</div><div class="line">ssh-copy-id root@172.18.50.62</div><div class="line">ansible all -m ping</div></pre></td></tr></table></figure></p>
+<p>关闭防火墙及selink<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[root@71 ansible]# ansible all -m shell -a &apos;iptables -F;setenforce 0&apos;</div><div class="line">172.18.50.61 | SUCCESS | rc=0 &gt;&gt;</div><div class="line"></div><div class="line"></div><div class="line">172.18.50.72 | SUCCESS | rc=0 &gt;&gt;</div><div class="line"></div><div class="line"></div><div class="line">172.18.50.73 | SUCCESS | rc=0 &gt;&gt;</div><div class="line"></div><div class="line"></div><div class="line">172.18.50.62 | SUCCESS | rc=0 &gt;&gt;</div></pre></td></tr></table></figure></p>
+<p><strong>同步时间</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"> cat /etc/ansible/ntp.yml </div><div class="line"></div><div class="line">- hosts: all</div><div class="line">  remote_user: root</div><div class="line">  tasks:</div><div class="line">  - name: install ntp</div><div class="line">    yum: name=ntp state=latest</div><div class="line">  - name: sync time</div><div class="line">    shell: ntpdate ntp1.aliyun.com</div><div class="line">   </div><div class="line">[root@71 ~]# ansible-playbook /etc/ansible/ntp.yml</div><div class="line">#查看是否同步</div><div class="line">[root@71 ~]# ansible all -m shell -a &apos;date&apos;</div><div class="line">172.18.50.61 | SUCCESS | rc=0 &gt;&gt;</div><div class="line">Thu May 25 10:49:24 CST 2017</div><div class="line"></div><div class="line">172.18.50.62 | SUCCESS | rc=0 &gt;&gt;</div><div class="line">Thu May 25 10:49:25 CST 2017</div><div class="line"></div><div class="line">172.18.50.73 | SUCCESS | rc=0 &gt;&gt;</div><div class="line">Thu May 25 10:49:25 CST 2017</div><div class="line"></div><div class="line">172.18.50.72 | SUCCESS | rc=0 &gt;&gt;</div><div class="line">Thu May 25 10:49:25 CST 2017</div></pre></td></tr></table></figure></p>
+<p><strong>安装tomcat</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[root@71 ansible]# cat tomcat.yml </div><div class="line">---</div><div class="line"></div><div class="line">- hosts: tcs</div><div class="line">  remote_user: root</div><div class="line">  tasks:</div><div class="line">  - name: install tomcat</div><div class="line">    yum: name=tomcat,tomcat-webapps  state=latest</div><div class="line">  - name: start tomcat</div><div class="line">    service: name=tomcat state=started</div><div class="line">[root@71 ansible]# ansible-playbook tomcat.yml</div></pre></td></tr></table></figure></p>
+<p><strong>安装memcached</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[root@71 ~]# cat /etc/ansible/mems.yml </div><div class="line">---</div><div class="line"></div><div class="line">- hosts: mems</div><div class="line">  remote_user: root</div><div class="line">  tasks:</div><div class="line">  - name: install memcached</div><div class="line">    yum: name=memcached state=latest</div><div class="line">  - name: start memcached</div><div class="line">    service: name=memcached state=started</div><div class="line">[root@71 ~]# ansible-playbook /etc/ansible/mems.yml</div></pre></td></tr></table></figure></p>
+<p>安装httpd并实现负载均衡<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line">yum -y install httpd</div><div class="line">#在conf/httpd.conf中插入</div><div class="line">&lt;Proxy balancer://tomcat&gt;</div><div class="line">    BalancerMember  http://172.18.50.72:8080 loadfactor=1</div><div class="line">    BalancerMember  http://172.18.50.73:8080 loadfactor=1</div><div class="line">    ProxySet  lbmethod=byrequests</div><div class="line">&lt;/Proxy&gt;</div><div class="line">ProxyVia Off</div><div class="line">ProxyRequests Off</div><div class="line">ProxyPass / balancer://tomcat/</div><div class="line">ProxyPassReverse / balancer://tomcat/</div><div class="line">&lt;Proxy *&gt;</div><div class="line">    Order Allow,Deny</div><div class="line">    Allow From all</div><div class="line">&lt;/Proxy&gt;</div><div class="line">&lt;Location /&gt;</div><div class="line">    Order Allow,Deny</div><div class="line">    Allow From all</div><div class="line">&lt;/Location&gt;</div></pre></td></tr></table></figure></p>
+<h4 id="安装配置-memcached-session-manager"><a href="#安装配置-memcached-session-manager" class="headerlink" title="安装配置 memcached-session-manager"></a>安装配置 memcached-session-manager</h4><ul>
+<li><p>下载jar文件</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">下载如下jar文件至各tomcat节点的tomcat安装目录下的lib目录中，其中的$&#123;version&#125;要换成你所需要的版本号，tc$&#123;6,7,8&#125;要换成与tomcat版本相同的版本号。</div><div class="line">	memcached-session-manager-$&#123;version&#125;.jar</div><div class="line">	memcached-session-manager-tc$&#123;6,7,8&#125;-$&#123;version&#125;.jar</div><div class="line">	spymemcached-$&#123;version&#125;.jar</div><div class="line">	msm-javolution-serializer-$&#123;version&#125;.jar</div><div class="line">	javolution-$&#123;version&#125;.jar</div></pre></td></tr></table></figure>
+</li>
+<li><p>使用ansible推送至tcs</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">[root@71 ~]# ls</div><div class="line">anaconda-ks.cfg  javolution-5.4.3.1.jar               memcached-session-manager-tc7-1.8.3.jar  spymemcached-2.11.1.jar</div><div class="line">copy_jar.yml     memcached-session-manager-1.8.3.jar  msm-javolution-serializer-1.8.3.jar</div><div class="line">[root@71 ~]# cat copy_jar.yml </div><div class="line">---</div><div class="line"></div><div class="line">- hosts: tcs</div><div class="line">  remote_user: root</div><div class="line">  tasks:</div><div class="line">  - name: copy jar to tcs</div><div class="line">    copy: src=~/&#123;&#123; item &#125;&#125; dest=/usr/share/tomcat/lib</div><div class="line">    with_items:</div><div class="line">      - &quot;memcached-session-manager-tc7-1.8.3.jar&quot;</div><div class="line">      - &quot;javolution-5.4.3.1.jar&quot;</div><div class="line">      - &quot;memcached-session-manager-1.8.3.jar&quot;</div><div class="line">      - &quot;spymemcached-2.11.1.jar&quot;</div><div class="line">      - &quot;msm-javolution-serializer-1.8.3.jar&quot;</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p><strong>配置tomcat1</strong><br>tomcat2配置与1除测试页外一致<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div><div class="line">127</div><div class="line">128</div><div class="line">129</div><div class="line">130</div><div class="line">131</div><div class="line">132</div><div class="line">133</div><div class="line">134</div><div class="line">135</div><div class="line">136</div><div class="line">137</div><div class="line">138</div><div class="line">139</div><div class="line">140</div><div class="line">141</div><div class="line">142</div><div class="line">143</div><div class="line">144</div><div class="line">145</div><div class="line">146</div><div class="line">147</div><div class="line">148</div><div class="line">149</div><div class="line">150</div><div class="line">151</div><div class="line">152</div><div class="line">153</div><div class="line">154</div><div class="line">155</div><div class="line">156</div><div class="line">157</div><div class="line">158</div><div class="line">159</div><div class="line">160</div><div class="line">161</div><div class="line">162</div><div class="line">163</div><div class="line">164</div><div class="line">165</div><div class="line">166</div><div class="line">167</div><div class="line">168</div><div class="line">169</div><div class="line">170</div><div class="line">171</div><div class="line">172</div></pre></td><td class="code"><pre><div class="line">mkdir -pv /usr/share/tomcat/webapps/test/&#123;classes,lib,WEB-INF&#125;</div><div class="line">cat /usr/share/tomcat/test/webapps/test/index.jsp</div><div class="line">&lt;%@ page language=&quot;java&quot; %&gt;</div><div class="line">&lt;html&gt;</div><div class="line">  &lt;head&gt;&lt;title&gt;TomcatB&lt;/title&gt;&lt;/head&gt;</div><div class="line">  &lt;body&gt;</div><div class="line">    &lt;h1&gt;&lt;font color=&quot;blue&quot;&gt;TomcatB&lt;/font&gt;&lt;/h1&gt;</div><div class="line">    &lt;table align=&quot;centre&quot; border=&quot;1&quot;&gt;</div><div class="line">      &lt;tr&gt;</div><div class="line">        &lt;td&gt;Session ID&lt;/td&gt;</div><div class="line">    &lt;% session.setAttribute(&quot;test.com&quot;,&quot;test.com&quot;); %&gt;</div><div class="line">        &lt;td&gt;&lt;%= session.getId() %&gt;&lt;/td&gt;</div><div class="line">      &lt;/tr&gt;</div><div class="line">      &lt;tr&gt;</div><div class="line">        &lt;td&gt;Created on&lt;/td&gt;</div><div class="line">        &lt;td&gt;&lt;%= session.getCreationTime() %&gt;&lt;/td&gt;</div><div class="line">     &lt;/tr&gt;</div><div class="line">    &lt;/table&gt;</div><div class="line">  &lt;/body&gt;</div><div class="line">&lt;/html&gt;</div><div class="line">[root@73 test]# cat /etc/tomcat/server.xml </div><div class="line">&lt;?xml version=&apos;1.0&apos; encoding=&apos;utf-8&apos;?&gt;</div><div class="line">&lt;!--</div><div class="line">  Licensed to the Apache Software Foundation (ASF) under one or more</div><div class="line">  contributor license agreements.  See the NOTICE file distributed with</div><div class="line">  this work for additional information regarding copyright ownership.</div><div class="line">  The ASF licenses this file to You under the Apache License, Version 2.0</div><div class="line">  (the &quot;License&quot;); you may not use this file except in compliance with</div><div class="line">  the License.  You may obtain a copy of the License at</div><div class="line"></div><div class="line">      http://www.apache.org/licenses/LICENSE-2.0</div><div class="line"></div><div class="line">  Unless required by applicable law or agreed to in writing, software</div><div class="line">  distributed under the License is distributed on an &quot;AS IS&quot; BASIS,</div><div class="line">  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.</div><div class="line">  See the License for the specific language governing permissions and</div><div class="line">  limitations under the License.</div><div class="line">--&gt;</div><div class="line">&lt;!-- Note:  A &quot;Server&quot; is not itself a &quot;Container&quot;, so you may not</div><div class="line">     define subcomponents such as &quot;Valves&quot; at this level.</div><div class="line">     Documentation at /docs/config/server.html</div><div class="line"> --&gt;</div><div class="line">&lt;Server port=&quot;8005&quot; shutdown=&quot;SHUTDOWN&quot;&gt;</div><div class="line">  &lt;Listener className=&quot;org.apache.catalina.startup.VersionLoggerListener&quot; /&gt;</div><div class="line">  &lt;!-- Security listener. Documentation at /docs/config/listeners.html</div><div class="line">  &lt;Listener className=&quot;org.apache.catalina.security.SecurityListener&quot; /&gt;</div><div class="line">  --&gt;</div><div class="line">  &lt;!--APR library loader. Documentation at /docs/apr.html --&gt;</div><div class="line">  &lt;Listener className=&quot;org.apache.catalina.core.AprLifecycleListener&quot; SSLEngine=&quot;on&quot; /&gt;</div><div class="line">  &lt;!--Initialize Jasper prior to webapps are loaded. Documentation at /docs/jasper-howto.html --&gt;</div><div class="line">  &lt;Listener className=&quot;org.apache.catalina.core.JasperListener&quot; /&gt;</div><div class="line">  &lt;!-- Prevent memory leaks due to use of particular java/javax APIs--&gt;</div><div class="line">  &lt;Listener className=&quot;org.apache.catalina.core.JreMemoryLeakPreventionListener&quot; /&gt;</div><div class="line">  &lt;Listener className=&quot;org.apache.catalina.mbeans.GlobalResourcesLifecycleListener&quot; /&gt;</div><div class="line">  &lt;Listener className=&quot;org.apache.catalina.core.ThreadLocalLeakPreventionListener&quot; /&gt;</div><div class="line"></div><div class="line">  &lt;!-- Global JNDI resources</div><div class="line">       Documentation at /docs/jndi-resources-howto.html</div><div class="line">  --&gt;</div><div class="line">  &lt;GlobalNamingResources&gt;</div><div class="line">    &lt;!-- Editable user database that can also be used by</div><div class="line">         UserDatabaseRealm to authenticate users</div><div class="line">    --&gt;</div><div class="line">    &lt;Resource name=&quot;UserDatabase&quot; auth=&quot;Container&quot;</div><div class="line">              type=&quot;org.apache.catalina.UserDatabase&quot;</div><div class="line">              description=&quot;User database that can be updated and saved&quot;</div><div class="line">              factory=&quot;org.apache.catalina.users.MemoryUserDatabaseFactory&quot;</div><div class="line">              pathname=&quot;conf/tomcat-users.xml&quot; /&gt;</div><div class="line">  &lt;/GlobalNamingResources&gt;</div><div class="line"></div><div class="line">  &lt;!-- A &quot;Service&quot; is a collection of one or more &quot;Connectors&quot; that share</div><div class="line">       a single &quot;Container&quot; Note:  A &quot;Service&quot; is not itself a &quot;Container&quot;,</div><div class="line">       so you may not define subcomponents such as &quot;Valves&quot; at this level.</div><div class="line">       Documentation at /docs/config/service.html</div><div class="line">   --&gt;</div><div class="line">  &lt;Service name=&quot;Catalina&quot;&gt;</div><div class="line"></div><div class="line">    &lt;!--The connectors can use a shared executor, you can define one or more named thread pools--&gt;</div><div class="line">    &lt;!--</div><div class="line">    &lt;Executor name=&quot;tomcatThreadPool&quot; namePrefix=&quot;catalina-exec-&quot;</div><div class="line">        maxThreads=&quot;150&quot; minSpareThreads=&quot;4&quot;/&gt;</div><div class="line">    --&gt;</div><div class="line"></div><div class="line"></div><div class="line">    &lt;!-- A &quot;Connector&quot; represents an endpoint by which requests are received</div><div class="line">         and responses are returned. Documentation at :</div><div class="line">         Java HTTP Connector: /docs/config/http.html (blocking &amp; non-blocking)</div><div class="line">         Java AJP  Connector: /docs/config/ajp.html</div><div class="line">         APR (HTTP/AJP) Connector: /docs/apr.html</div><div class="line">         Define a non-SSL HTTP/1.1 Connector on port 8080</div><div class="line">    --&gt;</div><div class="line">    &lt;Connector port=&quot;8080&quot; protocol=&quot;HTTP/1.1&quot;</div><div class="line">               connectionTimeout=&quot;20000&quot;</div><div class="line">               redirectPort=&quot;8443&quot; /&gt;</div><div class="line">    &lt;!-- A &quot;Connector&quot; using the shared thread pool--&gt;</div><div class="line">    &lt;!--</div><div class="line">    &lt;Connector executor=&quot;tomcatThreadPool&quot;</div><div class="line">               port=&quot;8080&quot; protocol=&quot;HTTP/1.1&quot;</div><div class="line">               connectionTimeout=&quot;20000&quot;</div><div class="line">               redirectPort=&quot;8443&quot; /&gt;</div><div class="line">    --&gt;</div><div class="line">    &lt;!-- Define a SSL HTTP/1.1 Connector on port 8443</div><div class="line">         This connector uses the BIO implementation that requires the JSSE</div><div class="line">         style configuration. When using the APR/native implementation, the</div><div class="line">         OpenSSL style configuration is required as described in the APR/native</div><div class="line">         documentation --&gt;</div><div class="line">    &lt;!--</div><div class="line">    &lt;Connector port=&quot;8443&quot; protocol=&quot;org.apache.coyote.http11.Http11Protocol&quot;</div><div class="line">               maxThreads=&quot;150&quot; SSLEnabled=&quot;true&quot; scheme=&quot;https&quot; secure=&quot;true&quot;</div><div class="line">               clientAuth=&quot;false&quot; sslProtocol=&quot;TLS&quot; /&gt;</div><div class="line">    --&gt;</div><div class="line"></div><div class="line">    &lt;!-- Define an AJP 1.3 Connector on port 8009 --&gt;</div><div class="line">    &lt;Connector port=&quot;8009&quot; protocol=&quot;AJP/1.3&quot; redirectPort=&quot;8443&quot; /&gt;</div><div class="line"></div><div class="line"></div><div class="line">    &lt;!-- An Engine represents the entry point (within Catalina) that processes</div><div class="line">         every request.  The Engine implementation for Tomcat stand alone</div><div class="line">         analyzes the HTTP headers included with the request, and passes them</div><div class="line">         on to the appropriate Host (virtual host).</div><div class="line">         Documentation at /docs/config/engine.html --&gt;</div><div class="line"></div><div class="line">    &lt;!-- You should set jvmRoute to support load-balancing via AJP ie :</div><div class="line">    &lt;Engine name=&quot;Catalina&quot; defaultHost=&quot;localhost&quot; jvmRoute=&quot;jvm1&quot;&gt;</div><div class="line">    --&gt;</div><div class="line">    &lt;Engine name=&quot;Catalina&quot; defaultHost=&quot;localhost&quot; &gt;</div><div class="line"></div><div class="line">      &lt;!--For clustering, please take a look at documentation at:</div><div class="line">          /docs/cluster-howto.html  (simple how to)</div><div class="line">          /docs/config/cluster.html (reference documentation) --&gt;</div><div class="line">      &lt;!--</div><div class="line">      &lt;Cluster className=&quot;org.apache.catalina.ha.tcp.SimpleTcpCluster&quot;/&gt;</div><div class="line">      --&gt;</div><div class="line"></div><div class="line">      &lt;!-- Use the LockOutRealm to prevent attempts to guess user passwords</div><div class="line">           via a brute-force attack --&gt;</div><div class="line">      &lt;Realm className=&quot;org.apache.catalina.realm.LockOutRealm&quot;&gt;</div><div class="line">        &lt;!-- This Realm uses the UserDatabase configured in the global JNDI</div><div class="line">             resources under the key &quot;UserDatabase&quot;.  Any edits</div><div class="line">             that are performed against this UserDatabase are immediately</div><div class="line">             available for use by the Realm.  --&gt;</div><div class="line">        &lt;Realm className=&quot;org.apache.catalina.realm.UserDatabaseRealm&quot;</div><div class="line">               resourceName=&quot;UserDatabase&quot;/&gt;</div><div class="line">      &lt;/Realm&gt;</div><div class="line"></div><div class="line">      &lt;Host name=&quot;localhost&quot;  appBase=&quot;webapps&quot;</div><div class="line">            unpackWARs=&quot;true&quot; autoDeploy=&quot;true&quot;&gt;</div><div class="line"></div><div class="line">        &lt;!-- SingleSignOn valve, share authentication between web applications</div><div class="line">             Documentation at: /docs/config/valve.html --&gt;</div><div class="line">        &lt;!--</div><div class="line">        &lt;Valve className=&quot;org.apache.catalina.authenticator.SingleSignOn&quot; /&gt;</div><div class="line">        --&gt;</div><div class="line"></div><div class="line">        &lt;!-- Access log processes all example.</div><div class="line">             Documentation at: /docs/config/valve.html</div><div class="line">             Note: The pattern used is equivalent to using pattern=&quot;common&quot; --&gt;</div><div class="line">        &lt;Valve className=&quot;org.apache.catalina.valves.AccessLogValve&quot; directory=&quot;logs&quot;</div><div class="line">               prefix=&quot;localhost_access_log.&quot; suffix=&quot;.txt&quot;</div><div class="line">               pattern=&quot;%h %l %u %t &amp;quot;%r&amp;quot; %s %b&quot; /&gt;</div><div class="line">        &lt;Context path=&quot;/test&quot;  docBase=&quot;/usr/share/tomcat/webapps/test&quot; reloadable=&quot;true&quot;&gt;</div><div class="line">              &lt;Manager className=&quot;de.javakaffee.web.msm.MemcachedBackupSessionManager&quot;</div><div class="line">                memcachedNodes=&quot;n1:172.18.50.61:11211,n2:172.18.50.62:11211&quot;</div><div class="line">                failoverNodes=&quot;n1&quot;</div><div class="line">                requestUriIgnorePattern=&quot;.*\.(ico|png|gif|jpg|css|js)$&quot;</div><div class="line">                transcoderFactoryClass=&quot;de.javakaffee.web.msm.serializer.javolution.JavolutionTranscoderFactory&quot;</div><div class="line">              /&gt;</div><div class="line">        &lt;/Context&gt;</div><div class="line">      &lt;/Host&gt;</div><div class="line">    &lt;/Engine&gt;</div><div class="line">  &lt;/Service&gt;</div><div class="line">&lt;/Server&gt;</div></pre></td></tr></table></figure></p>
+<p><strong>测试</strong></p>
+<blockquote>
+<p><a href="http://172.18.50.71" target="_blank" rel="external">http://172.18.50.71</a><br>TomcatA<br>Session ID<br>3F96F6A4657D50881AC523F6A7AF787F-n2<br>Created on<br>1495693301965<br>刷新后为<br>TomcatB<br>Session ID<br>3F96F6A4657D50881AC523F6A7AF787F-n2<br>Created on<br>1495693301965<br>stop n2后为 n1</p>
+</blockquote>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">Show TOC</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">Hide TOC</button>
+  <div class="random-toc">
+    <h2>Table of Content</h2>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Tomcat-session共享"><span class="toc-text">Tomcat session共享</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#50-71"><span class="toc-text">50.71</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装配置-memcached-session-manager"><span class="toc-text">安装配置 memcached-session-manager</span></a></li></ol></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/05/25/HTTP HEADER.html" class="prev">&larr; Prev post </a>
+  
+
+  
+
+  
+    <a href="/2017/05/18/web站点的动静分离及高可用.html" class="next">Next post web站点的动静分离及高可用 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Hee shen using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg">
+    <p id="description">my notes</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com/">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.douban.com">
+        
+          <i class="icon iconfont douban">&#xe60f;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
