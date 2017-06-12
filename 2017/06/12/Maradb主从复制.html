@@ -1,0 +1,390 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Hee shen">
+  
+  
+  
+  
+    <meta name="description" content="Maradb主从复制MASTER(172.18.50.72)vim /etc/my.cnf.d/server.cnf添加1234innodb_file_per_table=ONskip_name_resolve=ONlog_bin=mysql-binserver_id=1
+授权slave服务器1GRANT REPLICATION SLAVE,REPLICATION CLIENT ON *.*...">
+  
+  <title>Maradb主从复制 [ Linux-2017 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/06/12/Fastdfs安装配置.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Fastdfs安装配置
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/06/12/Mariadb半同步复制及复制过滤器.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Mariadb半同步复制及复制过滤器
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg"/>
+          <div id="homelink">Linux-2017</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>Maradb主从复制</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-06-12</span>
+      
+        <span id = "post-title-updated">修改于 2017-06-12</span>
+      
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/Mariadb/">Mariadb</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/主从复制/">主从复制</a>
+      
+      </span>
+      
+    </p>
+    
+    <h2 id="Maradb主从复制"><a href="#Maradb主从复制" class="headerlink" title="Maradb主从复制"></a>Maradb主从复制</h2><h4 id="MASTER-172-18-50-72"><a href="#MASTER-172-18-50-72" class="headerlink" title="MASTER(172.18.50.72)"></a>MASTER(172.18.50.72)</h4><p>vim /etc/my.cnf.d/server.cnf添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">innodb_file_per_table=ON</div><div class="line">skip_name_resolve=ON</div><div class="line">log_bin=mysql-bin</div><div class="line">server_id=1</div></pre></td></tr></table></figure></p>
+<p>授权slave服务器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">GRANT REPLICATION SLAVE,REPLICATION CLIENT ON *.* TO test@&apos;172.18.50.73&apos; IDENTIFIED BY &apos;test123&apos;;</div></pre></td></tr></table></figure></p>
+<p>查看二进制文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; SHOW MASTER STATUS;</div><div class="line">+------------------+----------+--------------+------------------+</div><div class="line">| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |</div><div class="line">+------------------+----------+--------------+------------------+</div><div class="line">| mysql-bin.000005 |      503 |              |                  |</div><div class="line">+------------------+----------+--------------+------------------+</div><div class="line">MariaDB [(none)]&gt; SHOW BINARY LOGS;</div><div class="line">+------------------+-----------+</div><div class="line">| Log_name         | File_size |</div><div class="line">+------------------+-----------+</div><div class="line">| mysql-bin.000001 |       288 |</div><div class="line">| mysql-bin.000002 |       848 |</div><div class="line">| mysql-bin.000003 |      1629 |</div><div class="line">| mysql-bin.000004 |       811 |</div><div class="line">| mysql-bin.000005 |       503 |</div><div class="line">+------------------+-----------+</div><div class="line">5 rows in set (0.00 sec)</div></pre></td></tr></table></figure></p>
+<h4 id="SLAVE-172-18-50-73"><a href="#SLAVE-172-18-50-73" class="headerlink" title="SLAVE(172.18.50.73)"></a>SLAVE(172.18.50.73)</h4><p>在/etc/my.cnf.d/server.cnf中加入<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">[mysqld]</div><div class="line">skip_name_resolve=ON</div><div class="line">innodb_file_per_table=ON</div><div class="line">server_id=2</div><div class="line">relay_log=relay-log</div></pre></td></tr></table></figure></p>
+<p>授权<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">CHANGE MASTER TO MASTER_HOST=&apos;172.18.50.72&apos;,MASTER_USER=&apos;test&apos;,MASTER_PASSWORD=&apos;test123&apos;,MASTER_LOG_FILE=&apos;mysql-bin.000005&apos;,MASTER_LOG_POS=503;</div></pre></td></tr></table></figure></p>
+<p>启动slave,IO和SQL为Yes说明启动成功<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">START SLAVE;</div><div class="line">SHOW SLAVE STATUS\G</div><div class="line">Slave_IO_Running: Yes</div><div class="line">Slave_SQL_Running: Yes</div></pre></td></tr></table></figure></p>
+<p> <strong>复制时需要注意的地方：</strong></p>
+<ol>
+<li><p>从服务应该设定为只读<br>在从服务器启动read_only,但对非SUPER权限的用户有效；</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">show global variables like &quot;%read_only%&quot;;	</div><div class="line">MariaDB [(none)]&gt; SET @@GLOBAL.read_only=ON;</div></pre></td></tr></table></figure>
+<pre><code>阻止所有用户
+</code></pre><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; FLUSH TABLES WITH READ LOCK;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div></pre></td></tr></table></figure>
+</li>
+<li><p>尽量确保复制时的事务安全<br>在master节点启用参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; set @@global.sync_binlog=1;</div></pre></td></tr></table></figure>
+<p>如果是Innodb存储引擎,确保下面两项是on状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; show variables like &apos;innodb%trx%&apos;;</div><div class="line">+-------------------------------------------+-------+</div><div class="line">| Variable_name                             | Value |</div><div class="line">+-------------------------------------------+-------+</div><div class="line">| innodb_flush_log_at_trx_commit            | 1     |</div><div class="line">| innodb_use_global_flush_log_at_trx_commit | ON    |</div><div class="line">+-------------------------------------------+-------+</div></pre></td></tr></table></figure>
+</li>
+<li><p>从服务器意外终止时尽量避免自动启动复制线程</p>
+</li>
+<li><p>从节点：设置参数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; set @@global.sync_master_info=1;</div><div class="line">MariaDB [(none)]&gt; set @@global.sync_master_info=ON</div></pre></td></tr></table></figure>
+<p>​</p>
+</li>
+</ol>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Maradb主从复制"><span class="toc-text">Maradb主从复制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MASTER-172-18-50-72"><span class="toc-text">MASTER(172.18.50.72)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SLAVE-172-18-50-73"><span class="toc-text">SLAVE(172.18.50.73)</span></a></li></ol></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/06/12/Fastdfs安装配置.html" class="prev">&larr; 上一篇 Fastdfs安装配置</a>
+  
+
+  
+
+  
+    <a href="/2017/06/12/Mariadb半同步复制及复制过滤器.html" class="next">下一篇 Mariadb半同步复制及复制过滤器 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Hee shen using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg">
+    <p id="description">my notes</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com/">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.douban.com">
+        
+          <i class="icon iconfont douban">&#xe60f;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

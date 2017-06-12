@@ -1,0 +1,399 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Hee shen">
+  
+  
+  
+  
+    <meta name="description" content="MogileFS的安装配置该项目托管在github之上，地址为https://github.com/hachi
+MogileFS由3个部分组成：
+server：主要包括mogilefsd和mogstored两个应用程序。mogilefsd实现的是tracker，它通过数据库来保存元数据信息，包括站点doman、class、host等；mogstored是存储节点(store node),它其...">
+  
+  <title>MogileFS的安装配置 [ Linux-2017 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/06/12/Mariadb半同步复制及复制过滤器.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Mariadb半同步复制及复制过滤器
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/06/12/ProxySQL1.3.6配置.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        ProxySQL1.3.6配置
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg"/>
+          <div id="homelink">Linux-2017</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>MogileFS的安装配置</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-06-12</span>
+      
+        <span id = "post-title-updated">修改于 2017-06-12</span>
+      
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/MogileFS/">MogileFS</a>
+      
+      </span>
+      
+    </p>
+    
+    <h2 id="MogileFS的安装配置"><a href="#MogileFS的安装配置" class="headerlink" title="MogileFS的安装配置"></a>MogileFS的安装配置</h2><p><strong>该项目托管在github之上，地址为<a href="https://github.com/hachi" target="_blank" rel="external">https://github.com/hachi</a></strong></p>
+<h3 id="MogileFS由3个部分组成："><a href="#MogileFS由3个部分组成：" class="headerlink" title="MogileFS由3个部分组成："></a>MogileFS由3个部分组成：</h3><ol>
+<li>server：主要包括mogilefsd和mogstored两个应用程序。mogilefsd实现的是tracker，它通过数据库来保存元数据信息，包括站点doman、class、host等；mogstored是存储节点(store node),它其实是个WebDAV服务，默认监听在7500端口，接受客户端的文件存储请求。在MogileFS安装完后，要运行mogadm工具将所有的store node注册到mogilefsd的数据库里，mogilefsd会对这些节点进行管理和监控。</li>
+<li>utiles（工具集）：主要是MofileFS的一些管理工具，例如mogadm等。</li>
+<li>客户端API：MogileFS的客户端API很多，例如Perl、PHP、Java、Python等，用这个模块可以编写客户端程序，实现文件的备份管理功能等。</li>
+</ol>
+<p>存储主机（节点）<br>这个是MogileFS存储文件存放在这些机器上，也是mogstored节点，也叫Storage Server，每一台存储主要都要启动一个mogstored服务，扩容就是增加这些机器。</p>
+<p>设备（device）<br>一个存储节点，可以有多个device，就是用来存放文件的目录（例如挂载的目录），每个设备都有一个设备id，需要在mogstored的配置文件中的docroot配置的项目，指定的目录下面创建相应的设备的目录，目录名为\$docroot/dev\$id,设备是不能删除的，只能将其设备的状态值为dead，当一个设备dead之后，里面的数据无法恢复，且这个dead了的设备id也将不能用了。</p>
+<h3 id="安装"><a href="#安装" class="headerlink" title="安装"></a>安装</h3><p>实验环境为4台centos6.8，分别配置epel源，时间已经同步，且防护墙、selinux已关闭。</p>
+<p><strong>拓扑</strong><br>nginx反代、tracker以及mysq都在<br>172.18.50.61</p>
+<p>3台storage node<br>172.18.50.62<br>172.18.50.63<br>172.18.50.64</p>
+<h4 id="安装-1"><a href="#安装-1" class="headerlink" title="安装"></a>安装</h4><p>为了节省时间，这里在61主机上使用ansible进行配置<br>ansible的hosts配置为<br>[my]<br>172.18.50.61<br>[mgs]<br>172.18.50.62<br>172.18.50.63<br>172.18.50.64</p>
+<p>安装perl环境<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ansible all -m shell -a &apos;yum install perl-Net-Netmask perl-IO-stringy perl-Sys-Syslog perl-IO-AIO&apos;</div></pre></td></tr></table></figure></p>
+<p>准备mogilefs文件<br>[root@61 rpm]# ls /root/rpm<br>MogileFS-Server-2.46-2.el6.noarch.rpm            perl-Danga-Socket-1.61-1.el6.rf.noarch.rpm<br>MogileFS-Server-mogilefsd-2.46-2.el6.noarch.rpm  perl-IO-stringy-2.110-1.2.el6.rfx.noarch.rpm<br>MogileFS-Server-mogstored-2.46-2.el6.noarch.rpm  perl-MogileFS-Client-1.14-1.el6.noarch.rpm<br>MogileFS-Utils-2.19-1.el6.noarch.rpm             perl-Net-Netmask-1.9015-8.el6.noarch.rpm<br>Perlbal-1.78-1.el6.noarch.rpm                    perl-Perlbal-1.78-1.el6.noarch.rpm<br>Perlbal-doc-1.78-1.el6.noarch.rpm</p>
+<p>将这些文件推送至store node<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">[root@61 ~]# cat copy.yml </div><div class="line">---</div><div class="line"></div><div class="line">- hosts: mgs</div><div class="line">  remote_user: root</div><div class="line">  tasks:</div><div class="line">  - name: COPY</div><div class="line">    copy: src=/root/rpm dest=/tmp</div></pre></td></tr></table></figure></p>
+<p>copy模块依赖libselinux，所以<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ansible all -m shell -a &apos;yum -y install libselinux-python&apos;</div></pre></td></tr></table></figure></p>
+<p>coppy<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">ansible-playbook copy.yml</div></pre></td></tr></table></figure></p>
+<p>安装mogilefs<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">yum install rpm/*.rpm -y</div><div class="line">ansible mfs -m shell -a &apos;yum -y install /tmp/rpm/*.rpm&apos;</div></pre></td></tr></table></figure></p>
+<p>在store node上创建数据存放目录并修改属主<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ansible mgs -m shell -a &apos;mkdir -pv /var/mogdata&apos;</div><div class="line">ansible mgs -m shell  -a &quot;chown -R mogilefs.mogilefs /var/mogdata&quot;</div></pre></td></tr></table></figure></p>
+<p>配置tracker<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">[root@61 ~]# cat /etc/mogilefs/mogilefsd.conf | grep -v &quot;^#&quot;</div><div class="line">daemonize = 1</div><div class="line">pidfile = /var/run/mogilefsd/mogilefsd.pid</div><div class="line">db_dsn = DBI:mysql:mogilefs:host=127.0.0.1  #mysql地址</div><div class="line">db_user = mogile</div><div class="line">db_pass = password</div><div class="line">listen = 127.0.0.1:7001</div><div class="line">conf_port = 7001</div><div class="line">query_jobs = 10</div><div class="line">delete_jobs = 1</div><div class="line">replicate_jobs = 5</div><div class="line">reaper_jobs = 1</div></pre></td></tr></table></figure></p>
+<p>mysql相关配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">yum -y install mysql-server</div><div class="line">service mysqld start </div><div class="line">mysql&gt;grant all privileges on *.* to mogile@&apos;172.18.50.%&apos; identified by &apos;password&apos;;</div><div class="line">mysql&gt;grant all privileges on *.* to mogile@&apos;localhost&apos; identified by &apos;password&apos;;</div><div class="line">mysql&gt;flush privileges;</div></pre></td></tr></table></figure></p>
+<p>初始化数据库,这个过程会自动创建数据库并授权，但是允许的主机为%，不安全，可以在授权完成后修改为指定ip。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">mogdbsetup --dbhost=127.0.0.1 --dbpass=password</div></pre></td></tr></table></figure></p>
+<p>启动mogilefsd<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">su mogilefs -c &quot;mogilefsd -c /etc/mogilefs/mogilefsd.conf --daemon&quot;</div></pre></td></tr></table></figure></p>
+<p>启动mogstored并检查是否启动成功<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div></pre></td><td class="code"><pre><div class="line">ansible mgs -m shell -a &apos;mogstored -daemon&apos;</div><div class="line">[root@61 ~]# ansible mgs -m shell -a &quot;ss -ntl&quot;</div><div class="line">172.18.50.62 | SUCCESS | rc=0 &gt;&gt;</div><div class="line">State      Recv-Q Send-Q        Local Address:Port          Peer Address:Port </div><div class="line">LISTEN     0      128                       *:7500                     *:*     </div><div class="line">LISTEN     0      128                       *:7501                     *:*     </div><div class="line">LISTEN     0      128                      :::22                      :::*     </div><div class="line">LISTEN     0      128                       *:22                       *:*     </div><div class="line">LISTEN     0      100                     ::1:25                      :::*     </div><div class="line">LISTEN     0      100               127.0.0.1:25                       *:*     </div><div class="line"></div><div class="line">172.18.50.64 | SUCCESS | rc=0 &gt;&gt;</div><div class="line">State      Recv-Q Send-Q        Local Address:Port          Peer Address:Port </div><div class="line">LISTEN     0      128                       *:7500                     *:*     </div><div class="line">LISTEN     0      128                       *:7501                     *:*     </div><div class="line">LISTEN     0      128                      :::22                      :::*     </div><div class="line">LISTEN     0      128                       *:22                       *:*     </div><div class="line">LISTEN     0      100                     ::1:25                      :::*     </div><div class="line">LISTEN     0      100               127.0.0.1:25                       *:*     </div><div class="line"></div><div class="line">172.18.50.63 | SUCCESS | rc=0 &gt;&gt;</div><div class="line">State      Recv-Q Send-Q        Local Address:Port          Peer Address:Port </div><div class="line">LISTEN     0      128                       *:7500                     *:*     </div><div class="line">LISTEN     0      128                       *:7501                     *:*     </div><div class="line">LISTEN     0      128                      :::22                      :::*     </div><div class="line">LISTEN     0      128                       *:22                       *:*     </div><div class="line">LISTEN     0      100                     ::1:25                      :::*     </div><div class="line">LISTEN     0      100               127.0.0.1:25                       *:*</div></pre></td></tr></table></figure></p>
+<p>添加host<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mogadm host add node1 --ip=172.18.50.62 --port=7500 --status=alive</div><div class="line">mogadm host add node2 --ip=172.18.50.63 --port=7500 --status=alive</div><div class="line">mogadm host add node3 --ip=172.18.50.64 --port=7500 --status=alive</div></pre></td></tr></table></figure></p>
+<p>添加device，这里需要在三台store node的数据目录分别建立dev1-3<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">mogadm device add node1 1</div><div class="line">mogadm device add node2 2</div><div class="line">mogadm device add node3 3</div></pre></td></tr></table></figure></p>
+<p>查看空间是否正常，如果没空间，一般是iptables或文件权限问题<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">[root@61 ~]# mogadm  device list</div><div class="line">node1 [1]: alive</div><div class="line">                    used(G)    free(G)   total(G)  weight(%)</div><div class="line">   dev1:   alive      1.104     10.923     12.027        100</div><div class="line"></div><div class="line">node2 [2]: alive</div><div class="line">                    used(G)    free(G)   total(G)  weight(%)</div><div class="line">   dev2:   alive      1.132     10.896     12.027        100</div><div class="line"></div><div class="line">node3 [3]: alive</div><div class="line">                    used(G)    free(G)   total(G)  weight(%)</div><div class="line">   dev3:   alive      1.132     10.896     12.027        100</div></pre></td></tr></table></figure></p>
+<p>添加images<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mogadm domain add images</div><div class="line">mogadm domian add file</div></pre></td></tr></table></figure></p>
+<p>添加class,这里可以用 –mindevcount=i 指定上传文件的mindevcount</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">mogadm class add images png</div><div class="line">mogadm class add images png</div></pre></td></tr></table></figure>
+<p>上传文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">[root@61 ~]# mogupload  --trackers=127.0.0.1 --domain=images --key=&apos;test.jpg&apos; --file=&apos;/usr/share/backgrounds/simple_waves.jpg&apos;</div><div class="line">[root@61 ~]# mogfileinfo --trackers=127.0.0.1 --domain=images --key=&apos;test.jpg&apos; </div><div class="line">- file: test.jpg</div><div class="line">     class:              default</div><div class="line">  devcount:                    2</div><div class="line">    domain:               images</div><div class="line">       fid:                    5</div><div class="line">       key:             test.jpg</div><div class="line">    length:               931957</div><div class="line"> - http://172.18.50.63:7500/dev2/0/000/000/0000000005.fid</div><div class="line"> - http://172.18.50.64:7500/dev3/0/000/000/0000000005.fid</div></pre></td></tr></table></figure></p>
+<p>####使用Nginx 做为 MogileFS 的前端客户端<br>这里使用nginx1.10.3<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">tar -xvf nginx-1.10.3.tar.gz</div><div class="line">yum -y install git pcre-devel openssl-devel</div><div class="line">git clone https://github.com/vkholodkov/nginx-mogilefs-module.git</div><div class="line">cd nginx.1.10.3</div><div class="line"> ./configure   --prefix=/usr   --sbin-path=/usr/sbin/nginx   --conf-path=/etc/nginx/nginx.conf   --error-log-path=/var/log/nginx/error.log   --http-log-path=/var/log/nginx/access.log   --pid-path=/var/run/nginx/nginx.pid    --lock-path=/var/lock/nginx.lock   --user=nginx   --group=nginx   --with-http_ssl_module   --with-http_flv_module   --with-http_stub_status_module   --with-http_gzip_static_module   --http-client-body-temp-path=/var/tmp/nginx/client/   --http-proxy-temp-path=/var/tmp/nginx/proxy/   --http-fastcgi-temp-path=/var/tmp/nginx/fcgi/   --http-uwsgi-temp-path=/var/tmp/nginx/uwsgi   --http-scgi-temp-path=/var/tmp/nginx/scgi   --with-pcre   --with-debug   --add-module=/root/nginx-mogilefs-module</div><div class="line">make &amp;&amp; make install</div><div class="line">有些版本make不成功可以使用make CFLAGS=&quot;-pipe  -O -W -Wall -Wpointer-arith -Wno-unused-parameter -g&quot;</div></pre></td></tr></table></figure></p>
+<p>这nginx配置文件中加入location进行反代<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line">vim /etc/nginx/nginx.conf</div><div class="line">        location /imgs/ &#123;</div><div class="line">            mogilefs_tracker 127.0.0.1:7001;</div><div class="line">            mogilefs_domain images;</div><div class="line">#           mogilefs_class png jpg;</div><div class="line"></div><div class="line">            mogilefs_pass &#123;</div><div class="line">                proxy_pass $mogilefs_path;</div><div class="line">                proxy_hide_header Content-Type;</div><div class="line">                proxy_buffering off;</div><div class="line">            &#125;</div><div class="line">        &#125;</div></pre></td></tr></table></figure></p>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><hr>
+<p><img src="http://omsab2via.bkt.clouddn.com/mogilefs.png" alt="enter image description here"></p>
+<p>最后附几个unit脚本<br>nginx<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div><div class="line">112</div><div class="line">113</div><div class="line">114</div><div class="line">115</div><div class="line">116</div><div class="line">117</div><div class="line">118</div><div class="line">119</div><div class="line">120</div><div class="line">121</div><div class="line">122</div><div class="line">123</div><div class="line">124</div><div class="line">125</div><div class="line">126</div></pre></td><td class="code"><pre><div class="line">#!/bin/sh</div><div class="line">#</div><div class="line"># nginx - this script starts and stops the nginx daemon</div><div class="line">#</div><div class="line"># chkconfig:   - 85 15 </div><div class="line"># description:  Nginx is an HTTP(S) server, HTTP(S) reverse \</div><div class="line">#               proxy and IMAP/POP3 proxy server</div><div class="line"># processname: nginx</div><div class="line"># config:      /etc/nginx/nginx.conf</div><div class="line"># config:      /etc/sysconfig/nginx</div><div class="line"># pidfile:     /var/run/nginx.pid</div><div class="line"> </div><div class="line"># Source function library.</div><div class="line">. /etc/rc.d/init.d/functions</div><div class="line"> </div><div class="line"># Source networking configuration.</div><div class="line">. /etc/sysconfig/network</div><div class="line"> </div><div class="line"># Check that networking is up.</div><div class="line">[ &quot;$NETWORKING&quot; = &quot;no&quot; ] &amp;&amp; exit 0</div><div class="line"> </div><div class="line">nginx=&quot;/usr/sbin/nginx&quot;</div><div class="line">prog=$(basename $nginx)</div><div class="line"> </div><div class="line">NGINX_CONF_FILE=&quot;/etc/nginx/nginx.conf&quot;</div><div class="line"> </div><div class="line">[ -f /etc/sysconfig/nginx ] &amp;&amp; . /etc/sysconfig/nginx</div><div class="line"> </div><div class="line">lockfile=/var/lock/subsys/nginx</div><div class="line"> </div><div class="line">make_dirs() &#123;</div><div class="line">   # make required directories</div><div class="line">   user=`nginx -V 2&gt;&amp;1 | grep &quot;configure arguments:&quot; | sed &apos;s/[^*]*--user=\([^ ]*\).*/\1/g&apos; -`</div><div class="line">   options=`$nginx -V 2&gt;&amp;1 | grep &apos;configure arguments:&apos;`</div><div class="line">   for opt in $options; do</div><div class="line">       if [ `echo $opt | grep &apos;.*-temp-path&apos;` ]; then</div><div class="line">           value=`echo $opt | cut -d &quot;=&quot; -f 2`</div><div class="line">           if [ ! -d &quot;$value&quot; ]; then</div><div class="line">               # echo &quot;creating&quot; $value</div><div class="line">               mkdir -p $value &amp;&amp; chown -R $user $value</div><div class="line">           fi</div><div class="line">       fi</div><div class="line">   done</div><div class="line">&#125;</div><div class="line"> </div><div class="line">start() &#123;</div><div class="line">    [ -x $nginx ] || exit 5</div><div class="line">    [ -f $NGINX_CONF_FILE ] || exit 6</div><div class="line">    make_dirs</div><div class="line">    echo -n $&quot;Starting $prog: &quot;</div><div class="line">    daemon $nginx -c $NGINX_CONF_FILE</div><div class="line">    retval=$?</div><div class="line">    echo</div><div class="line">    [ $retval -eq 0 ] &amp;&amp; touch $lockfile</div><div class="line">    return $retval</div><div class="line">&#125;</div><div class="line"> </div><div class="line">stop() &#123;</div><div class="line">    echo -n $&quot;Stopping $prog: &quot;</div><div class="line">    killproc $prog -QUIT</div><div class="line">    retval=$?</div><div class="line">    echo</div><div class="line">    [ $retval -eq 0 ] &amp;&amp; rm -f $lockfile</div><div class="line">    return $retval</div><div class="line">&#125;</div><div class="line"> </div><div class="line">restart() &#123;</div><div class="line">    configtest || return $?</div><div class="line">    stop</div><div class="line">    sleep 1</div><div class="line">    start</div><div class="line">&#125;</div><div class="line"> </div><div class="line">reload() &#123;</div><div class="line">    configtest || return $?</div><div class="line">    echo -n $&quot;Reloading $prog: &quot;</div><div class="line">    killproc $nginx -HUP</div><div class="line">    RETVAL=$?</div><div class="line">    echo</div><div class="line">&#125;</div><div class="line"> </div><div class="line">force_reload() &#123;</div><div class="line">    restart</div><div class="line">&#125;</div><div class="line"> </div><div class="line">configtest() &#123;</div><div class="line">  $nginx -t -c $NGINX_CONF_FILE</div><div class="line">&#125;</div><div class="line"> </div><div class="line">rh_status() &#123;</div><div class="line">    status $prog</div><div class="line">&#125;</div><div class="line"> </div><div class="line">rh_status_q() &#123;</div><div class="line">    rh_status &gt;/dev/null 2&gt;&amp;1</div><div class="line">&#125;</div><div class="line"> </div><div class="line">case &quot;$1&quot; in</div><div class="line">    start)</div><div class="line">        rh_status_q &amp;&amp; exit 0</div><div class="line">        $1</div><div class="line">        ;;</div><div class="line">    stop)</div><div class="line">        rh_status_q || exit 0</div><div class="line">        $1</div><div class="line">        ;;</div><div class="line">    restart|configtest)</div><div class="line">        $1</div><div class="line">        ;;</div><div class="line">    reload)</div><div class="line">        rh_status_q || exit 7</div><div class="line">        $1</div><div class="line">        ;;</div><div class="line">    force-reload)</div><div class="line">        force_reload</div><div class="line">        ;;</div><div class="line">    status)</div><div class="line">        rh_status</div><div class="line">        ;;</div><div class="line">    condrestart|try-restart)</div><div class="line">        rh_status_q || exit 0</div><div class="line">            ;;</div><div class="line">    *)</div><div class="line">        echo $&quot;Usage: $0 &#123;start|stop|status|restart|condrestart|try-restart|reload|force-reload|configtest&#125;&quot;</div><div class="line">        exit 2</div><div class="line">esac</div></pre></td></tr></table></figure></p>
+<p>mogstored<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line">#</div><div class="line"># mogstored - Startup script for the MogileFS storage</div><div class="line">#</div><div class="line"># chkconfig: - 86 14</div><div class="line"># description: MogileFS storage </div><div class="line"># processname: mogstored</div><div class="line"># config: /etc/mogilefs/mogstored.conf </div><div class="line"># pidfile: /var/run/mogilefsd/mogstored.pid</div><div class="line"></div><div class="line"># Source function library.</div><div class="line">. /etc/rc.d/init.d/functions</div><div class="line"></div><div class="line"># Path to the apachectl script, server binary, and short-form for messages.</div><div class="line">lockfile=$&#123;LOCKFILE-/var/lock/subsys/mogstored&#125; </div><div class="line">RETVAL=0</div><div class="line"></div><div class="line">configfile=&apos;/etc/mogilefs/mogstored.conf&apos;</div><div class="line"></div><div class="line">prog=$(which mogstored)</div><div class="line"></div><div class="line">start() &#123; </div><div class="line">	ulimit -n 65535</div><div class="line">	echo -n $&quot;Starting mogstored&quot;</div><div class="line">	su - mogilefs -c &quot;$prog -c $configfile --daemon&quot;  &amp;&gt; /dev/null</div><div class="line">	RETVAL=$?</div><div class="line">	[ $RETVAL = 0 ] &amp;&amp; success &amp;&amp; touch $&#123;lockfile&#125; || failure</div><div class="line">	echo</div><div class="line">	return $RETVAL</div><div class="line">&#125;</div><div class="line"></div><div class="line">stop() &#123;</div><div class="line">	echo -n $&quot;Stopping mogstored&quot; </div><div class="line">	netstat -nlp|grep &quot;mogstored&quot;|grep -v grep|awk &apos;&#123;print $7&#125;&apos;|awk -F&quot;/&quot; &apos;&#123;print $1&#125;&apos;|xargs kill -9 </div><div class="line">	RETVAL=$?</div><div class="line">	[ $RETVAL = 0 ] &amp;&amp; success &amp;&amp; rm -f $&#123;lockfile&#125; || failure</div><div class="line">	echo</div><div class="line">&#125;</div><div class="line"></div><div class="line">reload() &#123;</div><div class="line">	echo -n $&quot;Reloading mogstored: &quot; </div><div class="line">	killall mogstored -HUP </div><div class="line">	RETVAL=$?</div><div class="line">	[ $RETVAL = 0 ] &amp;&amp; success || failure</div><div class="line">	echo</div><div class="line">&#125;</div><div class="line"></div><div class="line">case &quot;$1&quot; in</div><div class="line">	start) </div><div class="line">		start</div><div class="line">		;; </div><div class="line">	stop)</div><div class="line">		stop</div><div class="line">		;; </div><div class="line">	status) </div><div class="line">		status mogstored </div><div class="line">		RETVAL=$?</div><div class="line">		;;</div><div class="line">	restart)</div><div class="line">		stop</div><div class="line">		sleep 1</div><div class="line">		start</div><div class="line">		;;</div><div class="line">	reload)</div><div class="line">		reload</div><div class="line">		;; </div><div class="line">	*) </div><div class="line">		echo $&quot;Usage: mogstored &#123;start|stop|restart|reload|status&#125;&quot; </div><div class="line">		exit 1</div><div class="line">esac</div><div class="line">exit $RETVAL</div></pre></td></tr></table></figure></p>
+<p>mogilefsd服务脚本：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div></pre></td><td class="code"><pre><div class="line">#!/bin/bash</div><div class="line">#</div><div class="line"># mogilefsd - Startup script for the MogileFS tracker</div><div class="line">#</div><div class="line"># chkconfig: - 85 15</div><div class="line"># description: MogileFS tracker </div><div class="line"># processname: mogilefsd</div><div class="line"># config: /etc/mogilefs/mogilefsd.conf </div><div class="line"># pidfile: /var/run/mogilefsd/mogilefsd.pid</div><div class="line"></div><div class="line"># Source function library.</div><div class="line">. /etc/rc.d/init.d/functions</div><div class="line"></div><div class="line"># Path to the apachectl script, server binary, and short-form for messages.</div><div class="line">lockfile=$&#123;LOCKFILE-/var/lock/subsys/mogilefsd&#125; </div><div class="line">RETVAL=0</div><div class="line"></div><div class="line">prog=$(which mogilefsd)</div><div class="line"></div><div class="line">start() &#123; </div><div class="line">	ulimit -n 65535</div><div class="line">	echo -n $&quot;Starting mogilefsd&quot;</div><div class="line">	su - mogilefs -c &quot;$prog -c /etc/mogilefs/mogilefsd.conf --daemon&quot; </div><div class="line">	RETVAL=$?</div><div class="line">	[ $RETVAL = 0 ] &amp;&amp; success &amp;&amp; touch $&#123;lockfile&#125; || failure</div><div class="line">	echo</div><div class="line">	return $RETVAL</div><div class="line">&#125;</div><div class="line"></div><div class="line">stop() &#123;</div><div class="line">	echo -n $&quot;Stopping mogilefsd&quot; </div><div class="line">	netstat -nlp|grep &quot;mogilefsd&quot;|grep -v grep|awk &apos;&#123;print $7&#125;&apos;|awk -F&quot;/&quot; &apos;&#123;print $1&#125;&apos;|xargs kill -9 </div><div class="line">	RETVAL=$?</div><div class="line">	[ $RETVAL = 0 ] &amp;&amp; success &amp;&amp; rm -f $&#123;lockfile&#125; || failure</div><div class="line">	echo</div><div class="line">&#125;</div><div class="line"></div><div class="line">reload() &#123;</div><div class="line">	echo -n $&quot;Reloading mogilefsd: &quot; </div><div class="line">	killall mogilefsd -HUP </div><div class="line">	RETVAL=$?</div><div class="line">	[ $RETVAL = 0 ] &amp;&amp; success || failure</div><div class="line">	echo</div><div class="line">&#125;</div><div class="line"></div><div class="line">case &quot;$1&quot; in</div><div class="line">	start) </div><div class="line">		start</div><div class="line">		;; </div><div class="line">	stop)</div><div class="line">		stop</div><div class="line">		;; </div><div class="line">	status) </div><div class="line">		status mogilefsd </div><div class="line">		RETVAL=$?</div><div class="line">		;;</div><div class="line">	restart)</div><div class="line">		stop</div><div class="line">		sleep 1</div><div class="line">		start</div><div class="line">		;;</div><div class="line">	reload)</div><div class="line">		reload</div><div class="line">		;; </div><div class="line">	*) </div><div class="line">		echo $&quot;Usage: mogilefsd &#123;start|stop|restart|reload|status&#125;&quot; </div><div class="line">		exit 1</div><div class="line">esac</div><div class="line">exit $RETVAL</div></pre></td></tr></table></figure></p>
+<p>####另外的两种安装方式<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"># yum -y install make gcc unzip perl-DBD-MySQL perl perl-CPAN perl-YAML perl-Time-HiRes</div><div class="line"># cpan </div><div class="line">App::cpanminus </div><div class="line">MogileFS::Server </div><div class="line">MogileFS::Utils </div><div class="line">IO::AIO </div><div class="line">IO::WrapTie </div><div class="line">Danga::Socket</div><div class="line">#2</div><div class="line">cpanm安装</div><div class="line">wget http://xrl.us/cpanm -O /usr/bin/cpanm; sudo chmod +x /usr/bin/cpanm</div><div class="line">#cpanm DBD::mysql</div><div class="line">#cpanm MogileFS::Server</div><div class="line">#cpanm MogileFS::Utils</div><div class="line">#cpanm MogileFS::Client</div><div class="line"># cpan -i App::cpanminus</div><div class="line">cpan&gt; install App:cpanminus</div></pre></td></tr></table></figure></p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MogileFS的安装配置"><span class="toc-text">MogileFS的安装配置</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MogileFS由3个部分组成："><span class="toc-text">MogileFS由3个部分组成：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#安装"><span class="toc-text">安装</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#安装-1"><span class="toc-text">安装</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试"><span class="toc-text">测试</span></a></li></ol></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/06/12/Mariadb半同步复制及复制过滤器.html" class="prev">&larr; 上一篇 Mariadb半同步复制及复制过滤器</a>
+  
+
+  
+
+  
+    <a href="/2017/06/12/ProxySQL1.3.6配置.html" class="next">下一篇 ProxySQL1.3.6配置 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Hee shen using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg">
+    <p id="description">my notes</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com/">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.douban.com">
+        
+          <i class="icon iconfont douban">&#xe60f;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

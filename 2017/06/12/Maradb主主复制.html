@@ -1,0 +1,388 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Hee shen">
+  
+  
+  
+  
+    <meta name="description" content="Maradb主主复制
+互为主从：两个节点各自都要开启binlog和relay log；
+
+
+数据不一致；
+自动增长id；
+
+定义一个节点使用奇数id12auto_increment_offset=1auto_increment_increment=2
+定义一个节点使用偶数id12auto_increment_offset=2auto_increment_increment=2
+MASTER1...">
+  
+  <title>Maradb主主复制 [ Linux-2017 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/06/12/ss.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        ss
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/05/25/http_header.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        HTTP HEADER
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg"/>
+          <div id="homelink">Linux-2017</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>Maradb主主复制</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-06-12</span>
+      
+        <span id = "post-title-updated">修改于 2017-06-12</span>
+      
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/Maradb/">Maradb</a>
+      
+      </span>
+      
+    </p>
+    
+    <h2 id="Maradb主主复制"><a href="#Maradb主主复制" class="headerlink" title="Maradb主主复制"></a>Maradb主主复制</h2><blockquote>
+<p>互为主从：两个节点各自都要开启binlog和relay log；</p>
+</blockquote>
+<ol>
+<li>数据不一致；</li>
+<li>自动增长id；</li>
+</ol>
+<p><strong>定义一个节点使用奇数id</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">auto_increment_offset=1</div><div class="line">auto_increment_increment=2</div></pre></td></tr></table></figure></p>
+<p><strong>定义一个节点使用偶数id</strong><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">auto_increment_offset=2</div><div class="line">auto_increment_increment=2</div></pre></td></tr></table></figure></p>
+<h4 id="MASTER1-172-18-50-72"><a href="#MASTER1-172-18-50-72" class="headerlink" title="MASTER1(172.18.50.72)"></a>MASTER1(172.18.50.72)</h4><p>/etc/my.cnf.d/server.cnf添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">innodb_file_per_table=ON</div><div class="line">skip_name_resolve=ON</div><div class="line">log_bin=mysql-bin</div><div class="line">server_id=1</div><div class="line">relay_log=relay-log</div><div class="line">auto_increment_offset=1</div><div class="line">auto_increment_increment=2</div></pre></td></tr></table></figure></p>
+<p>授权slave服务器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">GRANT REPLICATION SLAVE,REPLICATION CLIENT ON *.* TO test@&apos;172.18.50.73&apos; IDENTIFIED BY &apos;test123&apos;;</div></pre></td></tr></table></figure></p>
+<p>查看二进制文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; SHOW MASTER STATUS;</div><div class="line">+------------------+----------+--------------+------------------+</div><div class="line">| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |</div><div class="line">+------------------+----------+--------------+------------------+</div><div class="line">| mysql-bin.000003 |      491 |              |                  |</div><div class="line">+------------------+----------+--------------+------------------+</div></pre></td></tr></table></figure></p>
+<p>同步参数配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">CHANGE MASTER TO MASTER_HOST=&apos;172.18.50.73&apos;,MASTER_USER=&apos;test&apos;,MASTER_PASSWORD=&apos;test123&apos;,MASTER_LOG_FILE=&apos;mysql-bin.000003&apos;,MASTER_LOG_POS=491;</div></pre></td></tr></table></figure></p>
+<p>开启slave<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">START SLAVE;</div></pre></td></tr></table></figure></p>
+<h4 id="MASTER2-172-18-50-73"><a href="#MASTER2-172-18-50-73" class="headerlink" title="MASTER2(172.18.50.73)"></a>MASTER2(172.18.50.73)</h4><p>/etc/my.cnf.d/server.cnf添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">innodb_file_per_table=ON</div><div class="line">skip_name_resolve=ON</div><div class="line">log_bin=mysql-bin</div><div class="line">server_id=2</div><div class="line">relay_log=relay-log</div><div class="line">auto_increment_offset=2</div><div class="line">auto_increment_increment=2</div></pre></td></tr></table></figure></p>
+<p>授权slave服务器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">GRANT REPLICATION SLAVE,REPLICATION CLIENT ON *.* TO test@&apos;172.18.50.72&apos; IDENTIFIED BY &apos;test123&apos;;</div></pre></td></tr></table></figure></p>
+<p>查看二进制文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; SHOW MASTER STATUS;</div><div class="line">+------------------+----------+--------------+------------------+</div><div class="line">| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |</div><div class="line">+------------------+----------+--------------+------------------+</div><div class="line">| mysql-bin.000003 |      491 |              |                  |</div><div class="line">+------------------+----------+--------------+------------------+</div></pre></td></tr></table></figure></p>
+<p>同步参数配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">CHANGE MASTER TO MASTER_HOST=&apos;172.18.50.72&apos;,MASTER_USER=&apos;test&apos;,MASTER_PASSWORD=&apos;test123&apos;,MASTER_LOG_FILE=&apos;mysql-bin.000003&apos;,MASTER_LOG_POS=491;</div></pre></td></tr></table></figure></p>
+<p>开启slave<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">START SLAVE;</div></pre></td></tr></table></figure></p>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试"></a>测试</h4><p>MASTER1<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">CREATE TABLE tbl1 (id INT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,name VARCHAR(20));</div><div class="line">insert into tbl1 (name) VALUES (&apos;a1&apos;),(&apos;a2&apos;);</div></pre></td></tr></table></figure></p>
+<p>MASTER2<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">insert into tbl1 (name) VALUES (&apos;a1&apos;),(&apos;a2&apos;);</div><div class="line">MariaDB [mytest]&gt; select * from tbl1;</div><div class="line">+----+------+</div><div class="line">| id | name |</div><div class="line">+----+------+</div><div class="line">|  1 | a1   |</div><div class="line">|  3 | a2   |</div><div class="line">|  4 | a1   |</div><div class="line">|  6 | a2   |</div><div class="line">+----+------+</div></pre></td></tr></table></figure></p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Maradb主主复制"><span class="toc-text">Maradb主主复制</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MASTER1-172-18-50-72"><span class="toc-text">MASTER1(172.18.50.72)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#MASTER2-172-18-50-73"><span class="toc-text">MASTER2(172.18.50.73)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#测试"><span class="toc-text">测试</span></a></li></ol></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/06/12/ss.html" class="prev">&larr; 上一篇 ss</a>
+  
+
+  
+
+  
+    <a href="/2017/05/25/http_header.html" class="next">下一篇 HTTP HEADER &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Hee shen using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg">
+    <p id="description">my notes</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com/">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.douban.com">
+        
+          <i class="icon iconfont douban">&#xe60f;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

@@ -1,0 +1,369 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Hee shen">
+  
+  
+  
+  
+    <meta name="description" content="ProxySQL1.3.6配置下载https://github.com/sysown/proxysql/releases
+ProxySQL配置123456789101112131415161718192021222324252627282930313233343536373839404142434445464748495051525354555657585960616263646566676...">
+  
+  <title>ProxySQL1.3.6配置 [ Linux-2017 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/06/12/MogileFS的安装配置.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        MogileFS的安装配置
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/06/12/ss.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        ss
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg"/>
+          <div id="homelink">Linux-2017</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>ProxySQL1.3.6配置</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-06-12</span>
+      
+        <span id = "post-title-updated">修改于 2017-06-12</span>
+      
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/ProxySQL/">ProxySQL</a>
+      
+        
+          /
+        
+        
+        <a href="/tags/中间件/">中间件</a>
+      
+      </span>
+      
+    </p>
+    
+    <h3 id="ProxySQL1-3-6配置"><a href="#ProxySQL1-3-6配置" class="headerlink" title="ProxySQL1.3.6配置"></a>ProxySQL1.3.6配置</h3><p><strong>下载</strong><br><a href="https://github.com/sysown/proxysql/releases" target="_blank" rel="external">https://github.com/sysown/proxysql/releases</a></p>
+<h4 id="ProxySQL配置"><a href="#ProxySQL配置" class="headerlink" title="ProxySQL配置"></a>ProxySQL配置</h4><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div></pre></td><td class="code"><pre><div class="line">[root@171 ~]# cat /etc/proxysql.cnf | grep -E -v &quot;^(#|$)&quot;</div><div class="line">datadir=&quot;/var/lib/proxysql&quot;</div><div class="line">admin_variables=</div><div class="line">&#123;</div><div class="line">	admin_credentials=&quot;admin:admin&quot;</div><div class="line">	mysql_ifaces=&quot;127.0.0.1:6032;/tmp/proxysql_admin.sock&quot;</div><div class="line">&#125;</div><div class="line">mysql_variables=</div><div class="line">&#123;</div><div class="line">	threads=4</div><div class="line">	max_connections=2048</div><div class="line">	default_query_delay=0</div><div class="line">	default_query_timeout=36000000</div><div class="line">	have_compress=true</div><div class="line">	poll_timeout=2000</div><div class="line">	interfaces=&quot;0.0.0.0:3306;/tmp/mysql.sock&quot;</div><div class="line">	default_schema=&quot;information_schema&quot;</div><div class="line">	stacksize=1048576</div><div class="line">	server_version=&quot;5.5.30&quot;</div><div class="line">	connect_timeout_server=3000</div><div class="line">	monitor_history=600000</div><div class="line">	monitor_connect_interval=60000</div><div class="line">	monitor_ping_interval=10000</div><div class="line">	monitor_read_only_interval=1500</div><div class="line">	monitor_read_only_timeout=500</div><div class="line">	ping_interval_server=120000</div><div class="line">	ping_timeout_server=500</div><div class="line">	commands_stats=true</div><div class="line">	sessions_sort=true</div><div class="line">	connect_retries_on_failure=10</div><div class="line">&#125;</div><div class="line">mysql_servers =</div><div class="line">(</div><div class="line">	&#123;</div><div class="line">		address = &quot;172.18.50.71&quot; # no default, required . If port is 0 , address is interpred as a Unix Socket Domain</div><div class="line">		port = 3306           # no default, required . If port is 0 , address is interpred as a Unix Socket Domain</div><div class="line">		hostgroup = 0	        # no default, required</div><div class="line">		status = &quot;ONLINE&quot;     # default: ONLINE</div><div class="line">		weight = 1            # default: 1</div><div class="line">		compression = 0       # default: 0</div><div class="line">	&#125;,</div><div class="line">	&#123;</div><div class="line">		address = &quot;172.18.50.72&quot;</div><div class="line">		port = 3306</div><div class="line">		hostgroup = 1</div><div class="line">		status = &quot;ONLINE&quot;</div><div class="line">		weight = 1       </div><div class="line">		compression = 0  </div><div class="line">	&#125;,</div><div class="line">	&#123;</div><div class="line">		address = &quot;172.18.50.73&quot;</div><div class="line">		port = 3306</div><div class="line">		hostgroup = 1</div><div class="line">		status = &quot;ONLINE&quot;</div><div class="line">		weight = 1   </div><div class="line">		compression = 0  </div><div class="line">	&#125;</div><div class="line">)</div><div class="line">mysql_users:</div><div class="line">(</div><div class="line">	&#123;</div><div class="line">		username = &quot;root&quot;</div><div class="line">		password = &quot;rootpw&quot;</div><div class="line">		default_hostgroup = 0</div><div class="line">		max_connections=1000</div><div class="line">		default_schema=&quot;mytest&quot;</div><div class="line">		active = 1</div><div class="line">	&#125;,</div><div class="line">	&#123;</div><div class="line">		username = &quot;root&quot;</div><div class="line">		password = &quot;rootpw&quot;</div><div class="line">		default_hostgroup = 1</div><div class="line">		max_connections=1000</div><div class="line">		default_schema=&quot;mytest&quot;</div><div class="line">		active = 1</div><div class="line">	&#125;</div><div class="line">)</div><div class="line">mysql_query_rules:</div><div class="line">(</div><div class="line">)</div><div class="line">scheduler=</div><div class="line">(</div><div class="line">)</div><div class="line">mysql_replication_hostgroups=</div><div class="line">(</div><div class="line">        &#123;</div><div class="line">                writer_hostgroup=0</div><div class="line">                reader_hostgroup=1</div><div class="line">       &#125;</div><div class="line">)</div></pre></td></tr></table></figure>
+<p>MASTER<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">#授权</div><div class="line">grant all on *.*  to  root@&apos;proxysql ip&apos; identified by &apos;rootpw&apos;;</div></pre></td></tr></table></figure></p>
+<p>MASTER授权从服务器会同步授权<br>测试<br>分别在两台从服务器添加不同的表,并测试<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">[root@171 ~]# mysql -uroot -prootpw -h172.18.50.170 -e &quot;select * from mytest.t1&quot;;</div><div class="line">+--------+</div><div class="line">| name   |</div><div class="line">+--------+</div><div class="line">| slave2 |</div><div class="line">+--------+</div><div class="line">[root@171 ~]# mysql -uroot -prootpw -h172.18.50.170 -e &quot;select * from mytest.t1&quot;;</div><div class="line">+-------+</div><div class="line">| name  |</div><div class="line">+-------+</div><div class="line">| slave |</div><div class="line">+-------+</div><div class="line">[root@171 ~]# mysql -uroot -prootpw -h172.18.50.170 -e &quot;select * from mytest.t1&quot;;</div></pre></td></tr></table></figure></p>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#ProxySQL1-3-6配置"><span class="toc-text">ProxySQL1.3.6配置</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#ProxySQL配置"><span class="toc-text">ProxySQL配置</span></a></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/06/12/MogileFS的安装配置.html" class="prev">&larr; 上一篇 MogileFS的安装配置</a>
+  
+
+  
+
+  
+    <a href="/2017/06/12/ss.html" class="next">下一篇 ss &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Hee shen using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg">
+    <p id="description">my notes</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com/">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.douban.com">
+        
+          <i class="icon iconfont douban">&#xe60f;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+

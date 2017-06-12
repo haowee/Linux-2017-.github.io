@@ -4,6 +4,129 @@
 
     
   <url>
+    <loc>http://yoursite.com/2017/06/12/Fastdfs%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE.html</loc>
+    <lastmod>2017-06-12T13:34:46.310Z</lastmod>
+    <data>
+        <display>
+        <title>Fastdfs安装配置</title>
+        <pubTime>2017-06-12T13:28:08.000Z</pubTime>
+        
+        <tag>分布式文件系统</tag>
+         
+        <tag>Fastdfs</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/06/12/Maradb%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6.html</loc>
+    <lastmod>2017-06-12T13:34:46.310Z</lastmod>
+    <data>
+        <display>
+        <title>Maradb主从复制</title>
+        <pubTime>2017-06-12T13:28:08.000Z</pubTime>
+        
+        <tag>Mariadb</tag>
+         
+        <tag>主从复制</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/06/12/Mariadb%E5%8D%8A%E5%90%8C%E6%AD%A5%E5%A4%8D%E5%88%B6%E5%8F%8A%E5%A4%8D%E5%88%B6%E8%BF%87%E6%BB%A4%E5%99%A8.html</loc>
+    <lastmod>2017-06-12T13:34:46.310Z</lastmod>
+    <data>
+        <display>
+        <title>Mariadb半同步复制及复制过滤器</title>
+        <pubTime>2017-06-12T13:28:08.000Z</pubTime>
+        
+        <tag>Mariadb</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/06/12/MogileFS%E7%9A%84%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AE.html</loc>
+    <lastmod>2017-06-12T13:34:46.310Z</lastmod>
+    <data>
+        <display>
+        <title>MogileFS的安装配置</title>
+        <pubTime>2017-06-12T13:28:08.000Z</pubTime>
+        
+        <tag>MogileFS</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/06/12/ProxySQL1.3.6%E9%85%8D%E7%BD%AE.html</loc>
+    <lastmod>2017-06-12T13:34:46.310Z</lastmod>
+    <data>
+        <display>
+        <title>ProxySQL1.3.6配置</title>
+        <pubTime>2017-06-12T13:28:08.000Z</pubTime>
+        
+        <tag>ProxySQL</tag>
+         
+        <tag>中间件</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/06/12/Maradb%E4%B8%BB%E4%B8%BB%E5%A4%8D%E5%88%B6.html</loc>
+    <lastmod>2017-06-12T13:34:46.310Z</lastmod>
+    <data>
+        <display>
+        <title>Maradb主主复制</title>
+        <pubTime>2017-06-12T13:28:08.000Z</pubTime>
+        
+        <tag>Maradb</tag>
+         
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
+    <loc>http://yoursite.com/2017/06/12/ss.html</loc>
+    <lastmod>2017-06-12T13:28:08.358Z</lastmod>
+    <data>
+        <display>
+        <title>ss</title>
+        <pubTime>2017-06-12T13:28:08.000Z</pubTime>
+        
+         
+           
+        </display>
+    </data>
+    </url>
+
+    
+  <url>
     <loc>http://yoursite.com/2017/05/25/http_header.html</loc>
     <lastmod>2017-05-25T10:10:17.799Z</lastmod>
     <data>

@@ -1,0 +1,388 @@
+
+
+
+
+
+
+
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta http-equiv="Content-Type" content="text/html" charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <meta name="author" content="Hee shen">
+  
+  
+  
+  
+    <meta name="description" content="Mariadb半同步复制及复制过滤器依赖的插件/usr/lib64/mysql/plugin下
+
+semisync_master.sosemisync_slave.so
+
+MASTER(172.18.50.72)/etc/my.cnf.d/server.cnf配置1234innodb_file_per_table=ONskip_name_resolve=ONlog_bin=mysql-bin...">
+  
+  <title>Mariadb半同步复制及复制过滤器 [ Linux-2017 ]</title>
+  
+  
+    <link rel="shortcut icon" href="/favicon.ico">
+  
+  
+  <link rel="stylesheet" href="/css/random.css">
+<link rel="stylesheet" href="/css/vegas.min.css">
+<link rel="stylesheet" href="/css/highlight-railscasts.css">
+<link rel="stylesheet" href="/css/jquery.fancybox.css">
+<link rel="stylesheet" href="/css/iconfont/iconfont.css">
+<link rel="stylesheet" href="/css/jquery.fancybox-thumbs.css">
+<link rel="stylesheet" href="/css/plyr.css">
+  
+</head>
+
+<body>
+<div class="side-navigate hide-area">
+  
+    <div class="item prev">
+      <a href="/2017/06/12/Maradb主从复制.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        Maradb主从复制
+      </div>
+    </div>
+  
+  
+    <div class="item next">
+      <a href="/2017/06/12/MogileFS的安装配置.html">
+        <div class="item-icon"></div>
+      </a>
+      <div class="item-title">
+        MogileFS的安装配置
+      </div>
+    </div>
+  
+</div>
+<div id="outer-container" class="hide-area">
+<div id="container">
+  <div id="menu-outer" class="slide-down">
+    <div id="menu-inner">
+      <div id="brand">
+        
+        <a onClick="openUserCard()">
+          <img id="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg"/>
+          <div id="homelink">Linux-2017</div>
+        </a>
+      </div>
+      <div id="menu-list">
+        <ul>
+        
+        
+          
+            <li>
+          
+            <a href="/index.html">Home</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/archives">Archives</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/tags">Tags</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/categories">Categories</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="/about">About</a>
+            
+          </li>
+        
+          
+            <li>
+          
+            <a href="https://github.com/">Github</a>
+            
+          </li>
+        
+        </ul>
+      </div>
+      <div id="show-menu">
+        <button>Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="content-outer">
+    <div id="content-inner">
+      
+      
+  <article id="post">
+    <h1>Mariadb半同步复制及复制过滤器</h1>
+    <p class="page-title-sub">
+      <span id = "post-title-date">撰写于 2017-06-12</span>
+      
+        <span id = "post-title-updated">修改于 2017-06-12</span>
+      
+      
+      
+      <span id = "post-title-tags">
+      标签
+      
+      
+        
+        
+        <a href="/tags/Mariadb/">Mariadb</a>
+      
+      </span>
+      
+    </p>
+    
+    <h2 id="Mariadb半同步复制及复制过滤器"><a href="#Mariadb半同步复制及复制过滤器" class="headerlink" title="Mariadb半同步复制及复制过滤器"></a>Mariadb半同步复制及复制过滤器</h2><p>依赖的插件<br>/usr/lib64/mysql/plugin下</p>
+<blockquote>
+<p>semisync_master.so<br>semisync_slave.so</p>
+</blockquote>
+<h4 id="MASTER-172-18-50-72"><a href="#MASTER-172-18-50-72" class="headerlink" title="MASTER(172.18.50.72)"></a>MASTER(172.18.50.72)</h4><p>/etc/my.cnf.d/server.cnf配置<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">innodb_file_per_table=ON</div><div class="line">skip_name_resolve=ON</div><div class="line">log_bin=mysql-bin</div><div class="line">server_id=1</div></pre></td></tr></table></figure></p>
+<p>授权slave服务器<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">GRANT REPLICATION SLAVE,REPLICATION CLIENT ON *.* TO test@&apos;172.18.50.73&apos; IDENTIFIED BY &apos;test123&apos;;</div></pre></td></tr></table></figure></p>
+<p>查看二进制文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; show master status;</div><div class="line">+------------------+----------+--------------+------------------+</div><div class="line">| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |</div><div class="line">+------------------+----------+--------------+------------------+</div><div class="line">| mysql-bin.000003 |      493 |              |                  |</div><div class="line">+------------------+----------+--------------+------------------+</div><div class="line">1 row in set (0.00 sec)</div></pre></td></tr></table></figure></p>
+<p>安装插件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; INSTALL PLUGIN rpl_semi_sync_master SONAME &apos;semisync_master.so&apos;;</div></pre></td></tr></table></figure></p>
+<p>查看是否安装成功<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; SHOW PLUGINS;</div><div class="line">rpl_semi_sync_master           | ACTIVE   | REPLICATION        | semisync_master.so | GPL</div></pre></td></tr></table></figure></p>
+<p>开启rpl_semi_sync_master_enabled<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">SHOW VARIABLES LIKE &apos;%semi%&apos;;</div><div class="line">SET @@GLOBAL.rpl_semi_sync_master_enabled=ON</div></pre></td></tr></table></figure></p>
+<h4 id="SLAVE-172-18-50-73"><a href="#SLAVE-172-18-50-73" class="headerlink" title="SLAVE(172.18.50.73)"></a>SLAVE(172.18.50.73)</h4><p>/etc/my.cnf.d/server.cnf添加<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">innodb_file_per_table=ON</div><div class="line">skip_name_resolve=ON</div><div class="line">server_id=2</div><div class="line">relay_log=relay-log</div></pre></td></tr></table></figure></p>
+<p>添加master参数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; CHANGE  MASTER TO MASTER_HOST=&apos;172.18.50.72&apos;,MASTER_USER=&apos;test&apos;,MASTER_PASSWORD=&apos;test123&apos;,MASTER_LOG_FILE=&apos;mysql-bin.000003&apos;,MASTER_LOG_POS=493;</div></pre></td></tr></table></figure></p>
+<p>启动slave<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; START SLAVE;</div></pre></td></tr></table></figure></p>
+<p>安装插件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; INSTALL PLUGIN rpl_semi_sync_slave SONAME &apos;semisync_slave&apos;;</div></pre></td></tr></table></figure></p>
+<p>重启slave IO线程<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; STOP SLAVE IO_THREAD;</div><div class="line">Query OK, 0 rows affected (0.00 sec)</div><div class="line"></div><div class="line">MariaDB [(none)]&gt; START SLAVE IO_THREAD;</div><div class="line">Query OK, 0 rows affected (0.01 sec)</div></pre></td></tr></table></figure></p>
+<p>判断是否成功<br>主节点<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">MariaDB [(none)]&gt; SHOW GLOBAL STATUS  LIKE &apos;Rpl_semi_sync_master_clients&apos;;</div><div class="line">+------------------------------+-------+</div><div class="line">| Variable_name                | Value |</div><div class="line">+------------------------------+-------+</div><div class="line">| Rpl_semi_sync_master_clients | 1     |</div><div class="line">+------------------------------+-------+</div><div class="line">1 row in set (0.01 sec)</div></pre></td></tr></table></figure></p>
+<p>查看相关参数<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">MariaDB [mydb]&gt; SHOW GLOBAL STATUS  LIKE &apos;%semi%&apos;;</div><div class="line">+--------------------------------------------+-------+</div><div class="line">| Variable_name                              | Value |</div><div class="line">+--------------------------------------------+-------+</div><div class="line">| Rpl_semi_sync_master_clients               | 1     |</div><div class="line">| Rpl_semi_sync_master_net_avg_wait_time     | 552   |</div><div class="line">| Rpl_semi_sync_master_net_wait_time         | 1657  |</div><div class="line">| Rpl_semi_sync_master_net_waits             | 3     |</div><div class="line">| Rpl_semi_sync_master_no_times              | 0     |</div><div class="line">| Rpl_semi_sync_master_no_tx                 | 0     |</div><div class="line">| Rpl_semi_sync_master_status                | ON    |</div><div class="line">| Rpl_semi_sync_master_timefunc_failures     | 0     |</div><div class="line">| Rpl_semi_sync_master_tx_avg_wait_time      | 562   |</div><div class="line">| Rpl_semi_sync_master_tx_wait_time          | 1687  |</div><div class="line">| Rpl_semi_sync_master_tx_waits              | 3     |</div><div class="line">| Rpl_semi_sync_master_wait_pos_backtraverse | 0     |</div><div class="line">| Rpl_semi_sync_master_wait_sessions         | 0     |</div><div class="line">| Rpl_semi_sync_master_yes_tx                | 3     |</div><div class="line">+--------------------------------------------+-------+</div><div class="line">14 rows in set (0.00 sec)</div></pre></td></tr></table></figure></p>
+<h4 id="复制过滤器"><a href="#复制过滤器" class="headerlink" title="复制过滤器"></a>复制过滤器</h4><p>仅复制有限的一个或几个数据库相关的数据，而非所有；由复制过滤器进行；<br>两种实现方法：</p>
+<ol>
+<li><p>主服务器<br>主服务器仅向二进制日志中记录有关特定数据相关的写操作<br>问题：其他库的point-recovery将无从实现</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">binlog_do_db=    #白名单</div><div class="line">binlog_ignore_db=    #黑名单</div></pre></td></tr></table></figure>
+</li>
+<li><p>从服务器<br>从服务器的SQL THREAD仅重放关注的数据库或表的相关事件，并将其应用于本地；<br>问题：网络IO和磁盘IO</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">Replicate_Do_DB=</div><div class="line">Replicate_Ignore_DB=</div><div class="line">Replicate_Do_Table=</div><div class="line">Replicate_Ignore_Table=</div><div class="line">Replicate_Wild_Do_DB=    #根据表面通配符做白名单</div><div class="line">Replicate__Wild_Ignore_DB=    #根据表面通配符做黑名单</div></pre></td></tr></table></figure>
+</li>
+</ol>
+
+  </article>
+  <div class="random-toc-area">
+  <button class="btn-hide-toc btn-hide-toc-show" style="display: none" onclick="TOCToggle()">显示目录</button>
+  <button class="btn-hide-toc btn-hide-toc-hide" onclick="TOCToggle()">隐藏目录</button>
+  <div class="random-toc">
+    <h2>目录</h2>
+    <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Mariadb半同步复制及复制过滤器"><span class="toc-text">Mariadb半同步复制及复制过滤器</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#MASTER-172-18-50-72"><span class="toc-text">MASTER(172.18.50.72)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#SLAVE-172-18-50-73"><span class="toc-text">SLAVE(172.18.50.73)</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#复制过滤器"><span class="toc-text">复制过滤器</span></a></li></ol></li></ol></li></ol>
+  </div>
+</div>
+
+  
+<nav id="pagination">
+  
+    <a href="/2017/06/12/Maradb主从复制.html" class="prev">&larr; 上一篇 Maradb主从复制</a>
+  
+
+  
+
+  
+    <a href="/2017/06/12/MogileFS的安装配置.html" class="next">下一篇 MogileFS的安装配置 &rarr;</a>
+  
+</nav>
+
+  <!-- JiaThis Button BEGIN -->
+
+<!-- JiaThis Button END -->
+
+
+      
+      
+      
+    </div>
+  </div>
+
+  <div id="bottom-outer">
+    <div id="bottom-inner">
+      Site by Hee shen using
+      <a href="http://hexo.io">Hexo</a> & <a href="https://github.com/stiekel/hexo-theme-random">Random</a>
+      <br>
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+
+
+<div id="user-card">
+  <div class="center-field">
+    <img class="avatar" src="http://omsab2via.bkt.clouddn.com/ar.jpg">
+    <p id="description">my notes</p>
+    <ul class="social-icon">
+  
+  
+    <li>
+      <a href="https://github.com">
+        
+          <i class="icon iconfont github">&#xe606;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://coding.net/">
+        
+          <i class="icon iconfont coding">&#xe607;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="https://twitter.com/">
+        
+          <i class="icon iconfont twitter">&#xe600;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://weibo.com/">
+        
+          <i class="icon iconfont weibo">&#xe602;</i>
+        
+      </a>
+    </li>
+  
+    <li>
+      <a href="http://www.douban.com">
+        
+          <i class="icon iconfont douban">&#xe60f;</i>
+        
+      </a>
+    </li>
+  
+</ul>
+  </div>
+</div>
+
+
+<div id="btn-view">Hide</div>
+
+<script>
+// is trigger analytics / tongji script
+var isIgnoreHost = false;
+
+if(window && window.location && window.location.host) {
+  isIgnoreHost = ["localhost","127.0.0.1"].some(function(address){
+    return 0 === window.location.host.indexOf(address);
+  });
+}
+
+var isTriggerAnalytics = !( true && isIgnoreHost );
+
+</script>
+
+
+
+
+  
+  
+    <script src="/js/jquery-2.2.3.min.js"></script>
+  
+    <script src="/js/vegas.min.js"></script>
+  
+    <script src="/js/random.js"></script>
+  
+    <script src="/js/highlight.pack.js"></script>
+  
+    <script src="/js/jquery.mousewheel.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox.pack.js"></script>
+  
+    <script src="/js/jquery.fancybox-thumbs.js"></script>
+  
+    <script src="/js/plyr.js"></script>
+  
+
+<script>
+
+  // fancybox
+  var backgroundImages = [];
+  
+  $('#post').each(function(i){
+    $(this).find('img').each(function(){
+      if ($(this).parent().hasClass('fancybox') || $(this).parent().hasClass('fancybox-thumb')) return;
+      var alt = this.alt || this.title;
+      if (alt) $(this).after('<span class="caption">' + alt + '</span>');
+      $(this).wrap('<a href="' + this.src + '" title="' + alt + '" class="fancybox"></a>');
+    });
+    $(this).find('.fancybox').each(function(){
+      $(this).attr('rel', 'post' + i);
+    });
+  });
+  $(".fancybox").fancybox();
+
+var vegasConfig = {"preload­Image":true,"transition":["slideLeft2","slideRight2","flash2"],"timer":true,"delay":5000,"shuffle":true,"count":28};
+var unsplashConfig = {"gravity":"north"};
+// is show background images
+var turnoffBackgroundImage = false;
+
+
+
+  turnoffBackgroundImage = true;
+
+
+var backgroundColor = "34495E";
+
+$(".fancybox-thumb").fancybox({
+  prevEffect: 'none',
+  nextEffect: 'none',
+  helpers: {
+    title: {
+      type: 'outside'
+    },
+    thumbs: {
+      width: 50,
+      height: 50
+    }
+  }
+});
+
+// show video with plyr
+$(".video-container iframe").each(function(i){
+  var url = $(this).attr('src');
+  var id = url.split('/').pop();
+  var plyrContainer = document.createElement('div');
+  plyrContainer.className = 'plyr';
+  var plyrElement = document.createElement('div');
+  plyrElement.dataset.videoId = id;
+  switch(true) {
+    case url.search('youtube.com') >= 0:
+      plyrElement.dataset.type = 'youtube';
+      break;
+    case url.search('vimeo.com') >= 0:
+      plyrElement.dataset.type = 'vimeo';
+      break;
+    default:
+      return;
+  };
+  plyrContainer.appendChild(plyrElement);
+  $(this).parent().html(plyrContainer);
+});
+plyr.setup('.plyr', {iconUrl: '/css/sprite.svg'});
+</script>
+</body>
+</html>
+
